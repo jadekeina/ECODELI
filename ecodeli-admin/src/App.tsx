@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import DashboardOverview from "./pages/dashboard/Overview";
-import Livreurs from "./pages/utilisateurs/livreurs/livreurs";
+import Livreurs from "./pages/utilisateurs/livreurs/Livreurs";
 import Header from "./components/Header";
 
 function App() {
