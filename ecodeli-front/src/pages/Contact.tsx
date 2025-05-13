@@ -1,6 +1,7 @@
 const Contact = () => {
-    return <div className="p-8 text-2xl font-bold">À propos</div>;
-  };
-  
-  export default Contact;
-  
+  return;
+
+  <div className="p-8 text-2xl font-bold">À propos</div>;
+};
+
+export default Contact;

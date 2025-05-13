@@ -1,14 +1,14 @@
-import { Routes, Route } from 'react-router-dom';
-import Header from './components/header';
-import Footer from './components/Footer';
-import Home from './pages/Home';
-import Services from './pages/Services';
-import HowItWorks from './pages/HowItWorks';
-import BecomeCourier from './pages/BecomeCourier';
-import About from './pages/About';
-import Contact from './pages/Contact';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import { Routes, Route } from "react-router-dom";
+import Header from "./components/header";
+import Footer from "./components/Footer";
+import Home from "./pages/Home";
+import Services from "./pages/Services";
+import HowItWorks from "./pages/HowItWorks";
+import BecomeCourier from "./pages/BecomeCourier";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 function App() {
   return (
@@ -30,5 +30,3 @@ function App() {
 }
 
 export default App;
-
-

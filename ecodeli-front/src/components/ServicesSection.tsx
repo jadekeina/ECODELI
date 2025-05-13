@@ -1,41 +1,78 @@
+import { useState } from "react";
+
 const services = [
-  { title: "Livraisons de colis", image: "src/assets/Livraison.png" },
-  { title: "Service à la personne", image: "src/assets/ServicePersonne.png" },
-  { title: "Courses", image: "src/assets/Courses.png" },
-  { title: "Ménage", image: "src/assets/Menage.png" },
-  { title: "Garde d'enfants", image: "src/assets/GardeEnfants.png" },
-  { title: "Garde d’animaux", image: "src/assets/GardeAnimaux.png" },
+  { title: "Livraisons de colis", image: "src/assets/greybg.jpg" },
+  { title: "Service à la personne", image: "src/assets/greybg.jpg" },
+  { title: "Courses", image: "src/assets/greybg.jpg" },
+  { title: "Ménage", image: "src/assets/greybg.jpg" },
+  { title: "Garde d'enfants", image: "src/assets/greybg.jpg" },
+  { title: "Garde d’animaux", image: "src/assets/greybg.jpg" },
 ];
 
+
+
 const ServicesSection = () => {
-    return (
-      <section className="bg-[#ffffff] py-16 px-4">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((s, i) => (
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const visibleCards = 3;
+
+  const maxIndex = services.length - visibleCards;
+
+  const goLeft = () => {
+    setCurrentIndex((prev) => Math.max(prev - 1, 0));
+  };
+
+  const goRight = () => {
+    setCurrentIndex((prev) => Math.min(prev + 1, maxIndex));
+  };
+
+  const visibleServices = services.slice(currentIndex, currentIndex + visibleCards);
+
+  return (
+    <section className="bg-[#1a6350] py-18 px-4" >
+      <div className="max-w-6xl mx-auto flex flex-col items-center justify-center relative">
+        {/* Bouton gauche */}
+        <button
+          onClick={goLeft}
+          className="absolute left-0 bg-white text-[#1a6350]  p-3 h-14 w-14  rounded-full shadow-md hover:bg-gray-100 transition disabled:opacity-30"
+          disabled={currentIndex === 0}
+        >
+          <span className="text-xl">←</span>
+        </button>
+
+          <div className="flex items-center justify-center h-full mb-4">  <h2 className="text-white text-4xl text-center"> Toutes les <span className="bg-neutral-300/40 ">solutions</span>, <br/> pour chaque indépendant</h2>  </div>
+        
+        
+
+        <div className="flex gap-6 justify-center items-center">
+          {visibleServices.map((s, i) => (
             <div
               key={i}
-              className="bg-[#55c3aa] rounded-xl p-4 flex flex-col justify-between text-white h-64 relative"
+              className="bg-[#ffffff] rounded-xl p-1 text-white w-[300px] h-[400px] flex flex-col justify-between shadow-lg relative"
             >
-              {/* Texte en haut à gauche */}
-              <div className="absolute top-4 left-4 z-10">
-                <h3 className="text-lg font-semibold">{s.title}</h3>
-                
-              </div>
-  
-              {/* Image plus grande en bas */}
-            <div className="flex flex-grow items-center justify-center mt-0">
+                   <div className="flex-grow flex items-center justify-center">
                 <img
-                    src={s.image}
-                    alt={s.title}
-                    className="h-60 object-contain"
+                  src={s.image}
+                  alt={s.title}
+                  className="h-full rounded-xl "
                 />
-            </div>
-
+              </div>
+              <h3 className="text-lg self-center font-semibold text-[#1a6350] " >{s.title}</h3>
+         
             </div>
           ))}
         </div>
-      </section>
-    );
-  };
-  
-  export default ServicesSection;
+
+        {/* Bouton droit */}
+        <button
+          onClick={goRight}
+          className="absolute  right-0 bg-white text-[#1a6350] p-3 h-14 w-14 rounded-full shadow-md hover:bg-gray-100 transition disabled:opacity-30"
+          disabled={currentIndex === maxIndex}
+        >
+          <span className="text-xl">→</span>
+        </button>
+      </div>
+    </section>
+  );
+};
+
+export default ServicesSection;
