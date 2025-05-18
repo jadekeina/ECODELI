@@ -1,0 +1,39 @@
+/* Normal */
+@font-face {
+  font-family: "ArchivGrotesk";
+  src: url("../assets/fonts/ArchivGrotesk-Normal.otf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Mince */
+@font-face {
+  font-family: "ArchivGrotesk-Light";
+  src: url("../assets/fonts/ArchivGrotesk-Light.otf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Très Mince */
+@font-face {
+  font-family: "ArchivGrotesk-Hairline";
+  src: url("../assets/fonts/ArchivGrotesk-Hairline.otf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Gras */
+@font-face {
+  font-family: "ArchivGrotesk-Bold";
+  src: url("../assets/fonts/ArchivGrotesk-Bold.otf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Regular */
+@font-face {
+  font-family: "ArchivGrotesk-Regular";
+  src: url("../assets/fonts/ArchivGrotesk-Regular.otf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
