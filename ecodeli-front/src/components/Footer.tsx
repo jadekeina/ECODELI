@@ -1,6 +1,17 @@
+import { useLocation } from "react-router-dom";
+
 const Footer = () => {
+  const location = useLocation();
+  const isLoginPage = location.pathname === "/connexion";
+  const isRegisterPage = location.pathname === "/inscription";
+  const isAuthPage = isLoginPage || isRegisterPage;
+
+  if (isAuthPage) {
+    return null;
+  }
+
   return (
-    <footer className="bg-[#1a6350] text-white py-10 px-6">
+    <footer className="bg-[#155250] text-white py-10 px-6">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Bloc 1 : logo / nom */}
         <div>

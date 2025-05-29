@@ -2,10 +2,10 @@ import { Routes, Route } from "react-router-dom";
 import Header from "./components/header";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
-import Services from "./pages/Services";
-import HowItWorks from "./pages/HowItWorks";
-import BecomeCourier from "./pages/BecomeCourier";
-import About from "./pages/About";
+import Prix from "./pages/Prix";
+import NosEngagements from "./pages/NosEngagements";
+import CommentCaMarche from "./pages/CommentCaMarche";
+import ExpedierOuRecevoir from "./pages/ExpedierOuRecevoir";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -16,10 +16,10 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/comment-ca-marche" element={<HowItWorks />} />
-        <Route path="/devenir-livreur" element={<BecomeCourier />} />
-        <Route path="/a-propos" element={<About />} />
+        <Route path="/prix" element={<Prix />} />
+        <Route path="/NosEngagements" element={<NosEngagements />} />
+        <Route path="/Comment-ca-marche" element={<CommentCaMarche />} />
+        <Route path="/expedier-ou-recevoir" element={<ExpedierOuRecevoir />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/connexion" element={<Login />} />
         <Route path="/inscription" element={<Register />} />
