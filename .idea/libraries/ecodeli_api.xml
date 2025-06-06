@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="ecodeli_api">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/ecodeli_api.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
