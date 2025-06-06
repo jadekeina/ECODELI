@@ -29,7 +29,7 @@ const ServicesSection = () => {
   );
 
   return (
-    <section className="bg-[#155250] py-18 px-4">
+    <section className="bg-[#155250]  py-18 px-4">
       <div className="max-w-6xl mx-auto flex flex-col items-center justify-center relative">
         {/* Bouton gauche */}
         <button

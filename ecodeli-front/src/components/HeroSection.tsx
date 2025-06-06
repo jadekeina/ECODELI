@@ -1,14 +1,15 @@
 import { Link } from "react-router-dom";
 import "./HeroSection.css";
+import "../styles/fonts.css";
 
 const HeroSection = () => {
   return (
-    <section className="w-full px-8 py-18 flex flex-col lg:flex-row items-center justify-between gap-12 bg-white">
+    <section className="w-full px-8 py-8 flex flex-col lg:flex-row items-center justify-between gap-12  ">
       <div className="text-center lg:text-left max-w-xl lg:pl-50">
-        <h1 className="text-4xl md:text-5xl font-light text-[#142D2D] leading-tight">
+        <h1 className="text-4xl md:text-5xl font-light text-[#142D2D] leading-tight font-outfit-regular">
           <span className="whitespace-nowrap">
             Le{" "}
-            <span className="font-semibold text-[#1a6350]">crowdshipping</span>,
+            <span className="font-outfit-semibold text-[#155250]">crowdshipping</span>,
           </span>
           <br />
           simple,
@@ -22,7 +23,7 @@ const HeroSection = () => {
                 <button
           aria-label="User Login Button"
           role="button"
-          className="user-profile mt-3 "
+          className="user-profile mt-3 font-outfit-medium"
         >
           <div className="user-profile-inner ">
             <p>Créer un compte !</p>
@@ -35,7 +36,7 @@ const HeroSection = () => {
 
       </div>
 
-      <div className="max-w-lg w-full  pr-8 lg:pr-20">
+      <div className="max-w-lg w-full  pr-30 lg:pr-20">
 
      
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-center gap-12">
