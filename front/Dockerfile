@@ -1,26 +1,43 @@
-FROM node:20
+# Stage 1: Build
+FROM node:20-alpine AS builder
 
-# Configuration npm avant toute chose pour éviter les erreurs réseau
+WORKDIR /app
+
+# Copier les fichiers de configuration depuis le dossier front
+COPY front/package*.json ./
+
+# Configuration npm
 RUN npm config set prefer-online true \
   && npm config set registry https://registry.npmjs.org/ \
   && npm config set fetch-retries 5 \
   && npm config set fetch-retry-mintimeout 20000 \
   && npm config set fetch-retry-maxtimeout 120000
 
+# Nettoyer le cache
+RUN npm cache clean --force
+
+# Installer toutes les dépendances (dev + prod)
+RUN npm ci
+
+# Copier le code source du front
+COPY front/ .
+
+# Build de l'application
+RUN npm run build
+
+# Stage 2: Production
+FROM node:20-alpine AS production
+
 WORKDIR /app
-COPY . .
 
-# Installer les dépendances du projet
-RUN npm install
-
-# Installer vite et typescript globalement
-RUN npm install -g typescript vite
-
-# Compiler le projet (TypeScript + Vite)
-RUN tsc -b && vite build
-
-# Installer serve pour servir le front
+# Installer serve
 RUN npm install -g serve
 
-# Lancer le serveur statique sur le port 3000
+# Copier uniquement les fichiers buildés depuis le stage précédent
+COPY --from=builder /app/dist ./dist
+
+# Exposer le port
+EXPOSE 3000
+
+# Démarrer l'application
 CMD ["serve", "-s", "dist", "-l", "3000"]
