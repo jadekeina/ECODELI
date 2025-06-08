@@ -1,42 +1,39 @@
 # -------- Étape 1 : Build de l'application --------
 FROM node:20-alpine AS builder
 
-# Dossier de travail dans le conteneur
 WORKDIR /app
 
-# Copier uniquement les fichiers de configuration en premier (meilleur cache)
+# Copier les fichiers de configuration
 COPY front/package*.json ./
 
-# Config réseau pour npm avec timeouts plus longs
-RUN npm config set registry https://registry.npmjs.org/ \
-  && npm config set prefer-online false \
-  && npm config set fetch-retries 10 \
-  && npm config set fetch-retry-mintimeout 60000 \
-  && npm config set fetch-retry-maxtimeout 300000 \
-  && npm config set timeout 300000
+# Configuration npm minimale
+RUN npm config set registry https://registry.npmjs.org/
 
-# Nettoyage du cache npm
+# Nettoyer le cache
 RUN npm cache clean --force
 
-# Installation des dépendances avec npm ci (plus fiable)
-RUN npm ci --only=production=false
+# Installation avec npm ci
+RUN npm ci
 
-# Copier tout le code source du projet front
+# Copier le code source
 COPY front/ .
 
-# Build avec Vite (sans TypeScript séparé pour éviter les erreurs)
+# Build de l'application
 RUN npm run build
 
 # -------- Étape 2 : Image de production --------
-FROM nginx:alpine AS production
+FROM node:20-alpine AS production
 
-# Copier les fichiers buildés vers nginx
-COPY --from=builder /app/dist /usr/share/nginx/html
+WORKDIR /app
 
-# Copier la configuration nginx personnalisée si nécessaire
-# COPY front/nginx.conf /etc/nginx/conf.d/default.conf
+# Installer serve
+RUN npm install -g serve
 
-# Exposer le port 80 (standard nginx)
-EXPOSE 80
+# Copier les fichiers compilés
+COPY --from=builder /app/dist ./dist
 
-# Nginx se lance automatiquement
+# Exposer le port
+EXPOSE 3000
+
+# Commande de démarrage
+CMD ["serve", "-s", "dist", "-l", "3000"]
