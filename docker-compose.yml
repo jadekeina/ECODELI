@@ -3,16 +3,16 @@ version: '3.8'
 services:
   front:
     build:
-      context: ./front
-    container_name: ecodeli_front
+      context: .
+      dockerfile: front/Dockerfile
     ports:
       - "3000:3000"
     restart: always
 
   admin:
     build:
-      context: ./admin
-    container_name: ecodeli_admin
+      context: .
+      dockerfile: admin/Dockerfile
     ports:
       - "3001:3000"
     restart: always
