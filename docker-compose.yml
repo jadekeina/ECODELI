@@ -11,7 +11,7 @@ services:
   admin:
     build:
       context: .
-      dockerfile: front/Dockerfile
+      dockerfile: admin/Dockerfile
     container_name: ecodeli_admin
     ports:
       - "3001:3000"
@@ -25,7 +25,7 @@ services:
     env_file:
       - ./api/.env
     depends_on:
-      mysql :
+      mysql:
         condition: service_healthy
     restart: always
 
@@ -47,7 +47,6 @@ services:
       timeout: 5s
       retries: 5
     restart: always
-
 
   nginx:
     image: nginx:alpine

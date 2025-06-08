@@ -10,12 +10,12 @@ WORKDIR /app
 # Copier uniquement les fichiers de configuration en premier (meilleur cache)
 COPY front/package*.json ./
 
-# Configuration npm pour plus de résilience réseau
-RUN npm config set prefer-online true \
-  && npm config set registry https://registry.npmjs.org/ \
-  && npm config set fetch-retries 5 \
-  && npm config set fetch-retry-mintimeout 20000 \
-  && npm config set fetch-retry-maxtimeout 120000
+# Config réseau pour npm (déjà fait mais on renforce)
+RUN npm config set registry https://registry.npmjs.org/ \
+  && npm config set prefer-online true \
+  && npm config set fetch-retries 10 \
+  && npm config set fetch-retry-mintimeout 30000 \
+  && npm config set fetch-retry-maxtimeout 180000
 
 # Nettoyage du cache npm (optionnel mais propre)
 RUN npm cache clean --force
