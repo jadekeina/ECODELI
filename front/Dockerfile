@@ -1,49 +1,42 @@
 # -------- Étape 1 : Build de l'application --------
 FROM node:20-alpine AS builder
 
-# Mise à jour de npm pour éviter les bugs connus
-RUN npm install -g npm@latest
-
 # Dossier de travail dans le conteneur
 WORKDIR /app
 
 # Copier uniquement les fichiers de configuration en premier (meilleur cache)
 COPY front/package*.json ./
 
-# Config réseau pour npm (déjà fait mais on renforce)
+# Config réseau pour npm avec timeouts plus longs
 RUN npm config set registry https://registry.npmjs.org/ \
-  && npm config set prefer-online true \
+  && npm config set prefer-online false \
   && npm config set fetch-retries 10 \
-  && npm config set fetch-retry-mintimeout 30000 \
-  && npm config set fetch-retry-maxtimeout 180000
+  && npm config set fetch-retry-mintimeout 60000 \
+  && npm config set fetch-retry-maxtimeout 300000 \
+  && npm config set timeout 300000
 
-# Nettoyage du cache npm (optionnel mais propre)
+# Nettoyage du cache npm
 RUN npm cache clean --force
 
-# Installation des dépendances
-RUN npm install
+# Installation des dépendances avec npm ci (plus fiable)
+RUN npm ci --only=production=false
 
 # Copier tout le code source du projet front
 COPY front/ .
 
-# Compilation TypeScript + build Vite
-RUN npx tsc -b && npx vite build
-
+# Build avec Vite (sans TypeScript séparé pour éviter les erreurs)
+RUN npm run build
 
 # -------- Étape 2 : Image de production --------
-FROM node:20-alpine AS production
+FROM nginx:alpine AS production
 
-# Dossier de travail
-WORKDIR /app
+# Copier les fichiers buildés vers nginx
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Installer le serveur statique
-RUN npm install -g serve
+# Copier la configuration nginx personnalisée si nécessaire
+# COPY front/nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copier uniquement les fichiers compilés
-COPY --from=builder /app/dist ./dist
+# Exposer le port 80 (standard nginx)
+EXPOSE 80
 
-# Exposer le port utilisé par serve
-EXPOSE 3000
-
-# Commande de démarrage
-CMD ["serve", "-s", "dist", "-l", "3000"]
+# Nginx se lance automatiquement

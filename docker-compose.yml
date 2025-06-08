@@ -5,7 +5,7 @@ services:
       dockerfile: front/Dockerfile
     container_name: ecodeli_front
     ports:
-      - "3000:3000"
+      - "3000:80"
     restart: always
 
   admin:
