@@ -1,43 +1,40 @@
-# Stage 1: Build
+# Étape 1 : build
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copier les fichiers de configuration depuis le dossier front
+# Copier uniquement les fichiers nécessaires d'abord
 COPY front/package*.json ./
 
-# Configuration npm
+# Configuration npm pour résilience réseau
 RUN npm config set prefer-online true \
   && npm config set registry https://registry.npmjs.org/ \
   && npm config set fetch-retries 5 \
   && npm config set fetch-retry-mintimeout 20000 \
   && npm config set fetch-retry-maxtimeout 120000
 
-# Nettoyer le cache
-RUN npm cache clean --force
+# Installer les dépendances (et typescript localement)
+RUN npm install
 
-# Installer toutes les dépendances (dev + prod)
-RUN npm ci
-
-# Copier le code source du front
+# Copier le reste du code source
 COPY front/ .
 
-# Build de l'application
-RUN npm run build
+# Compiler avec le TypeScript local
+RUN npx tsc -b && npx vite build
 
-# Stage 2: Production
+# Étape 2 : image finale
 FROM node:20-alpine AS production
 
 WORKDIR /app
 
-# Installer serve
+# Installer un serveur statique
 RUN npm install -g serve
 
-# Copier uniquement les fichiers buildés depuis le stage précédent
+# Copier les fichiers compilés
 COPY --from=builder /app/dist ./dist
 
 # Exposer le port
 EXPOSE 3000
 
-# Démarrer l'application
+# Lancer le serveur
 CMD ["serve", "-s", "dist", "-l", "3000"]
