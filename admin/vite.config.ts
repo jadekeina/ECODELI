@@ -11,4 +11,8 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    host: "0.0.0.0", // ← important pour que Docker puisse exposer le port
+    port: 3000       // ← le même que dans docker-compose
+  },
 });
