@@ -1,12 +1,20 @@
 import { FaUserPlus, FaBullhorn, FaSearch, FaHandshake, FaSmile, FaCheckCircle, FaComments } from "react-icons/fa";
+import { ReactNode } from "react";
 
-const Etape = ({ num, icon, title, text }) => (
-  <div className="flex flex-col items-center text-center px-4 py-6 rounded-lg bg-white shadow-md hover:shadow-xl transition duration-300 ease-in-out transform hover:scale-[1.02] w-full md:w-[260px]">
-    <div className="text-[#1a6350] text-4xl font-bold mb-2">{num}</div>
-    <div className="text-3xl text-[#1a6350] mb-3">{icon}</div>
-    <h3 className="text-xl font-semibold mb-2 text-[#142D2D]">{title}</h3>
-    <p className="text-gray-600 text-sm">{text}</p>
-  </div>
+type EtapeProps = {
+  num: string | number;
+  icon: ReactNode;
+  title: string;
+  text: string;
+};
+
+const Etape = ({ num, icon, title, text }: EtapeProps) => (
+    <div className="flex flex-col items-center text-center px-4 py-6 rounded-lg bg-white shadow-md hover:shadow-xl transition duration-300 ease-in-out transform hover:scale-[1.02] w-full md:w-[260px]">
+      <div className="text-[#1a6350] text-4xl font-bold mb-2">{num}</div>
+      <div className="text-3xl text-[#1a6350] mb-3">{icon}</div>
+      <h3 className="text-xl font-semibold mb-2 text-[#142D2D]">{title}</h3>
+      <p className="text-gray-600 text-sm">{text}</p>
+    </div>
 );
 
 const CommentCaMarche = () => {

@@ -1,5 +1,5 @@
 const Contact = () => {
-  return;
+  return <div>Contact</div>;
 
   <div className="p-8 text-2xl font-bold">À propos</div>;
 };

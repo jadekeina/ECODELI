@@ -1,15 +1,31 @@
 import { useState } from "react";
 
-const ExpedierOuRecevoir = () => {
-  const [objects, setObjects] = useState([
-    { quantity: 1, name: "", size: "", weight: "" },
-  ]);
+type ObjectItem = {
+    quantity: number;
+    name: string;
+    size: string;
+    weight: string;
+};
 
-  const handleObjectChange = (index, field, value) => {
-    const newObjects = [...objects];
-    newObjects[index][field] = value;
-    setObjects(newObjects);
-  };
+type ObjectKey = keyof ObjectItem;
+
+const ExpedierOuRecevoir = () => {
+    const [objects, setObjects] = useState<ObjectItem[]>([
+        { quantity: 1, name: "", size: "", weight: "" }
+    ]);
+
+    const handleObjectChange = (
+        index: number,
+        field: ObjectKey,
+        value: string
+    ) => {
+        const newObjects = [...objects];
+        newObjects[index] = {
+            ...newObjects[index],
+            [field]: field === "quantity" ? Number(value) : value
+        };
+        setObjects(newObjects);
+    };
 
   const addObject = () => {
     setObjects([

@@ -32,7 +32,7 @@ const documentsInitiaux = [
 ]
 
 export default function DocumentsLivreurs() {
-  const [documents, setDocuments] = useState(documentsInitiaux)
+  const [documents] = useState(documentsInitiaux)
   const [recherche, setRecherche] = useState("")
   const [filtreStatut, setFiltreStatut] = useState("")
 

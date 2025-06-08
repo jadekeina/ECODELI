@@ -38,6 +38,6 @@ app.get("/", (req, res) => {
   res.send("✅ API EcoDeli is running");
 });
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log(`✅ Serveur EcoDeli lancé sur http://localhost:${process.env.PORT || 3000}`);
+app.listen(process.env.PORT || 3002, () => {
+  console.log(`✅ Serveur EcoDeli lancé sur http://localhost:${process.env.PORT || 3002}`);
 });

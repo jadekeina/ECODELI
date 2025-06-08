@@ -20,7 +20,7 @@ function App() {
         <Route path="/NosEngagements" element={<NosEngagements />} />
         <Route path="/Comment-ca-marche" element={<CommentCaMarche />} />
         <Route path="/expedier-ou-recevoir" element={<ExpedierOuRecevoir />} />
-        <Route path="/contact" element={<Contact />} />
+        <Route path="/contact" element={<Contact/>} />
         <Route path="/connexion" element={<Login />} />
         <Route path="/inscription" element={<Register />} />
       </Routes>
