@@ -44,7 +44,7 @@ const HeroSection = () => {
         <div className="relative">
           <div className="w-[220px] h-[330px] bg-[#54B89A]/50 rounded-[60px]  shadow-md">
             <img
-                src= "src/assets/Image/filleverte.png"
+                src= "/filleverte.png"
               alt="Femme en vert"
               className="w-full h-full object-cover scale-155"
             />
@@ -77,7 +77,7 @@ const HeroSection = () => {
           <div className="relative">
             <div className="w-[200px] h-[280px] bg-white rounded-[60px] overflow-hidden shadow-md">
               <img
-                src= "src/assets/Image/mecchoqué.png"
+                src= "/mecchoqué.png"
                 alt="Femme en bleu"
                 className=" object-cover scale-155 translate-y-8"
               />
@@ -93,7 +93,7 @@ const HeroSection = () => {
           <div className="relative">
             <div className="w-[200px] h-[280px] bg-[#91C684]/60 rounded-[60px] overflow-hidden shadow-md">
               <img
-                src= "src/assets/Image/groupevieux.png"
+                src= "/groupevieux.png"
                 alt="Homme"
                 className="w-full h-full object-cover scale-155 translate-y-8"
               />
