@@ -1,27 +1,32 @@
-FROM node:20-alpine
+# Étape 1 : build
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copier uniquement les fichiers nécessaires
-COPY admin/package*.json ./
-
-# Supprimer proxy si existant (optionnel mais utile dans ton cas)
+# Supprimer proxy au cas où
 RUN npm config delete proxy && npm config delete https-proxy
 
-# Installer les dépendances
+# Copier package.json et installer TOUTES les dépendances (y compris devDependencies)
+COPY admin/package*.json ./
 RUN npm install
 
-# Copier tout le code source
+# Copier le reste du code
 COPY admin/ .
 
-# Lancer le build (tsc + vite)
+# Compiler (TypeScript et Vite)
 RUN npm run build
 
-# Installer le serveur statique pour servir le front
+# Étape 2 : image finale
+FROM node:20-alpine AS production
+
+WORKDIR /app
+
+# Installer un serveur statique
 RUN npm install -g serve
 
-# Exposer le port
+# Copier uniquement les fichiers du build
+COPY --from=builder /app/dist ./dist
+
 EXPOSE 3000
 
-# Commande de lancement
 CMD ["serve", "-s", "dist", "-l", "3000"]
