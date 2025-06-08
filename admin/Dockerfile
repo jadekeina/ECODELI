@@ -1,26 +1,15 @@
 # front/Dockerfile
 
-FROM node:20-alpine
-
+FROM node:20 AS builder
 WORKDIR /app
-
-# Copier les fichiers nécessaires
 COPY package*.json ./
-
-# Installer les dépendances
 RUN npm install
-
-# Copier le reste du code source
 COPY . .
-
-# Build Vite (TypeScript est en dépendance locale, pas besoin de global install)
 RUN npm run build
 
-# Installer serve pour servir le build
+FROM node:20 AS production
+WORKDIR /app
 RUN npm install -g serve
-
-# Exposer le port
+COPY --from=builder /app/dist ./dist
 EXPOSE 3000
-
-# Lancer le serveur statique
 CMD ["serve", "-s", "dist", "-l", "3000"]

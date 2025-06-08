@@ -1,8 +1,9 @@
+version: '3.8'
+
 services:
   front:
     build:
       context: ./front
-      dockerfile: ./Dockerfile
     container_name: ecodeli_front
     ports:
       - "3000:3000"
@@ -11,7 +12,6 @@ services:
   admin:
     build:
       context: ./admin
-      dockerfile: Dockerfile
     container_name: ecodeli_admin
     ports:
       - "3001:3000"
