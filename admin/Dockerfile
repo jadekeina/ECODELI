@@ -4,7 +4,7 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Copier les fichiers de configuration depuis le dossier front
-COPY front/package*.json ./
+COPY admin/package*.json ./
 
 # Configuration npm
 RUN npm config set prefer-online true \
