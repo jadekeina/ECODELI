@@ -11,7 +11,8 @@ COPY package*.json ./
 
 # Installation des dépendances + TypeScript + Vite
 RUN npm install && \
-    npm install -D typescript vite
+    npm install -D typescript vite && \
+    npx tsc --version
 
 # Copie du code source
 COPY . .
