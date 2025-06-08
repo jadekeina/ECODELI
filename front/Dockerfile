@@ -1,39 +1,26 @@
-# -------- Étape 1 : Build de l'application --------
-FROM node:20-alpine AS builder
+# front/Dockerfile
+
+FROM node:20-alpine
 
 WORKDIR /app
 
-# Copier les fichiers de configuration
-COPY front/package*.json ./
+# Copier les fichiers nécessaires
+COPY package*.json ./
 
-# Configuration npm minimale
-RUN npm config set registry https://registry.npmjs.org/
+# Installer les dépendances
+RUN npm install
 
-# Nettoyer le cache
-RUN npm cache clean --force
+# Copier le reste du code source
+COPY . .
 
-# Installation avec npm ci
-RUN npm ci
-
-# Copier le code source
-COPY front/ .
-
-# Build de l'application
+# Build Vite (TypeScript est en dépendance locale, pas besoin de global install)
 RUN npm run build
 
-# -------- Étape 2 : Image de production --------
-FROM node:20-alpine AS production
-
-WORKDIR /app
-
-# Installer serve
+# Installer serve pour servir le build
 RUN npm install -g serve
-
-# Copier les fichiers compilés
-COPY --from=builder /app/dist ./dist
 
 # Exposer le port
 EXPOSE 3000
 
-# Commande de démarrage
+# Lancer le serveur statique
 CMD ["serve", "-s", "dist", "-l", "3000"]
