@@ -1,38 +1,37 @@
-# Étape build
-FROM node:20 AS builder
+# Étape unique : juste un serveur pour le build local
+FROM  node:20-bullseye AS builder
 
 WORKDIR /app
 
-# Retirer proxy si présent
-RUN npm config delete proxy \
- && npm config delete https-proxy
+# Supprime les proxies si définis
+RUN npm config delete proxy && npm config delete https-proxy
 
-# Copier les fichiers de dépendances
+# Copie les fichiers nécessaires
 COPY front/package*.json ./
 
-# Installer dépendances + TypeScript & Vite
-RUN npm install \
- && npm install -D typescript vite
+# Force l'utilisation de legacy-peer-deps pour éviter les bugs
+RUN npm install --legacy-peer-deps
 
-# Copier le code source
+# Installe TypeScript et Vite globalement pour éviter le bug "tsc not found"
+RUN npm install -g typescript vite
+
+# Copie du code source
 COPY front/ .
 
-# Builder le projet
+# Build du projet
 RUN npm run build
 
-# Étape production
-FROM node:20-alpine
+# Étape de prod
+FROM node:18-alpine
 
 WORKDIR /app
 
-# Supprime proxy + installer serveur statique
-RUN npm config delete proxy \
- && npm config delete https-proxy \
- && npm install -g serve
+RUN npm config delete proxy && npm config delete https-proxy && \
+    npm install -g serve
 
-# Copier le build généré
 COPY --from=builder /app/dist ./dist
 
 EXPOSE 3000
 
 CMD ["serve", "-s", "dist", "-l", "3000"]
+
