@@ -2,16 +2,23 @@ services:
   mysql:
     image: mysql:8.0
     container_name: ecodeli_mysql
-    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: your_strong_root_password
+      MYSQL_ROOT_PASSWORD: root-242
       MYSQL_DATABASE: ecodeli
-      MYSQL_USER: ecodeli_user
-      MYSQL_PASSWORD: your_strong_user_password
+      MYSQL_USER: dev-admin
+      MYSQL_PASSWORD: dev_sandrine # Assurez-vous que c'est bien ce mot de passe
+    ports:
+      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
       - ecodeli_net
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u$$MYSQL_USER", "-p$$MYSQL_PASSWORD" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   api:
     build:
@@ -20,12 +27,19 @@ services:
     container_name: ecodeli_api
     environment:
       DB_HOST: mysql
-      DB_USER: ecodeli_user
-      DB_PASSWORD: your_strong_user_password
+      DB_USER: dev-admin
+      DB_PASSWORD: dev_sandrine # Assurez-vous que c'est bien ce mot de passe
       DB_NAME: ecodeli
       API_PORT: 3002
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "pgrep node || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     networks:
       - ecodeli_net
 
@@ -35,11 +49,13 @@ services:
       dockerfile: Dockerfile
     container_name: ecodeli_front
     environment:
-      VITE_API_URL: http://ecodeli_api:3002
+      VITE_API_URL: http://localhost/api # <--- TRÈS IMPORTANT : Doit pointer vers le Nginx central pour l'API
     depends_on:
-      - api
+      api:
+        condition: service_healthy
     networks:
       - ecodeli_net
+    command: [ "tail", "-f", "/dev/null" ] # Garde le conteneur en vie
 
   admin:
     build:
@@ -47,11 +63,13 @@ services:
       dockerfile: Dockerfile
     container_name: ecodeli_admin
     environment:
-      VITE_API_URL: http://ecodeli_api:3002
+      VITE_API_URL: http://localhost/api # <--- TRÈS IMPORTANT : Doit pointer vers le Nginx central pour l'API
     depends_on:
-      - api
+      api:
+        condition: service_healthy
     networks:
       - ecodeli_net
+    command: [ "tail", "-f", "/dev/null" ] # Garde le conteneur en vie
 
   nginx:
     image: nginx:stable-alpine
@@ -60,12 +78,19 @@ services:
       - "80:80"
       - "443:443"
     volumes:
+      # Monter le fichier de configuration Nginx
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/conf.d/:/etc/nginx/conf.d/:ro
+      # Monter les dossiers 'dist' de vos applications front et admin
+      - ./front/dist:/usr/share/nginx/html/front:ro # <--- IMPORTANT
+      - ./admin/dist:/usr/share/nginx/html/admin:ro # <--- IMPORTANT
     depends_on:
-      - front
-      - admin
-      - api
+      front:
+        condition: service_started
+      admin:
+        condition: service_started
+      api:
+        condition: service_healthy
     networks:
       - ecodeli_net
 
