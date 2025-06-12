@@ -1,19 +1,23 @@
-# Stage 1: Build the React application
-FROM node:20-alpine AS build
+# Étape 1 : Build
+FROM node:20-alpine AS builder
+
 WORKDIR /app
+
 COPY package*.json ./
 RUN npm install
+
 COPY . .
 RUN npm run build
 
-# Stage 2: Prepare the built static files and set permissions
-FROM alpine AS production
+# Étape 2 : Serveur statique
+FROM node:20-alpine
+
 WORKDIR /app
-COPY --from=build /app/dist ./dist
 
-# C'est LA LIGNE CRUCIALE pour les permissions
-# Elle donne les droits de lecture et d'exécution au propriétaire, groupe et autres
-# sur le dossier 'dist' et tout ce qu'il contient.
-RUN chmod -R 755 /app/dist
+RUN npm install -g serve
 
-CMD ["tail", "-f", "/dev/null"]
+COPY --from=builder /app/dist ./dist
+
+EXPOSE 3000
+
+CMD ["serve", "-s", "dist", "-l", "3000"]

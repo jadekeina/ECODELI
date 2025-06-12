@@ -48,28 +48,22 @@ services:
       context: ./front
       dockerfile: Dockerfile
     container_name: ecodeli_front
-    environment:
-      VITE_API_URL: http://localhost/api # <--- TRÈS IMPORTANT : Doit pointer vers le Nginx central pour l'API
-    depends_on:
-      api:
-        condition: service_healthy
+    ports:
+      - "3000:3000"
+    restart: always
     networks:
       - ecodeli_net
-    command: [ "tail", "-f", "/dev/null" ] # Garde le conteneur en vie
 
   admin:
     build:
       context: ./admin
-      dockerfile: Dockerfile
+      dockerfile: admin/Dockerfile
     container_name: ecodeli_admin
-    environment:
-      VITE_API_URL: http://localhost/api # <--- TRÈS IMPORTANT : Doit pointer vers le Nginx central pour l'API
-    depends_on:
-      api:
-        condition: service_healthy
+    ports:
+      - "3001:3000"
+    restart: always
     networks:
       - ecodeli_net
-    command: [ "tail", "-f", "/dev/null" ] # Garde le conteneur en vie
 
   nginx:
     image: nginx:stable-alpine
