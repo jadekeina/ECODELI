@@ -6,7 +6,7 @@ services:
       MYSQL_ROOT_PASSWORD: root-242
       MYSQL_DATABASE: ecodeli
       MYSQL_USER: dev-admin
-      MYSQL_PASSWORD: dev_sandrine # Assurez-vous que c'est bien ce mot de passe
+      MYSQL_PASSWORD: dev_sandrine
     ports:
       - "3306:3306"
     volumes:
@@ -28,7 +28,7 @@ services:
     environment:
       DB_HOST: mysql
       DB_USER: dev-admin
-      DB_PASSWORD: dev_sandrine # Assurez-vous que c'est bien ce mot de passe
+      DB_PASSWORD: dev_sandrine
       DB_NAME: ecodeli
       API_PORT: 3002
     depends_on:
@@ -57,7 +57,7 @@ services:
   admin:
     build:
       context: ./admin
-      dockerfile: admin/Dockerfile
+      dockerfile: Dockerfile
     container_name: ecodeli_admin
     ports:
       - "3001:3000"
@@ -72,10 +72,8 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      # Monter le fichier de configuration Nginx
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/conf.d/:/etc/nginx/conf.d/:ro
-      # Monter les dossiers 'dist' de vos applications front et admin
       - ./front/dist:/usr/share/nginx/html/front:ro # <--- IMPORTANT
       - ./admin/dist:/usr/share/nginx/html/admin:ro # <--- IMPORTANT
     depends_on:
