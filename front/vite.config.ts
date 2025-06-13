@@ -12,6 +12,6 @@ export default defineConfig({
   },
   server: {
     host: "0.0.0.0", // ← important pour que Docker puisse exposer le port
-    port: 80       // ← le même que dans docker-compose
+    port: 3000,       // ← le même que dans docker-compose
   },
 });
