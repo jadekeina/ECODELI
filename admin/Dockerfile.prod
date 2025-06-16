@@ -1,0 +1,16 @@
+# Étape 1 : Build de l'app
+FROM node:20 AS builder
+
+WORKDIR /app
+COPY . .
+RUN npm install
+RUN npm run build
+
+# Étape 2 : Serveur statique léger
+FROM node:20-alpine
+
+WORKDIR /app
+RUN npm install -g serve
+COPY --from=builder /app/dist ./dist
+
+CMD ["serve", "-s", "dist", "-l", "3001"]

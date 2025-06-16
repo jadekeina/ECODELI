@@ -1,0 +1,71 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: ecodeli_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root-242
+      MYSQL_DATABASE: ecodeli
+      MYSQL_USER: dev-admin
+      MYSQL_PASSWORD: dev_sandrine
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - ecodeli_net
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile.dev
+    container_name: ecodeli_api
+    volumes:
+      - ./api:/app
+      - /app/node_modules
+    environment:
+      DB_HOST: mysql
+      DB_USER: dev-admin
+      DB_PASSWORD: dev_sandrine
+      DB_NAME: ecodeli
+      API_PORT: 3002
+    ports:
+      - "3002:3002"
+    depends_on:
+      - mysql
+    networks:
+      - ecodeli_net
+
+  front:
+    build:
+      context: ./front
+      dockerfile: Dockerfile.dev
+    container_name: ecodeli_front
+    volumes:
+      - ./front:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    networks:
+      - ecodeli_net
+
+  admin:
+    build:
+      context: ./admin
+      dockerfile: Dockerfile.dev
+    container_name: ecodeli_admin
+    volumes:
+      - ./admin:/app
+      - /app/node_modules
+    ports:
+      - "3001:3001"
+    networks:
+      - ecodeli_net
+
+volumes:
+  mysql_data:
+
+networks:
+  ecodeli_net:
+    driver: bridge
