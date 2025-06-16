@@ -11,7 +11,6 @@ app.use(express.urlencoded({ extended: true }));
 require("./config/db");
 
 
-
 // Routes users
 const userRoutesGet = require("./app/routes/users/get");
 const userRoutesPost = require("./app/routes/users/post");

@@ -9,6 +9,8 @@ services:
       MYSQL_PASSWORD: dev_sandrine
     volumes:
       - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
     networks:
       - ecodeli_net
 
