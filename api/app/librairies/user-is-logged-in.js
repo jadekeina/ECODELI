@@ -1,12 +1,12 @@
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
 
 function isUserLoggedIn(token) {
+  if (!token) throw new Error("Token manquant");
+
   try {
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
-    return decoded; // { userId, mail, iat, exp }
-  } catch (error) {
-    console.error("Token invalide :", error);
+    return decoded; // doit contenir au minimum `userId`
+  } catch (err) {
     throw new Error("Token invalide");
   }
 }
