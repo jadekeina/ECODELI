@@ -31,8 +31,10 @@ exports.getUserByEmail = (mail, callback) => {
 
 
 exports.setUserToken = (userId, token, callback) => {
-  db.query("UPDATE users SET token = ? WHERE id = ?", [token, userId], callback);
+  const sql = "UPDATE users SET token = ? WHERE id = ?";
+  db.query(sql, [token, userId], callback);
 };
+
 
 exports.clearUserToken = (userId, callback) => {
   db.query("UPDATE users SET token = NULL WHERE id = ?", [userId], callback);

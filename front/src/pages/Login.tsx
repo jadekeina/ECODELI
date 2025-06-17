@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { UserContext } from "../contexts/UserContext";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +10,8 @@ const Login = () => {
   });
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+
+  const { setUser } = useContext(UserContext);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -28,9 +31,13 @@ const Login = () => {
 
       if (!response.ok) throw new Error(data.message || "Erreur de connexion");
 
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("token", data.token);       // stocke le token
+      setUser(data.user);                              // met à jour le contexte utilisateur
+
       setMessage("✅ Connexion réussie !");
-      setTimeout(() => navigate("/dashboard"), 1500);
+      setTimeout(() => {
+        navigate("/app");                              // redirige sans recharger la page
+      }, 1500);
     } catch {
       setMessage("❌ Identifiants incorrects.");
     }

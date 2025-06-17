@@ -4,14 +4,14 @@ import AdvantagesSection from "../components/AdvantagesSection";
 import FinalCTA from "../components/FinalCTA";
 
 const Home = () => {
-  return (
-    <>
-      <HeroSection />
-      <ServicesSection />
-      <AdvantagesSection />
-      <FinalCTA />
-    </>
-  );
+    return (
+        <>
+            <HeroSection />
+            <ServicesSection />
+            <AdvantagesSection />
+            <FinalCTA />
+        </>
+    );
 };
 
 export default Home;

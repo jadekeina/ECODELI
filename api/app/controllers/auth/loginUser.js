@@ -12,12 +12,32 @@ async function loginUser(mail, password) {
       const isValid = await bcrypt.compare(password, user.password);
       if (!isValid) return reject(new Error("Mot de passe incorrect"));
 
-      const token = jwt.sign({ userId: user.id, mail: user.mail }, process.env.SECRET_KEY, { expiresIn: "1h" });
+      // 🔐 Création du token avec un timestamp pour le rendre unique
+      const token = jwt.sign(
+          {
+            userId: user.id,
+            mail: user.mail,
+            timestamp: Date.now(), // ← ajoute une unicité
+          },
+          process.env.SECRET_KEY,
+          { expiresIn: "1h" }
+      );
 
+      // 💾 Enregistrement du token dans la base de données
       db.setUserToken(user.id, token, (updateErr) => {
         if (updateErr) return reject(new Error("Erreur enregistrement du token"));
+
+        // ✅ On enlève le mot de passe du retour
         delete user.password;
-        resolve({ token, user: { ...user, token } });
+
+        // 🟢 On renvoie user + token
+        resolve({
+          token,
+          user: {
+            ...user,
+            token,
+          },
+        });
       });
     });
   });
