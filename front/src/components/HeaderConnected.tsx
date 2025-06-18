@@ -8,7 +8,10 @@ import { ChevronDown } from "lucide-react";
 const HeaderConnected = () => {
     // Assurez-vous que UserContext est correctement typé, par exemple:
     // const { user, setUser } = useContext(UserContext as React.Context<UserContextType>);
-    const { user, setUser } = useContext(UserContext); // Utilisez le type de votre UserContext
+    const { user, setUser } = useContext(UserContext); 
+    console.log("HeaderConnected user:", user);
+
+    const realUser = user?.user || user;
 
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const userMenuRef = useRef<HTMLDivElement>(null);
@@ -77,7 +80,7 @@ const HeaderConnected = () => {
                 <Dropdown title="Courses & achats">
                     <Link to="/courses-achats/chariot">🛒 Lâcher de chariot</Link>
                     <Link to="/courses-achats/pour-client">👥 Courses pour un client</Link>
-                    <Link to="/courses-achats/etranger">🌍 Achat à l’étranger</Link>
+                    <Link to="/courses-achats/etranger">🌍 Achat à l'étranger</Link>
                 </Dropdown>
 
                 <Dropdown title="Transport">
@@ -87,7 +90,7 @@ const HeaderConnected = () => {
                 </Dropdown>
 
                 <Dropdown title="Aide à domicile">
-                    <Link to="/aide-domicile/animaux">🐶 Garde d’animaux</Link>
+                    <Link to="/aide-domicile/animaux">🐶 Garde d'animaux</Link>
                     <Link to="/aide-domicile/menage">🧼 Ménage</Link>
                     <Link to="/aide-domicile/jardinage">🌿 Jardinage</Link>
                     <Link to="/aide-domicile/travaux">🛠️ Petits travaux</Link>
@@ -109,8 +112,9 @@ const HeaderConnected = () => {
                     <button onClick={toggleUserMenu} className="flex flex-col items-center text-[#1B4F3C] hover:text-[#0f3329]">
                         <FaUserCircle className="text-3xl" />
                         <span className="text-xs mt-1">
-                            {user?.firstname ? `${user.firstname} ${user.lastname?.charAt(0) || ''}.` : ''}
+                            {realUser?.firstname ? `${realUser.firstname} ${realUser.lastname?.charAt(0) || ''}.` : ''}
                         </span>
+
                     </button>
 
                     {isUserMenuOpen && (

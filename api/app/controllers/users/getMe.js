@@ -1,24 +1,25 @@
-const db = require("../../models/users");
-const isUserLoggedIn = require("../../librairies/user-is-logged-in");
+const userModel = require("../../models/users");
+const jwt = require("jsonwebtoken");
 
 async function getMe(token) {
-  try {
-    const decoded = isUserLoggedIn(token); // récupère userId depuis le token
-    const userId = decoded.userId;
+  return new Promise((resolve, reject) => {
+    try {
+      const decoded = jwt.verify(token, process.env.SECRET_KEY);
+      const userId = decoded.userId;
 
-    return new Promise((resolve, reject) => {
-      db.getUserById(userId, (err, result) => {
+      userModel.getUserById(userId, (err, result) => {
         if (err) return reject(new Error("Erreur lors de la récupération"));
-        if (!result || !result.length) return reject(new Error("User not found"));
+        if (!result || !result.length) return reject(new Error("Utilisateur introuvable"));
 
         const user = result[0];
         delete user.password;
+        delete user.token;
         resolve(user);
       });
-    });
-  } catch (err) {
-    throw new Error("Token invalide");
-  }
+    } catch (error) {
+      reject(new Error("Token invalide ou expiré"));
+    }
+  });
 }
 
 module.exports = getMe;

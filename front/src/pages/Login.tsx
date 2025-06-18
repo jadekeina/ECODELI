@@ -28,15 +28,17 @@ const Login = () => {
       });
 
       const data = await response.json();
+      console.log("Réponse login:", data);
 
       if (!response.ok) throw new Error(data.message || "Erreur de connexion");
 
-      localStorage.setItem("token", data.token);       // stocke le token
-      setUser(data.user);                              // met à jour le contexte utilisateur
+      localStorage.setItem("token", data.user.token);
+      const { token, ...userSansToken } = data.user;
+      setUser(userSansToken);
 
       setMessage("✅ Connexion réussie !");
       setTimeout(() => {
-        navigate("/app");                              // redirige sans recharger la page
+        navigate("/app");
       }, 1500);
     } catch {
       setMessage("❌ Identifiants incorrects.");

@@ -5,7 +5,7 @@ function isUserLoggedIn(token) {
 
   try {
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
-    return decoded; // doit contenir au minimum `userId`
+    return decoded;
   } catch (err) {
     throw new Error("Token invalide");
   }

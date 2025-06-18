@@ -4,7 +4,7 @@ const { isPostMethod } = require("../../librairies/method");
 const { jsonResponse } = require("../../librairies/response");
 const db = require("../../models/users");
 
-router.post("/logout", (req, res) => {
+router.post("/", (req, res) => {
   const { id } = req.body; // ✅ corriger ici (et pas userId)
 
   if (!id) {

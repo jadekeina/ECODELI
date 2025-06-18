@@ -1,20 +1,26 @@
 const express = require("express");
 const router = express.Router();
 const getMe = require("../../controllers/users/getMe");
+const { jsonResponse } = require("../../librairies/response");
+const { isGetMethod } = require("../../librairies/method");
 
 router.get("/me", async (req, res) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "Token manquant" });
+  if (!isGetMethod(req)) {
+    return jsonResponse(res, 405, {}, { message: "Méthode non autorisée" });
   }
 
-  const token = authHeader.split(" ")[1];
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (!token) {
+    return jsonResponse(res, 401, {}, { message: "Token manquant" });
+  }
 
   try {
-    const user = await getMe(token);
-    res.status(200).json({ message: "Utilisateur connecté ✅", user });
+    const data = await getMe(token);
+    return jsonResponse(res, 200, {}, { message: "Utilisateur connecté ✅", data });
   } catch (error) {
-    res.status(404).json({ message: error.message });
+    return jsonResponse(res, 404, {}, { message: error.message });
   }
 });
 

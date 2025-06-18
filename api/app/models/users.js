@@ -24,7 +24,6 @@ exports.getUserById = (id, callback) => {
   db.query("SELECT * FROM users WHERE id = ?", [id], callback);
 };
 
-
 exports.getUserByEmail = (mail, callback) => {
   db.query("SELECT * FROM users WHERE mail = ?", [mail], callback);
 };
