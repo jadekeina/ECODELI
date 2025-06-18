@@ -2,18 +2,15 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 const cors = require("cors");
-
 const morgan = require("morgan");
-app.use(morgan("dev")); // 👈 affichera toutes les requêtes entrantes
 
-
+app.use(morgan("dev"));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Connexion MySQL
 require("./config/db");
-
 
 // Routes users
 const userMeRoute = require("./app/routes/users/me");
@@ -25,35 +22,49 @@ const userPatchRoute = require("./app/routes/users/patch");
 const authLoginRoute = require("./app/routes/auth/login");
 const authLogoutRoute = require("./app/routes/auth/logout");
 
-
-//Routes livreurs
+// Routes livreurs
 const deliveryDriverRoute = require("./app/routes/deliveryDriver/post");
+const deliveryDriverPatch = require("./app/routes/deliveryDriver/patch");
 
+// Routes prestataires
+const providerRoute = require("./app/routes/provider/post");
+const providerPatch = require("./app/routes/provider/patch");
 
-// users
+// Routes commerçants
+const shopOwnerRoute = require("./app/routes/shopOwner/post");
+const shopOwnerPatch = require("./app/routes/shopOwner/patch");
+
+// Routes documents
+const postDocumentRoute = require("./app/routes/documents/post");
+const patchDocumentRoute = require("./app/routes/documents/patch");
+const getDocumentRoute = require("./app/routes/documents/get");
+
+// Users
 app.use("/users", userMeRoute);
 app.use("/users", userRoutesGet);
 app.use("/users", userRoutesPost);
 app.use("/users", userPatchRoute);
 
-
 // Auth
-app.use("/auth/login", authLoginRoute); // Ici la route est '/auth/login'
-app.use("/auth/logout", authLogoutRoute); // Ici la route est '/auth/logout'
+app.use("/auth/login", authLoginRoute);
+app.use("/auth/logout", authLogoutRoute);
 
-//Livreurs
+// Livreurs
 app.use("/delivery-driver", deliveryDriverRoute);
+app.use("/delivery-driver", deliveryDriverPatch);
 
-// Test
-app.get("/", (req, res) => {
-  res.send("✅ API EcoDeli is running");
-});
+// Prestataires
+app.use("/provider", providerRoute);
+app.use("/provider", providerPatch);
 
-app.get("/test-log", (req, res) => {
-  console.log("=== ROUTE /test-log appelée ===");
-  res.send("OK");
-});
+// Commerçants
+app.use("/shop-owner", shopOwnerRoute);
+app.use("/shop-owner", shopOwnerPatch);
 
+// Documents
+app.use("/documents", postDocumentRoute);
+app.use("/documents", patchDocumentRoute);
+app.use("/documents", getDocumentRoute);
 
 app.listen(process.env.PORT || 3002, () => {
   console.log(`✅ Serveur EcoDeli lancé sur http://localhost:${process.env.PORT || 3002}`);

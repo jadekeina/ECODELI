@@ -1,4 +1,4 @@
-// controllers/deliveryDriver/updateDeliveryDriver.js
+// controllers/deliveryDriver/updateProvider.js
 const jwt = require("jsonwebtoken");
 const model = require("../../models/deliveryDriver");
 

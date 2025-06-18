@@ -1,6 +1,6 @@
 // controllers/shopOwner/createShopOwner.js
 const jwt = require("jsonwebtoken");
-const db = require("../../config/db");
+const model = require("../../models/shopOwner");
 
 async function createShopOwner(token, data) {
     try {
@@ -17,7 +17,7 @@ async function createShopOwner(token, data) {
         ];
 
         return new Promise((resolve, reject) => {
-            db.query(sql, values, (err, result) => {
+            model.query(sql, values, (err, result) => {
                 if (err) return reject(err);
                 resolve({ message: "Shop owner profile created successfully" });
             });
