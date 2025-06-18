@@ -6,8 +6,7 @@ import { ChevronDown } from "lucide-react";
 
 
 const HeaderConnected = () => {
-    // Assurez-vous que UserContext est correctement typé, par exemple:
-    // const { user, setUser } = useContext(UserContext as React.Context<UserContextType>);
+
     const { user, setUser } = useContext(UserContext); 
     console.log("HeaderConnected user:", user);
 
@@ -62,7 +61,7 @@ const HeaderConnected = () => {
             </Link>
 
             {/* Menu principal */}
-            <nav className="hidden lg:flex gap-8 text-sm font-medium">
+            <nav className="hidden lg:flex gap-8 text-m font-medium">
                 <Dropdown title="Livraison">
                     <Link to="/livraison/envoyer-colis">📦 Envoyer un colis</Link>
                     <Link to="/livraison/partielle">🔁 Livraison partielle</Link>
@@ -101,9 +100,9 @@ const HeaderConnected = () => {
             <div className="flex items-center gap-6 text-sm">
                 {/* Devenir pro */}
                 <div className="flex flex-col items-center justify-center">
-                    <Link to="/rejoindre" className="flex flex-col items-center text-[#1B4F3C] hover:text-[#0f3329]">
+                    <Link to="/nous-rejoindre" className="flex flex-col items-center text-[#1B4F3C] hover:text-[#0f3329]">
                         <FaBriefcase className="text-3xl" />
-                        <span className="text-xs mt-1">Devenir pro</span>
+                        <span className="text-sm mt-1">Devenir pro</span>
                     </Link>
                 </div>
 
@@ -111,7 +110,7 @@ const HeaderConnected = () => {
                 <div className="relative flex flex-col items-center" ref={userMenuRef}>
                     <button onClick={toggleUserMenu} className="flex flex-col items-center text-[#1B4F3C] hover:text-[#0f3329]">
                         <FaUserCircle className="text-3xl" />
-                        <span className="text-xs mt-1">
+                        <span className="text-sm mt-1">
                             {realUser?.firstname ? `${realUser.firstname} ${realUser.lastname?.charAt(0) || ''}.` : ''}
                         </span>
 
@@ -121,6 +120,7 @@ const HeaderConnected = () => {
                         <div className="absolute right-0 mt-3 w-64 bg-white border rounded-lg shadow-lg text-sm p-4 z-50">
                             <ul className="space-y-3">
                                 <li><Link to="/dashboard" onClick={() => setIsUserMenuOpen(false)}>Tableau de bord</Link></li>
+                                <li><Link to="/mon-compte" onClick={() => setIsUserMenuOpen(false)}>Mon compte</Link></li>
                                 <li><Link to="/reservations" onClick={() => setIsUserMenuOpen(false)}>Mes réservations</Link></li>
                                 <li><Link to="/mes-trajets" onClick={() => setIsUserMenuOpen(false)}>Mes trajets</Link></li>
                                 <li><Link to="/historique" onClick={() => setIsUserMenuOpen(false)}>Historique</Link></li>

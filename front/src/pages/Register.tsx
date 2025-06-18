@@ -8,7 +8,12 @@ const Register = () => {
     firstname: "",
     mail: "",
     password: "",
+    username: "", // valeur automatique unique
+    profilpicture: "",
+    sexe: "",
+    birthday: "",
   });
+
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 

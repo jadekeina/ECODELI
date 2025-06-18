@@ -7,7 +7,7 @@ const AppHome = () => {
     return (
         <div className="px-6 py-10 text-[#1B4F3C] font-outfit-regular min-h-[80vh]">
             <h1 className="text-3xl font-bold mb-4">
-                Bonjour {user?.firstname} 👋
+                Bonjour {user?.user.firstname} 👋
             </h1>
 
             <p className="text-lg mb-6">

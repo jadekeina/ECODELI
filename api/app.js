@@ -25,6 +25,11 @@ const userPatchRoute = require("./app/routes/users/patch");
 const authLoginRoute = require("./app/routes/auth/login");
 const authLogoutRoute = require("./app/routes/auth/logout");
 
+
+//Routes livreurs
+const deliveryDriverRoute = require("./app/routes/deliveryDriver/post");
+
+
 // users
 app.use("/users", userMeRoute);
 app.use("/users", userRoutesGet);
@@ -35,6 +40,9 @@ app.use("/users", userPatchRoute);
 // Auth
 app.use("/auth/login", authLoginRoute); // Ici la route est '/auth/login'
 app.use("/auth/logout", authLogoutRoute); // Ici la route est '/auth/logout'
+
+//Livreurs
+app.use("/delivery-driver", deliveryDriverRoute);
 
 // Test
 app.get("/", (req, res) => {

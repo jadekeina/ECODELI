@@ -6,6 +6,7 @@ interface User {
     lastname: string;
     email: string;
     token?: string;
+    [key: string]: any;
 }
 
 interface UserContextType {
