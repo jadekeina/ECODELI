@@ -22,6 +22,8 @@ import Register from "./pages/Register";
 // PAGES PRIVEES
 import AppHome from "./pages/AppHome"; // page d'accueil connectee
 import Dashboard from "./pages/Dashboard"; // menu Mon compte
+import RegisterPro from "./pages/RegisterPro";
+
 
 function App() {
     return (
@@ -63,6 +65,20 @@ function App() {
                     </ProtectedRoute>
                 }
             />
+
+            <Route
+                path="/inscription-pro"
+                element={
+                    <ProtectedRoute>
+                        <>
+                            <HeaderConnected />
+                            <RegisterPro />
+                            <Footer />
+                        </>
+                    </ProtectedRoute>
+                }
+            />
+
         </Routes>
     );
 }

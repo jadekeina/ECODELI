@@ -1,6 +1,6 @@
 import { useContext, useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { UserContext } from "../contexts/UserContext"; // Assurez-vous que ce chemin est correct
+import { UserContext } from "../contexts/UserContext";
 import { FaBriefcase, FaUserCircle } from "react-icons/fa";
 import { ChevronDown } from "lucide-react";
 
@@ -100,7 +100,7 @@ const HeaderConnected = () => {
             <div className="flex items-center gap-6 text-sm">
                 {/* Devenir pro */}
                 <div className="flex flex-col items-center justify-center">
-                    <Link to="/nous-rejoindre" className="flex flex-col items-center text-[#1B4F3C] hover:text-[#0f3329]">
+                    <Link to="/inscription-pro" className="flex flex-col items-center text-[#1B4F3C] hover:text-[#0f3329]">
                         <FaBriefcase className="text-3xl" />
                         <span className="text-sm mt-1">Devenir pro</span>
                     </Link>
