@@ -18,16 +18,12 @@ CREATE TABLE users (
                        dateInscription DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Adresses
-CREATE TABLE adresses (
-                          id INT AUTO_INCREMENT PRIMARY KEY,
-                          user_id INT,
-                          ligne1 VARCHAR(255),
-                          ville VARCHAR(100),
-                          code_postal VARCHAR(20),
-                          pays VARCHAR(100),
-                          FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+CREATE TABLE addresses (
+                           id INT AUTO_INCREMENT PRIMARY KEY,
+                           full_address VARCHAR(255) NOT NULL,
+                           created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
 
 -- Documents justificatifs
 CREATE TABLE documents_justificatifs (
@@ -42,30 +38,31 @@ CREATE TABLE documents_justificatifs (
 
 -- Livreurs
 CREATE TABLE delivery_driver (
-                          id INT AUTO_INCREMENT PRIMARY KEY,
-                          user_id INT,
-                          zone_deplacement VARCHAR(255),
-                          statut_validation ENUM('en_attente', 'valide', 'refuse') DEFAULT 'en_attente',
-                          FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                                 id INT AUTO_INCREMENT PRIMARY KEY,
+                                 user_id INT NOT NULL,
+                                 zone_address_id INT,           -- zone de déplacement
+                                 home_address_id INT,           -- adresse perso s’il y en a
+                                 FOREIGN KEY (user_id) REFERENCES users(id),
+                                 FOREIGN KEY (zone_address_id) REFERENCES addresses(id),
+                                 FOREIGN KEY (home_address_id) REFERENCES addresses(id)
 );
 
 -- Prestataires
 CREATE TABLE provider (
-                              id INT AUTO_INCREMENT PRIMARY KEY,
-                              user_id INT,
-                              type_prestation VARCHAR(255),
-                              diplome VARCHAR(255),
-                              zone_deplacement VARCHAR(255),
-                              statut_validation ENUM('en_attente', 'valide', 'refuse') DEFAULT 'en_attente',
-                              FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                          id INT AUTO_INCREMENT PRIMARY KEY,
+                          user_id INT NOT NULL,
+                          zone_address_id INT,
+                          FOREIGN KEY (user_id) REFERENCES users(id),
+                          FOREIGN KEY (zone_address_id) REFERENCES addresses(id)
 );
+
 
 -- Commerçants
 CREATE TABLE shop_owner (
-                             id INT AUTO_INCREMENT PRIMARY KEY,
-                             user_id INT,
-                             nom_entreprise VARCHAR(255),
-                             siret VARCHAR(14),
-                             statut_validation ENUM('en_attente', 'valide', 'refuse') DEFAULT 'en_attente',
-                             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                            id INT AUTO_INCREMENT PRIMARY KEY,
+                            user_id INT NOT NULL,
+                            business_address_id INT,
+                            FOREIGN KEY (user_id) REFERENCES users(id),
+                            FOREIGN KEY (business_address_id) REFERENCES addresses(id)
 );
+

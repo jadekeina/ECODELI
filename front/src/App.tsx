@@ -1,15 +1,14 @@
-// ROUTEUR COMPLET AVEC PAGES PUBLIQUES & PRIVEES
-import { Routes, Route } from "react-router-dom";
-import ProtectedRoute from "./components/ProtectedRoute";
+import { useContext } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { UserContext } from "./contexts/UserContext";
 
-// Headers
+// Components
+import ProtectedRoute from "./components/ProtectedRoute";
 import HeaderPublic from "./components/header";
 import HeaderConnected from "./components/HeaderConnected";
-
-// FOOTER
 import Footer from "./components/Footer";
 
-// PAGES PUBLIQUES
+// Pages publiques
 import Home from "./pages/Home";
 import Prix from "./pages/Prix";
 import NosEngagements from "./pages/NosEngagements";
@@ -19,18 +18,35 @@ import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
-// PAGES PRIVEES
-import AppHome from "./pages/AppHome"; // page d'accueil connectee
-import Dashboard from "./pages/Dashboard"; // menu Mon compte
+// Pages privées
+import AppHome from "./pages/AppHome";
+import Dashboard from "./pages/Dashboard";
 import RegisterPro from "./pages/RegisterPro";
 
-
 function App() {
+    const { user, loading } = useContext(UserContext);
+
+    // 🔄 On attend que le UserContext ait fini de charger
+    if (loading) return <div>Chargement...</div>;
+
     return (
         <Routes>
 
-            {/* 🔓 Pages PUBLIQUES avec HeaderPublic + Footer */}
-            <Route path="/" element={<><HeaderPublic /><Home /><Footer /></>} />
+            {/* 🔓 Pages PUBLIQUES */}
+            <Route
+                path="/"
+                element={
+                    user ? (
+                        <Navigate to="/app" replace />
+                    ) : (
+                        <>
+                            <HeaderPublic />
+                            <Home />
+                            <Footer />
+                        </>
+                    )
+                }
+            />
             <Route path="/prix" element={<><HeaderPublic /><Prix /><Footer /></>} />
             <Route path="/NosEngagements" element={<><HeaderPublic /><NosEngagements /><Footer /></>} />
             <Route path="/Comment-ca-marche" element={<><HeaderPublic /><CommentCaMarche /><Footer /></>} />
@@ -39,7 +55,7 @@ function App() {
             <Route path="/connexion" element={<><HeaderPublic /><Login /><Footer /></>} />
             <Route path="/inscription" element={<><HeaderPublic /><Register /><Footer /></>} />
 
-            {/* 🔐 Pages PRIVEES - accessibles uniquement avec token */}
+            {/* 🔐 Pages PRIVEES */}
             <Route
                 path="/app"
                 element={

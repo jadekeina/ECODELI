@@ -12,15 +12,18 @@ interface User {
 interface UserContextType {
     user: User | null;
     setUser: (user: User | null) => void;
+    loading: boolean;
 }
 
 export const UserContext = createContext<UserContextType>({
     user: null,
     setUser: () => {},
+    loading: true,
 });
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -30,6 +33,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             if (!token) {
                 console.log("UserProvider: Pas de token, utilisateur non connecté.");
                 setUser(null);
+                setLoading(false);
                 return;
             }
 
@@ -46,13 +50,13 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                     const errorBody = await res.text();
                     console.error("UserProvider: Corps de l'erreur:", errorBody);
                     setUser(null);
+                    setLoading(false);
                     return;
                 }
 
                 const data = await res.json();
                 console.log("UserProvider: Données brutes de l'API reçues:", data);
 
-                // ✅ Mapping mail → email
                 const userFromApi = data.data;
                 const mappedUser: User = {
                     id: userFromApi.id,
@@ -66,6 +70,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             } catch (err) {
                 console.error("UserProvider: Erreur lors de la récupération de l'utilisateur:", err);
                 setUser(null);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -73,7 +79,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     return (
-        <UserContext.Provider value={{ user, setUser }}>
+        <UserContext.Provider value={{ user, setUser, loading }}>
             {children}
         </UserContext.Provider>
     );
