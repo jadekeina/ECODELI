@@ -42,3 +42,7 @@ exports.clearUserToken = (userId, callback) => {
 exports.rawQuery = (sql, values, callback) => {
   db.query(sql, values, callback);
 };
+
+exports.deleteUserById = (id, callback) => {
+  db.query("DELETE FROM users WHERE id = ?", [id], callback);
+};
