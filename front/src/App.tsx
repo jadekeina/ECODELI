@@ -23,6 +23,7 @@ import Register from "./pages/Register";
 import AppHome from "./pages/AppHome"; // page d'accueil connectee
 import Dashboard from "./pages/Dashboard"; // menu Mon compte
 import RegisterPro from "./pages/RegisterPro";
+import MonCompte from "./pages/MonCompte";
 
 
 function App() {
@@ -73,6 +74,19 @@ function App() {
                         <>
                             <HeaderConnected />
                             <RegisterPro />
+                            <Footer />
+                        </>
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/mon-compte"
+                element={
+                    <ProtectedRoute>
+                        <>
+                            <HeaderConnected />
+                            <MonCompte />
                             <Footer />
                         </>
                     </ProtectedRoute>
