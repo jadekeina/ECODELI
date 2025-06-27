@@ -19,7 +19,6 @@ const AutocompleteInput = ({ name, label, value, onChange }: any) => {
     const handleInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const inputVal = e.target.value;
         onChange(e);
-
         if (!inputVal) return setSuggestions([]);
 
         try {
@@ -113,16 +112,19 @@ const submitProfessionalProfile = async (
             body: form,
         });
 
-        const json = await res.json();
-        if (!res.ok) throw new Error(json.message || "Erreur lors de l'inscription");
+        const contentType = res.headers.get("content-type");
+        const data = contentType?.includes("application/json") ? await res.json() : null;
+
+        if (!res.ok) {
+            throw new Error(data?.message || "Erreur lors de l'inscription");
+        }
+
         alert("Profil professionnel créé avec succès !");
     } catch (err) {
         console.error(err);
         alert(err instanceof Error ? err.message : "Erreur inconnue");
     }
 };
-
-
 
 const roles = [
     { id: "delivery-driver", label: "Chauffeur", icon: ChauffeurIcon },
@@ -183,9 +185,7 @@ export default function RegisterPro() {
             <div className="w-1/2 p-16 flex flex-col justify-center space-y-10 relative z-0">
                 {step === 1 && (
                     <div>
-                        <h2 className="text-4xl font-bold mb-8">
-                            Choisissez votre statut professionnel
-                        </h2>
+                        <h2 className="text-4xl font-bold mb-8">Choisissez votre statut professionnel</h2>
                         <div className="grid grid-cols-3 gap-8 px-24 py-10 justify-center">
                             {roles.map((r) => (
                                 <Button
@@ -200,11 +200,7 @@ export default function RegisterPro() {
                             ))}
                         </div>
                         <div className="mt-6 flex justify-end">
-                            <Button
-                                className="h-12 text-base px-6"
-                                disabled={!role}
-                                onClick={() => setStep(2)}
-                            >
+                            <Button className="h-12 text-base px-6" disabled={!role} onClick={() => setStep(2)}>
                                 Suivant
                             </Button>
                         </div>
@@ -225,12 +221,7 @@ export default function RegisterPro() {
                         {role === "provider" && (
                             <div className="space-y-4">
                                 <Label className="text-lg">Type de prestation</Label>
-                                <Input
-                                    className="h-12 text-base"
-                                    name="type"
-                                    value={formData.type}
-                                    onChange={handleChange}
-                                />
+                                <Input className="h-12 text-base" name="type" value={formData.type} onChange={handleChange} />
                                 <AutocompleteInput
                                     name="zone"
                                     label="Zone de déplacement"
@@ -242,22 +233,10 @@ export default function RegisterPro() {
                         {role === "shop-owner" && (
                             <div className="space-y-4">
                                 <Label className="text-lg">Nom de l'entreprise</Label>
-                                <Input
-                                    className="h-12 text-base"
-                                    name="nom_entreprise"
-                                    value={formData.nom_entreprise}
-                                    onChange={handleChange}
-                                />
+                                <Input className="h-12 text-base" name="nom_entreprise" value={formData.nom_entreprise} onChange={handleChange} />
                                 <Label className="text-lg">SIRET</Label>
-                                <Input
-                                    className="h-12 text-base"
-                                    name="siret"
-                                    value={formData.siret}
-                                    onChange={handleChange}
-                                />
-                                {errors.siret && (
-                                    <p className="text-sm text-red-500 mt-1">{errors.siret}</p>
-                                )}
+                                <Input className="h-12 text-base" name="siret" value={formData.siret} onChange={handleChange} />
+                                {errors.siret && <p className="text-sm text-red-500 mt-1">{errors.siret}</p>}
                                 <AutocompleteInput
                                     name="adresse"
                                     label="Adresse"
@@ -267,73 +246,51 @@ export default function RegisterPro() {
                             </div>
                         )}
                         <div className="flex justify-between">
-                            <Button variant="outline" onClick={() => setStep(1)}>
-                                Retour
-                            </Button>
-                            <Button className="h-12 text-base px-6" onClick={() => setStep(3)}>
-                                Suivant
-                            </Button>
+                            <Button variant="outline" onClick={() => setStep(1)}>Retour</Button>
+                            <Button className="h-12 text-base px-6" onClick={() => setStep(3)}>Suivant</Button>
                         </div>
                     </div>
                 )}
 
-                {step === 3 && role !== "shop-owner" && (
+                {step === 3 && (
                     <div className="space-y-6">
                         <h2 className="text-4xl font-bold mb-4">Téléversement des documents</h2>
                         {role === "delivery-driver" && (
                             <div className="space-y-4">
-                                {[
-                                    "permis",
-                                    "piece_identite",
-                                    "avis_sirene",
-                                    "attestation_urssaf",
-                                    "rc_pro",
-                                ].map((label, i) => (
+                                {["permis", "piece_identite", "avis_sirene", "attestation_urssaf", "rc_pro"].map((label, i) => (
                                     <div key={i}>
                                         <Label className="text-lg">{label}</Label>
                                         <Input
                                             className="h-12 text-base"
                                             type="file"
-                                            onChange={(e) => handleFile(e, label)}
+                                            accept=".png, .jpg, .jpeg, .pdf"
+                                            onChange={(e) => handleFile(e, "diplome")}
                                         />
+
                                     </div>
                                 ))}
                             </div>
                         )}
                         {role === "provider" && (
                             <div>
-                                <Label className="text-lg">diplome</Label>
+                                <Label className="text-lg">Diplôme</Label>
                                 <Input
                                     className="h-12 text-base"
                                     type="file"
+                                    accept=".png, .jpg, .jpeg, .pdf"
                                     onChange={(e) => handleFile(e, "diplome")}
                                 />
+
+                            </div>
+                        )}
+                        {role === "shop-owner" && (
+                            <div className="text-lg text-gray-600">
+                                Aucun document requis. Cliquez sur <strong>Valider</strong> pour finaliser.
                             </div>
                         )}
                         <div className="flex justify-between">
-                            <Button variant="outline" onClick={() => setStep(2)}>
-                                Retour
-                            </Button>
-                            <Button className="h-12 text-base px-6" onClick={handleSubmit}>
-                                Valider
-                            </Button>
-                        </div>
-                    </div>
-                )}
-
-                {step === 3 && role === "shop-owner" && (
-                    <div className="space-y-6">
-                        <div className="text-lg text-gray-600">
-                            Aucun document requis. Cliquez sur <strong>Valider</strong> pour
-                            finaliser.
-                        </div>
-                        <div className="flex justify-between">
-                            <Button variant="outline" onClick={() => setStep(2)}>
-                                Retour
-                            </Button>
-                            <Button className="h-12 text-base px-6" onClick={handleSubmit}>
-                                Valider
-                            </Button>
+                            <Button variant="outline" onClick={() => setStep(2)}>Retour</Button>
+                            <Button className="h-12 text-base px-6" onClick={handleSubmit}>Valider</Button>
                         </div>
                     </div>
                 )}

@@ -2,7 +2,7 @@ import { useState } from "react";
 import Profil from "./Profil";
 import Paiement from "./Paiement";
 import Securite from "./Securite";
-import Document from "./Document";
+//import Document from "./Document";
 
 const MonCompte = () => {
   const [ongletActif, setOngletActif] = useState("profil");
@@ -17,8 +17,8 @@ const MonCompte = () => {
       //   return <Entreprise />;
       case "securite":
            return <Securite />;
-      case "document":
-        return <Document />;
+      //case "document":
+      //  return <Document />;
       // case "utilisateurs":
       //   return <Utilisateurs />;
       default:

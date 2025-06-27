@@ -1,10 +1,13 @@
 // models/shopOwner.js
 const db = require("../../config/db");
 
-exports.createShopOwner = (userId, nom, siret, callback) => {
-    const sql = `INSERT INTO shop_owner (user_id, nom_entreprise, siret, statut_validation)
-               VALUES (?, ?, ?, 'en_attente')`;
-    db.query(sql, [userId, nom, siret], callback);
+exports.createShopOwner = (userId, nom_entreprise, siret, business_address_id, callback) => {
+    const sql = `
+        INSERT INTO shop_owner
+        (user_id, nom_entreprise, siret, business_address_id, statut_validation)
+        VALUES (?, ?, ?, ?, 'en_attente')`;
+
+    db.query(sql, [userId, nom_entreprise, siret, business_address_id], callback);
 };
 
 exports.getAllShopOwners = (callback) => {

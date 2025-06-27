@@ -1,10 +1,11 @@
 // models/documents.js
 const db = require("../../config/db");
 
-exports.addDocument = (userId, type, chemin, callback) => {
-    const sql = `INSERT INTO documents_justificatifs (user_id, type_document, chemin_fichier, statut)
-               VALUES (?, ?, ?, 'en_attente')`;
-    db.query(sql, [userId, type, chemin], callback);
+exports.insertDocument = (userId, type_document, chemin_fichier, callback) => {
+    const sql = `INSERT INTO documents_justificatifs (user_id, type_document, chemin_fichier)
+        VALUES (?, ?, ?)
+    `;
+    db.query(sql, [userId, type_document, chemin_fichier], callback);
 };
 
 exports.getDocumentsByUser = (userId, callback) => {

@@ -1,6 +1,7 @@
 // models/deliveryDriver.js
 const db = require("../../config/db");
 
+
 exports.createDeliveryDriver = (userId, zone_deplacement, callback) => {
     const sql = `
         INSERT INTO delivery_driver (user_id, zone_deplacement, statut_validation)

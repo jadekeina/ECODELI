@@ -1,13 +1,15 @@
 // models/provider.js
 const db = require("../../config/db");
 
-exports.createProvider = (userId, type_prestation, zone_deplacement, callback) => {
+
+exports.insertProvider = (userId, type_prestation, zone_deplacement, callback) => {
     const sql = `
         INSERT INTO provider (user_id, type_prestation, zone_deplacement, statut_validation)
         VALUES (?, ?, ?, 'en_attente')
     `;
     db.query(sql, [userId, type_prestation, zone_deplacement], callback);
 };
+
 
 exports.getAllProviders = (callback) => {
     db.query("SELECT * FROM provider", callback);
