@@ -1,29 +1,29 @@
 const jwt = require("jsonwebtoken");
-const model = require("../../models/provider");
+const ProviderModel = require("../../models/provider");
 
 async function createProvider(token, data) {
     try {
         const decoded = jwt.verify(token, process.env.SECRET_KEY);
         const userId = decoded.userId;
 
-        const sql = `INSERT INTO prestataires (user_id, type_prestation, diplome, zone_deplacement, statut_validation)
-                 VALUES (?, ?, ?, ?, ?)`;
-        const values = [
-            userId,
-            data.type_prestation || null,
-            data.diplome || null,
-            data.zone_deplacement || null,
-            "en_attente"
-        ];
+        const { type_prestation, zone_deplacement } = data;
 
-        return new Promise((resolve, reject) => {
-            model.query(sql, values, (err, result) => {
-                if (err) return reject(err);
-                resolve({ message: "Provider profile created successfully" });
-            });
+        if (!type_prestation || !zone_deplacement) {
+            throw new Error("Champs requis manquants : type_prestation ou zone_deplacement");
+        }
+
+        await new Promise((resolve, reject) => {
+            ProviderModel.createProvider(
+                userId,
+                type_prestation,
+                zone_deplacement,
+                (err) => (err ? reject(err) : resolve())
+            );
         });
+
+        return { message: "Compte prestataire créé avec succès" };
     } catch (err) {
-        throw new Error("Invalid or expired token");
+        throw err;
     }
 }
 

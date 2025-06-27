@@ -66,6 +66,11 @@ app.use("/documents", postDocumentRoute);
 app.use("/documents", patchDocumentRoute);
 app.use("/documents", getDocumentRoute);
 
+app.get("/", (req, res) => {
+  res.send("EcoDeli API is running ✅");
+});
+
+
 app.listen(process.env.PORT || 3002, () => {
   console.log(`✅ Serveur EcoDeli lancé sur http://localhost:${process.env.PORT || 3002}`);
 });

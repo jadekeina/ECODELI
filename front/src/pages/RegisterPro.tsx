@@ -7,6 +7,12 @@ import ChauffeurIcon from "@/assets/image/livreur-removebg-preview.svg";
 import PrestataireIcon from "@/assets/image/utilisateur-removebg-preview.svg";
 import BoutiqueIcon from "@/assets/image/boutique-removebg-preview_1.svg";
 
+const endpointMap: Record<string, string> = {
+    "delivery-driver": "/delivery-driver",
+    "provider": "/provider",
+    "shop-owner": "/shop-owner",
+};
+
 const AutocompleteInput = ({ name, label, value, onChange }: any) => {
     const [suggestions, setSuggestions] = useState<string[]>([]);
 
@@ -31,7 +37,8 @@ const AutocompleteInput = ({ name, label, value, onChange }: any) => {
             );
 
             const data = await res.json();
-            const results = data?.suggestions?.map((s: any) => s?.placePrediction?.text?.text) || [];
+            const results =
+                data?.suggestions?.map((s: any) => s?.placePrediction?.text?.text) || [];
             setSuggestions(results);
         } catch (err) {
             console.error("Erreur API Suggestions:", err);
@@ -70,6 +77,52 @@ const AutocompleteInput = ({ name, label, value, onChange }: any) => {
     );
 };
 
+const submitProfessionalProfile = async (
+    role: string,
+    formData: any,
+    files: Record<string, File | null>
+) => {
+    const token = localStorage.getItem("token");
+    const form = new FormData();
+
+    if (role === "delivery-driver") {
+        form.append("zone_deplacement", formData.zone);
+    }
+
+    if (role === "provider") {
+        form.append("zone_deplacement", formData.zone);
+        form.append("type_prestation", formData.type);
+    }
+
+    if (role === "shop-owner") {
+        form.append("adresse", formData.adresse);
+        form.append("siret", formData.siret);
+        form.append("nom_entreprise", formData.nom_entreprise);
+    }
+
+    Object.entries(files).forEach(([key, file]) => {
+        if (file) form.append(key, file);
+    });
+
+    try {
+        const res = await fetch(import.meta.env.VITE_API_URL + endpointMap[role], {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            body: form,
+        });
+
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.message || "Erreur lors de l'inscription");
+        alert("Profil professionnel créé avec succès !");
+    } catch (err) {
+        console.error(err);
+        alert(err instanceof Error ? err.message : "Erreur inconnue");
+    }
+};
+
+
 
 const roles = [
     { id: "delivery-driver", label: "Chauffeur", icon: ChauffeurIcon },
@@ -96,7 +149,12 @@ export default function RegisterPro() {
 
         if (name === "siret") {
             const isValid = /^[0-9]{14}$/.test(value);
-            setErrors({ ...errors, siret: isValid ? undefined : "Le numéro SIRET doit contenir exactement 14 chiffres." });
+            setErrors({
+                ...errors,
+                siret: isValid
+                    ? undefined
+                    : "Le numéro SIRET doit contenir exactement 14 chiffres.",
+            });
         }
     };
 
@@ -105,8 +163,11 @@ export default function RegisterPro() {
     };
 
     const handleSubmit = () => {
-        console.log("Données :", formData);
-        console.log("Fichiers :", files);
+        if (!role) {
+            alert("Veuillez d’abord choisir un statut professionnel.");
+            return;
+        }
+        submitProfessionalProfile(role, formData, files);
     };
 
     return (
@@ -122,7 +183,9 @@ export default function RegisterPro() {
             <div className="w-1/2 p-16 flex flex-col justify-center space-y-10 relative z-0">
                 {step === 1 && (
                     <div>
-                        <h2 className="text-4xl font-bold mb-8">Choisissez votre statut professionnel</h2>
+                        <h2 className="text-4xl font-bold mb-8">
+                            Choisissez votre statut professionnel
+                        </h2>
                         <div className="grid grid-cols-3 gap-8 px-24 py-10 justify-center">
                             {roles.map((r) => (
                                 <Button
@@ -137,7 +200,11 @@ export default function RegisterPro() {
                             ))}
                         </div>
                         <div className="mt-6 flex justify-end">
-                            <Button className="h-12 text-base px-6" disabled={!role} onClick={() => setStep(2)}>
+                            <Button
+                                className="h-12 text-base px-6"
+                                disabled={!role}
+                                onClick={() => setStep(2)}
+                            >
                                 Suivant
                             </Button>
                         </div>
@@ -158,7 +225,12 @@ export default function RegisterPro() {
                         {role === "provider" && (
                             <div className="space-y-4">
                                 <Label className="text-lg">Type de prestation</Label>
-                                <Input className="h-12 text-base" name="type" value={formData.type} onChange={handleChange} />
+                                <Input
+                                    className="h-12 text-base"
+                                    name="type"
+                                    value={formData.type}
+                                    onChange={handleChange}
+                                />
                                 <AutocompleteInput
                                     name="zone"
                                     label="Zone de déplacement"
@@ -170,10 +242,22 @@ export default function RegisterPro() {
                         {role === "shop-owner" && (
                             <div className="space-y-4">
                                 <Label className="text-lg">Nom de l'entreprise</Label>
-                                <Input className="h-12 text-base" name="nom_entreprise" value={formData.nom_entreprise} onChange={handleChange} />
+                                <Input
+                                    className="h-12 text-base"
+                                    name="nom_entreprise"
+                                    value={formData.nom_entreprise}
+                                    onChange={handleChange}
+                                />
                                 <Label className="text-lg">SIRET</Label>
-                                <Input className="h-12 text-base" name="siret" value={formData.siret} onChange={handleChange} />
-                                {errors.siret && <p className="text-sm text-red-500 mt-1">{errors.siret}</p>}
+                                <Input
+                                    className="h-12 text-base"
+                                    name="siret"
+                                    value={formData.siret}
+                                    onChange={handleChange}
+                                />
+                                {errors.siret && (
+                                    <p className="text-sm text-red-500 mt-1">{errors.siret}</p>
+                                )}
                                 <AutocompleteInput
                                     name="adresse"
                                     label="Adresse"
@@ -183,8 +267,12 @@ export default function RegisterPro() {
                             </div>
                         )}
                         <div className="flex justify-between">
-                            <Button variant="outline" onClick={() => setStep(1)}>Retour</Button>
-                            <Button className="h-12 text-base px-6" onClick={() => setStep(3)}>Suivant</Button>
+                            <Button variant="outline" onClick={() => setStep(1)}>
+                                Retour
+                            </Button>
+                            <Button className="h-12 text-base px-6" onClick={() => setStep(3)}>
+                                Suivant
+                            </Button>
                         </div>
                     </div>
                 )}
@@ -194,33 +282,58 @@ export default function RegisterPro() {
                         <h2 className="text-4xl font-bold mb-4">Téléversement des documents</h2>
                         {role === "delivery-driver" && (
                             <div className="space-y-4">
-                                {["Permis de conduire", "Pièce d'identité", "Avis SIRENE", "Attestation URSSAF", "RC Pro"].map((label, i) => (
+                                {[
+                                    "permis",
+                                    "piece_identite",
+                                    "avis_sirene",
+                                    "attestation_urssaf",
+                                    "rc_pro",
+                                ].map((label, i) => (
                                     <div key={i}>
                                         <Label className="text-lg">{label}</Label>
-                                        <Input className="h-12 text-base" type="file" onChange={(e) => handleFile(e, label)} />
+                                        <Input
+                                            className="h-12 text-base"
+                                            type="file"
+                                            onChange={(e) => handleFile(e, label)}
+                                        />
                                     </div>
                                 ))}
                             </div>
                         )}
                         {role === "provider" && (
                             <div>
-                                <Label className="text-lg">Diplôme</Label>
-                                <Input className="h-12 text-base" type="file" onChange={(e) => handleFile(e, "diplome")} />
+                                <Label className="text-lg">diplome</Label>
+                                <Input
+                                    className="h-12 text-base"
+                                    type="file"
+                                    onChange={(e) => handleFile(e, "diplome")}
+                                />
                             </div>
                         )}
                         <div className="flex justify-between">
-                            <Button variant="outline" onClick={() => setStep(2)}>Retour</Button>
-                            <Button className="h-12 text-base px-6" onClick={handleSubmit}>Valider</Button>
+                            <Button variant="outline" onClick={() => setStep(2)}>
+                                Retour
+                            </Button>
+                            <Button className="h-12 text-base px-6" onClick={handleSubmit}>
+                                Valider
+                            </Button>
                         </div>
                     </div>
                 )}
 
                 {step === 3 && role === "shop-owner" && (
                     <div className="space-y-6">
-                        <div className="text-lg text-gray-600">Aucun document requis. Cliquez sur <strong>Valider</strong> pour finaliser.</div>
+                        <div className="text-lg text-gray-600">
+                            Aucun document requis. Cliquez sur <strong>Valider</strong> pour
+                            finaliser.
+                        </div>
                         <div className="flex justify-between">
-                            <Button variant="outline" onClick={() => setStep(2)}>Retour</Button>
-                            <Button className="h-12 text-base px-6" onClick={handleSubmit}>Valider</Button>
+                            <Button variant="outline" onClick={() => setStep(2)}>
+                                Retour
+                            </Button>
+                            <Button className="h-12 text-base px-6" onClick={handleSubmit}>
+                                Valider
+                            </Button>
                         </div>
                     </div>
                 )}

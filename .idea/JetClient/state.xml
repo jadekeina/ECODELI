@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JetClientState">
+    <option name="draftsState">
+      <draftsState>
+        <option name="requests">
+          <list>
+            <requestState>
+              <option name="auth">
+                <authState>
+                  <option name="type" value="BEARER" />
+                </authState>
+              </option>
+              <option name="id" value="6a2c263a-b790-4263-9d0d-2a175639c273" />
+              <option name="method" value="GET" />
+              <option name="name" value="Draft" />
+            </requestState>
+            <requestState>
+              <option name="body">
+                <bodyState>
+                  <option name="raw" value="{&#10;  type: Coiffure à domicile,&#10;  zone: 75 - Paris,&#10;  diplome: [file]&#10;}" />
+                  <option name="type" value="JSON" />
+                </bodyState>
+              </option>
+              <option name="id" value="602008af-463f-4247-9871-7e30964e0981" />
+              <option name="method" value="GET" />
+              <option name="name" value="Draft (1)" />
+            </requestState>
+          </list>
+        </option>
+      </draftsState>
+    </option>
+    <option name="id" value="3aaa0d6b-0f09-4b91-a2bf-5fb3c1ca3f35" />
+    <option name="version" value="6" />
+  </component>
+</project>

@@ -1,9 +1,3 @@
-const express = require("express");
-const router = express.Router();
-const createDeliveryDriver = require("../../controllers/deliveryDriver/createDeliveryDriver");
-const { isPostMethod } = require("../../librairies/method");
-const { jsonResponse } = require("../../librairies/response");
-
 router.post("/", async (req, res) => {
     if (!isPostMethod(req)) {
         return jsonResponse(res, 405, {}, { message: "Method Not Allowed" });
@@ -17,12 +11,10 @@ router.post("/", async (req, res) => {
     const token = authHeader.split(" ")[1];
 
     try {
-        const result = await createDeliveryDriver(token, req.body);
-        return jsonResponse(res, 201, {}, result);
+        await createDeliveryDriver(token, req.body);
+        return res.status(201).json({ message: "Profil professionnel créé avec succès" });
     } catch (error) {
         console.error("createDeliveryDriver error:", error);
         return jsonResponse(res, 500, {}, { message: error.message });
     }
 });
-
-module.exports = router;

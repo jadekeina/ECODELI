@@ -1,27 +1,31 @@
-// controllers/provider/updateProvider.js
 const jwt = require("jsonwebtoken");
-const model = require("../../models/provider");
+const db = require("../../models/provider");
+const AddressModel = require("../../models/address");
 
-async function updateProvider(token, updates) {
+module.exports = async function updateProvider(token, data) {
     try {
         const decoded = jwt.verify(token, process.env.SECRET_KEY);
         const userId = decoded.userId;
 
-        return new Promise((resolve, reject) => {
-            const sql = "SELECT id FROM prestataires WHERE user_id = ?";
-            model.rawQuery(sql, [userId], (err, result) => {
-                if (err || result.length === 0) return reject(new Error("Provider profile not found"));
+        const [result] = await db.query("SELECT zone_address_id FROM prestataires WHERE user_id = ?", [userId]);
+        const addressId = result[0]?.zone_address_id;
 
-                const providerId = result[0].id;
-                model.updateProvider(providerId, updates, (err2) => {
-                    if (err2) return reject(err2);
-                    resolve({ message: "Provider profile updated" });
-                });
+        if (!addressId) throw new Error("Adresse introuvable pour ce prestataire.");
+
+        await new Promise((resolve, reject) => {
+            AddressModel.updateAddress(addressId, data.zone_deplacement, (err) => {
+                if (err) reject(err);
+                else resolve();
             });
         });
-    } catch (err) {
-        throw new Error("Invalid or expired token");
-    }
-}
 
-module.exports = updateProvider;
+        await db.query(
+            "UPDATE prestataires SET type_prestation = ?, diplome = ? WHERE user_id = ?",
+            [data.type_prestation, data.diplome, userId]
+        );
+
+        return { message: "Profil prestataire mis à jour" };
+    } catch (err) {
+        throw new Error(err.message || "Erreur lors de la mise à jour du prestataire");
+    }
+};

@@ -1,0 +1,9 @@
+### TEST CREATION PROVIDER
+POST http://localhost:3002/provider
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm1haWwiOiJ0ZXN0QGljbG91ZC5jb20iLCJ0aW1lc3RhbXAiOjE3NTA4NjIyMTQ2NjIsImlhdCI6MTc1MDg2MjIxNCwiZXhwIjoxNzUwODY1ODE0fQ.3h4yAhGhFc9xp1Mew74PH6PsfyFkxIID0WlJbZlFeJ4
+Content-Type: application/json
+
+{
+  "type_prestation": "Coiffure",
+  "zone_deplacement": "Paris 15e"
+}

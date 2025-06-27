@@ -1,4 +1,4 @@
-// routes/shopOwner/post.js
+// /routes/shopOwner/post.js
 const express = require("express");
 const router = express.Router();
 const createShopOwner = require("../../controllers/shopOwner/createShopOwner");
@@ -18,9 +18,10 @@ router.post("/", async (req, res) => {
     const token = authHeader.split(" ")[1];
 
     try {
-        const result = await createShopOwner(token, req.body);
-        return jsonResponse(res, 201, {}, result);
-    } catch (error) {
+        await createShopOwner(token, req.body);
+        return res.status(201).json({ message: "Profil professionnel créé avec succès" });
+    }
+    catch (error) {
         console.error("createShopOwner error:", error);
         return jsonResponse(res, 500, {}, { message: error.message });
     }
