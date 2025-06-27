@@ -1,3 +1,4 @@
 admin.tar
 front.tar
 api.tar
+api/app/storage/*

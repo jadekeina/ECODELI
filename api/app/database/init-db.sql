@@ -44,7 +44,6 @@ CREATE TABLE documents_justificatifs (
                                          date_upload DATETIME DEFAULT CURRENT_TIMESTAMP,
                                          FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
-in
 
 -- 🚚 Livreurs
 CREATE TABLE delivery_driver (

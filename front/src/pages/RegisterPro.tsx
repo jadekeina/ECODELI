@@ -13,6 +13,7 @@ const endpointMap: Record<string, string> = {
     "shop-owner": "/shop-owner",
 };
 
+
 const AutocompleteInput = ({ name, label, value, onChange }: any) => {
     const [suggestions, setSuggestions] = useState<string[]>([]);
 
@@ -79,7 +80,8 @@ const AutocompleteInput = ({ name, label, value, onChange }: any) => {
 const submitProfessionalProfile = async (
     role: string,
     formData: any,
-    files: Record<string, File | null>
+    files: Record<string, File | null>,
+    setSuccessMessage: (msg: string) => void
 ) => {
     const token = localStorage.getItem("token");
     const form = new FormData();
@@ -119,10 +121,10 @@ const submitProfessionalProfile = async (
             throw new Error(data?.message || "Erreur lors de l'inscription");
         }
 
-        alert("Profil professionnel créé avec succès !");
+        setSuccessMessage("Profil professionnel créé avec succès !");
     } catch (err) {
         console.error(err);
-        alert(err instanceof Error ? err.message : "Erreur inconnue");
+        setSuccessMessage(err instanceof Error ? err.message : "Erreur inconnue");
     }
 };
 
@@ -135,6 +137,7 @@ const roles = [
 export default function RegisterPro() {
     const [step, setStep] = useState(1);
     const [role, setRole] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         zone: "",
         siret: "",
@@ -169,7 +172,7 @@ export default function RegisterPro() {
             alert("Veuillez d’abord choisir un statut professionnel.");
             return;
         }
-        submitProfessionalProfile(role, formData, files);
+        submitProfessionalProfile(role, formData, files, setSuccessMessage);
     };
 
     return (
@@ -320,6 +323,11 @@ export default function RegisterPro() {
                         {role === "shop-owner" && (
                             <div className="text-lg text-gray-600">
                                 Aucun document requis. Cliquez sur <strong>Valider</strong> pour finaliser.
+                            </div>
+                        )}
+                        {successMessage && (
+                            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
+                                ✅ {successMessage}
                             </div>
                         )}
                         <div className="flex justify-between">
