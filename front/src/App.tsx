@@ -8,6 +8,7 @@ import HeaderPublic from "./components/header";
 import HeaderConnected from "./components/HeaderConnected";
 import Footer from "./components/Footer";
 
+
 // Pages publiques
 import Home from "./pages/Home";
 import Prix from "./pages/Prix";
@@ -23,6 +24,8 @@ import AppHome from "./pages/AppHome";
 import Dashboard from "./pages/Dashboard";
 import RegisterPro from "./pages/RegisterPro";
 import MonCompte from "./pages/MonCompte";
+import CreateAnnonce from "./components/CreateAnnonce";
+
 
 function App() {
     const { user, loading } = useContext(UserContext);
@@ -55,6 +58,7 @@ function App() {
             <Route path="/contact" element={<><HeaderPublic /><Contact /><Footer /></>} />
             <Route path="/connexion" element={<><HeaderPublic /><Login /><Footer /></>} />
             <Route path="/inscription" element={<><HeaderPublic /><Register /><Footer /></>} />
+
 
             {/* 🔐 Pages PRIVEES */}
             <Route
@@ -109,7 +113,25 @@ function App() {
                 }
             />
 
+            <Route
+                path="/deposer-annonce"
+                element={
+                    <ProtectedRoute>
+                        <>
+                            <HeaderConnected />
+                            <CreateAnnonce />
+                            <Footer />
+                        </>
+                    </ProtectedRoute>
+                }
+            />
+
+
         </Routes>
+
+
+
+
     );
 }
 

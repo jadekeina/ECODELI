@@ -108,6 +108,15 @@ const HeaderConnected = () => {
                     </Link>
                 </div>
 
+                {/* Déposer une annonce */}
+                <div className="flex flex-col items-center justify-center">
+                    <Link to="/deposer-annonce" className="flex flex-col items-center text-[#1B4F3C] hover:text-[#0f3329]">
+                        <span className="text-3xl">📢</span>
+                        <span className="text-sm mt-1">Déposer une annonce</span>
+                    </Link>
+                </div>
+
+
                 {/* Profil utilisateur */}
                 <div className="relative flex flex-col items-center" ref={userMenuRef}>
                     <button onClick={toggleUserMenu} className="flex flex-col items-center text-[#1B4F3C] hover:text-[#0f3329]">

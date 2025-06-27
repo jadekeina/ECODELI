@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -147,6 +149,19 @@ export default function RegisterPro() {
     });
     const [files, setFiles] = useState<Record<string, File | null>>({});
     const [errors, setErrors] = useState<{ siret?: string }>({});
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (successMessage) {
+            const timer = setTimeout(() => {
+                navigate("/mon-compte");
+            }, 3000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [successMessage, navigate]);
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
