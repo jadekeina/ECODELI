@@ -257,20 +257,54 @@ export default function RegisterPro() {
                         <h2 className="text-4xl font-bold mb-4">Téléversement des documents</h2>
                         {role === "delivery-driver" && (
                             <div className="space-y-4">
-                                {["permis", "piece_identite", "avis_sirene", "attestation_urssaf", "rc_pro"].map((label, i) => (
-                                    <div key={i}>
-                                        <Label className="text-lg">{label}</Label>
-                                        <Input
-                                            className="h-12 text-base"
-                                            type="file"
-                                            accept=".png, .jpg, .jpeg, .pdf"
-                                            onChange={(e) => handleFile(e, "diplome")}
-                                        />
-
-                                    </div>
-                                ))}
+                                <div>
+                                    <Label className="text-lg">Permis de conduire</Label>
+                                    <Input
+                                        type="file"
+                                        accept=".pdf,.png,.jpg,.jpeg"
+                                        className="h-12 text-base"
+                                        onChange={(e) => handleFile(e, "permis")}
+                                    />
+                                </div>
+                                <div>
+                                    <Label className="text-lg">Pièce d’identité</Label>
+                                    <Input
+                                        type="file"
+                                        accept=".pdf,.png,.jpg,.jpeg"
+                                        className="h-12 text-base"
+                                        onChange={(e) => handleFile(e, "piece_identite")}
+                                    />
+                                </div>
+                                <div>
+                                    <Label className="text-lg">Avis SIRENE</Label>
+                                    <Input
+                                        type="file"
+                                        accept=".pdf,.png,.jpg,.jpeg"
+                                        className="h-12 text-base"
+                                        onChange={(e) => handleFile(e, "avis_sirene")}
+                                    />
+                                </div>
+                                <div>
+                                    <Label className="text-lg">Attestation URSSAF</Label>
+                                    <Input
+                                        type="file"
+                                        accept=".pdf,.png,.jpg,.jpeg"
+                                        className="h-12 text-base"
+                                        onChange={(e) => handleFile(e, "attestation_urssaf")}
+                                    />
+                                </div>
+                                <div>
+                                    <Label className="text-lg">Responsabilité Civile Professionnelle</Label>
+                                    <Input
+                                        type="file"
+                                        accept=".pdf,.png,.jpg,.jpeg"
+                                        className="h-12 text-base"
+                                        onChange={(e) => handleFile(e, "rc_pro")}
+                                    />
+                                </div>
                             </div>
                         )}
+
                         {role === "provider" && (
                             <div>
                                 <Label className="text-lg">Diplôme</Label>

@@ -29,12 +29,22 @@ CREATE TABLE addresses (
 CREATE TABLE documents_justificatifs (
                                          id INT AUTO_INCREMENT PRIMARY KEY,
                                          user_id INT NOT NULL,
-                                         type_document ENUM('permis', 'siret', 'attestation_autoentrepreneur', 'diplome', 'justificatif_domicile', 'piece_identite', 'rc_pro', 'urssaf') NOT NULL,
+                                         type_document ENUM(
+                                             'permis',
+                                             'siret',
+                                             'attestation_autoentrepreneur',
+                                             'diplome',
+                                             'justificatif_domicile',
+                                             'piece_identite',
+                                             'rc_pro',
+                                             'urssaf'
+                                             ) NOT NULL,
                                          chemin_fichier VARCHAR(255) NOT NULL,
                                          statut ENUM('en_attente', 'valide', 'refuse') DEFAULT 'en_attente',
                                          date_upload DATETIME DEFAULT CURRENT_TIMESTAMP,
                                          FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+in
 
 -- 🚚 Livreurs
 CREATE TABLE delivery_driver (
