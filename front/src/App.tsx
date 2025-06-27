@@ -22,6 +22,7 @@ import Register from "./pages/Register";
 import AppHome from "./pages/AppHome";
 import Dashboard from "./pages/Dashboard";
 import RegisterPro from "./pages/RegisterPro";
+import MonCompte from "./pages/MonCompte";
 
 function App() {
     const { user, loading } = useContext(UserContext);
@@ -89,6 +90,19 @@ function App() {
                         <>
                             <HeaderConnected />
                             <RegisterPro />
+                            <Footer />
+                        </>
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/mon-compte"
+                element={
+                    <ProtectedRoute>
+                        <>
+                            <HeaderConnected />
+                            <MonCompte />
                             <Footer />
                         </>
                     </ProtectedRoute>

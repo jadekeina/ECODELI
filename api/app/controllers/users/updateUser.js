@@ -1,14 +1,21 @@
 const db = require("../../models/users");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 async function updateUser(token, updates) {
   try {
+    console.log("[Update] SECRET_KEY utilisée pour vérifier:", process.env.SECRET_KEY);
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
     const userId = decoded.userId;
 
     // Construit dynamiquement la requête SQL
     const fields = [];
     const values = [];
+
+    // Si on veut changer le mot de passe, on le hashe
+    if (updates.password) {
+      updates.password = await bcrypt.hash(updates.password, 10);
+    }
 
     for (const [key, value] of Object.entries(updates)) {
       fields.push(`${key} = ?`);

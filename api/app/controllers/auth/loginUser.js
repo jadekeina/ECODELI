@@ -12,6 +12,8 @@ async function loginUser(mail, password) {
       const isValid = await bcrypt.compare(password, user.password);
       if (!isValid) return reject(new Error("Mot de passe incorrect"));
 
+      console.log("[Login] SECRET_KEY utilisée pour signer:", process.env.SECRET_KEY);
+
       const token = jwt.sign(
           {
             userId: user.id,

@@ -11,6 +11,8 @@ const HeaderConnected = () => {
     console.log("HeaderConnected user:", user);
 
     const realUser = user?.user || user;
+    const defaultPictures = ["default.jpg", "/uploads/default-avatar.png"];
+    const hasCustomPhoto = realUser?.profilpicture && !defaultPictures.includes(realUser.profilpicture);
 
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const userMenuRef = useRef<HTMLDivElement>(null);
@@ -109,11 +111,14 @@ const HeaderConnected = () => {
                 {/* Profil utilisateur */}
                 <div className="relative flex flex-col items-center" ref={userMenuRef}>
                     <button onClick={toggleUserMenu} className="flex flex-col items-center text-[#1B4F3C] hover:text-[#0f3329]">
-                        <FaUserCircle className="text-3xl" />
+                        {hasCustomPhoto ? (
+                            <img src={`http://localhost:3002${realUser.profilpicture}`} alt="Profil" className="w-8 h-8 rounded-full object-cover" />
+                        ) : (
+                            <FaUserCircle className="text-3xl" />
+                        )}
                         <span className="text-sm mt-1">
                             {realUser?.firstname ? `${realUser.firstname} ${realUser.lastname?.charAt(0) || ''}.` : ''}
                         </span>
-
                     </button>
 
                     {isUserMenuOpen && (

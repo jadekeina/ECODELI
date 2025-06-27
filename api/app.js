@@ -1,8 +1,12 @@
+require("dotenv").config();
+
 const express = require("express");
 const app = express();
-require("dotenv").config();
 const cors = require("cors");
 const morgan = require("morgan");
+
+// Middleware pour servir les fichiers statiques du dossier 'public'
+app.use(express.static('public'));
 
 app.use(morgan("dev"));
 app.use(cors());
