@@ -16,6 +16,11 @@ app.use(express.urlencoded({ extended: true }));
 // Connexion MySQL
 require("./config/db");
 
+//api-google
+const distanceRoutes = require("./app/routes/distance.js");
+app.use("/distance", distanceRoutes);
+
+
 // Routes users
 const userMeRoute = require("./app/routes/users/me");
 const userRoutesGet = require("./app/routes/users/get");
