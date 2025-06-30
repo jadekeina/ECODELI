@@ -18,10 +18,12 @@ async function loginUser(mail, password) {
           {
             userId: user.id,
             mail: user.mail,
+            role: user.role,
+            status: user.status,
             timestamp: Date.now(),
           },
           process.env.SECRET_KEY,
-          { expiresIn: "1h" }
+          { expiresIn: "2h" }
       );
 
       db.setUserToken(user.id, token, (updateErr) => {
@@ -31,10 +33,7 @@ async function loginUser(mail, password) {
 
         resolve({
           token,
-          user: {
             ...user,
-            token,
-          },
         });
       });
     });

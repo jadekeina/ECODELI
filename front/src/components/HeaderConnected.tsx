@@ -4,15 +4,19 @@ import { UserContext } from "../contexts/UserContext";
 import { FaBriefcase, FaUserCircle } from "react-icons/fa";
 import { ChevronDown } from "lucide-react";
 
-
 const HeaderConnected = () => {
+    const { user, setUser, hasProAccount, mode, setMode } = useContext(UserContext);
 
-    const { user, setUser } = useContext(UserContext); 
-    console.log("HeaderConnected user:", user);
+    console.log("🔍 [HeaderConnected] hasProAccount :", hasProAccount);
+    console.log("👤 [HeaderConnected] user :", user);
+    console.log("🕹️ [HeaderConnected] mode :", mode);
+
 
     const realUser = user?.user || user;
     const defaultPictures = ["default.jpg", "/uploads/default-avatar.png"];
-    const hasCustomPhoto = realUser?.profilpicture && !defaultPictures.includes(realUser.profilpicture);
+    const hasCustomPhoto =
+        realUser?.profilpicture && !defaultPictures.includes(realUser.profilpicture);
+
 
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const userMenuRef = useRef<HTMLDivElement>(null);
@@ -23,7 +27,6 @@ const HeaderConnected = () => {
                 setIsUserMenuOpen(false);
             }
         };
-
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
@@ -34,7 +37,6 @@ const HeaderConnected = () => {
 
     const handleLogout = async () => {
         const token = localStorage.getItem("token");
-
         try {
             await fetch("http://localhost:3002/auth/logout", {
                 method: "POST",
@@ -42,18 +44,15 @@ const HeaderConnected = () => {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ userId: user?.id }), // ← envoie bien l'userId
+                body: JSON.stringify({ userId: user?.id }),
             });
         } catch (error) {
             console.error("Erreur lors de la déconnexion :", error);
         }
-
-        // Ensuite, nettoyage local
         localStorage.removeItem("token");
         setUser(null);
         window.location.href = "/";
     };
-
 
     return (
         <header className="w-full bg-white px-6 py-4 flex justify-between items-center shadow text-[#1B4F3C] text-base">
@@ -98,26 +97,43 @@ const HeaderConnected = () => {
                 </Dropdown>
             </nav>
 
-            {/* Icônes alignées à droite */}
+            {/* Icônes à droite */}
             <div className="flex items-center gap-6 text-sm">
-                {/* Devenir pro */}
+
+                {/* Switch mode Client / Pro */}
+                {hasProAccount ? (
+                    <div className="flex flex-col items-center justify-center">
+                        <button
+                            onClick={() => setMode(mode === "client" ? "pro" : "client")}
+                            className="text-sm bg-[#1B4F3C] text-white px-4 py-2 rounded-full hover:bg-[#154534] transition"
+                        >
+                            Mode : {mode === "client" ? "Client 👤" : "Pro 💼"}
+                        </button>
+                    </div>
+                ) : (
+                    <div className="flex flex-col items-center justify-center">
+                        <Link to="/inscription-pro" className="flex flex-col items-center text-[#1B4F3C] hover:text-[#0f3329]">
+                            <FaBriefcase className="text-3xl" />
+                            <span className="text-sm mt-1">Devenir pro</span>
+                        </Link>
+                    </div>
+                )}
+
+
+                {/* Déposer une annonce / offre */}
                 <div className="flex flex-col items-center justify-center">
-                    <Link to="/inscription-pro" className="flex flex-col items-center text-[#1B4F3C] hover:text-[#0f3329]">
-                        <FaBriefcase className="text-3xl" />
-                        <span className="text-sm mt-1">Devenir pro</span>
+                    <Link
+                        to={mode === "client" ? "/deposer-annonce" : "/publier-offre"}
+                        className="flex flex-col items-center text-[#1B4F3C] hover:text-[#0f3329]"
+                    >
+                        <span className="text-3xl">{mode === "client" ? "📢" : "🛠️"}</span>
+                        <span className="text-sm mt-1">
+              {mode === "client" ? "Déposer une annonce" : "Publier une offre"}
+            </span>
                     </Link>
                 </div>
 
-                {/* Déposer une annonce */}
-                <div className="flex flex-col items-center justify-center">
-                    <Link to="/deposer-annonce" className="flex flex-col items-center text-[#1B4F3C] hover:text-[#0f3329]">
-                        <span className="text-3xl">📢</span>
-                        <span className="text-sm mt-1">Déposer une annonce</span>
-                    </Link>
-                </div>
-
-
-                {/* Profil utilisateur */}
+                {/* Profil */}
                 <div className="relative flex flex-col items-center" ref={userMenuRef}>
                     <button onClick={toggleUserMenu} className="flex flex-col items-center text-[#1B4F3C] hover:text-[#0f3329]">
                         {hasCustomPhoto ? (
@@ -126,8 +142,8 @@ const HeaderConnected = () => {
                             <FaUserCircle className="text-3xl" />
                         )}
                         <span className="text-sm mt-1">
-                            {realUser?.firstname ? `${realUser.firstname} ${realUser.lastname?.charAt(0) || ''}.` : ''}
-                        </span>
+              {realUser?.firstname ? `${realUser.firstname} ${realUser.lastname?.charAt(0) || ''}.` : ''}
+            </span>
                     </button>
 
                     {isUserMenuOpen && (
@@ -139,9 +155,7 @@ const HeaderConnected = () => {
                                 <li><Link to="/mes-trajets" onClick={() => setIsUserMenuOpen(false)}>Mes trajets</Link></li>
                                 <li><Link to="/historique" onClick={() => setIsUserMenuOpen(false)}>Historique</Link></li>
                                 <li><Link to="/abonnement" onClick={() => setIsUserMenuOpen(false)}>Abonnement</Link></li>
-                                <li>
-                                    <button onClick={handleLogout} className="text-red-600">Se déconnecter</button>
-                                </li>
+                                <li><button onClick={handleLogout} className="text-red-600">Se déconnecter</button></li>
                             </ul>
                         </div>
                     )}
@@ -153,7 +167,7 @@ const HeaderConnected = () => {
 
 export default HeaderConnected;
 
-// Component pour les dropdowns
+// Dropdown
 const Dropdown = ({ title, children }: { title: string; children: React.ReactNode }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -164,13 +178,11 @@ const Dropdown = ({ title, children }: { title: string; children: React.ReactNod
                 setIsOpen(false);
             }
         };
-
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
-
 
     return (
         <div className="relative cursor-pointer" ref={dropdownRef}>

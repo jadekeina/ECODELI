@@ -18,6 +18,10 @@ exports.getShopOwnerById = (id, callback) => {
     db.query("SELECT * FROM shop_owner WHERE id = ?", [id], callback);
 };
 
+exports.getShopOwnerByUserId = (userId, callback) => {
+    db.query("SELECT * FROM shop_owner WHERE user_id = ?", [userId], callback);
+};
+
 exports.updateShopOwner = (id, updates, callback) => {
     const fields = Object.keys(updates).map(key => `${key} = ?`).join(", ");
     const values = Object.values(updates);

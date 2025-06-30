@@ -1,10 +1,6 @@
 ### TEST CREATION PROVIDER
-POST http://localhost:3002/shop-owner
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm1haWwiOiJ0ZXN0QGljbG91ZC5jb20iLCJ0aW1lc3RhbXAiOjE3NTEwMTc2MTg1NzgsImlhdCI6MTc1MTAxNzYxOCwiZXhwIjoxNzUxMDIxMjE4fQ.VnZaZCYR1-F4y80KXCZiGRTreXOKZkqrfNcVjvdZV1c
+GET http://localhost:3002/users/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm1haWwiOiJ0ZXN0QGljbG91ZC5jb20iLCJyb2xlIjoicHJvdmlkZXIiLCJ0aW1lc3RhbXAiOjE3NTEyNzE4Nzg5NTAsImlhdCI6MTc1MTI3MTg3OCwiZXhwIjoxNzUxMjc5MDc4fQ.8xXGxVgVxCqzs637naau7einChEy5Oa8tmxasOXRKsg
 Content-Type: application/json
 
-{
-  "nom_entreprise": "Boulangerie Dupont",
-  "siret": "12345678912345",
-  "adresse": "24 rue de Rivoli, Paris"
-}
+

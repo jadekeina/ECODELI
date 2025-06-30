@@ -19,6 +19,10 @@ exports.getDeliveryDriverById = (id, callback) => {
     db.query("SELECT * FROM delivery_driver WHERE id = ?", [id], callback);
 };
 
+exports.getDeliveryDriverByUserId = (userId, callback) => {
+    db.query("SELECT * FROM delivery_driver WHERE user_id = ?", [userId], callback);
+};
+
 exports.updateDeliveryDriver = (id, updates, callback) => {
     const fields = Object.keys(updates).map(key => `${key} = ?`).join(", ");
     const values = Object.values(updates);

@@ -14,7 +14,7 @@ CREATE TABLE users (
                        profilpicture VARCHAR(255) DEFAULT 'default.jpg',
                        birthday DATE DEFAULT NULL,
                        token TEXT DEFAULT NULL,
-                       role ENUM('client', 'livreur', 'prestataire', 'commercant', 'admin') DEFAULT 'client',
+                       role ENUM('client', 'provider', 'delivery-driver', 'shop-owner', 'admin') DEFAULT 'client',
                        dateInscription DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -31,13 +31,13 @@ CREATE TABLE documents_justificatifs (
                                          user_id INT NOT NULL,
                                          type_document ENUM(
                                              'permis',
-                                             'siret',
-                                             'attestation_autoentrepreneur',
-                                             'diplome',
-                                             'justificatif_domicile',
                                              'piece_identite',
+                                             'avis_sirene',
+                                             'attestation_urssaf',
                                              'rc_pro',
-                                             'urssaf'
+                                             'diplome',
+                                             'siret',
+                                             'attestation_autoentrepreneur'
                                              ) NOT NULL,
                                          chemin_fichier VARCHAR(255) NOT NULL,
                                          statut ENUM('en_attente', 'valide', 'refuse') DEFAULT 'en_attente',

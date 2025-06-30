@@ -25,6 +25,9 @@ import Dashboard from "./pages/Dashboard";
 import RegisterPro from "./pages/RegisterPro";
 import MonCompte from "./pages/MonCompte";
 import CreateAnnonce from "./components/CreateAnnonce";
+import DeposerContenu from "./pages/DeposerContenu";
+
+
 
 
 function App() {
@@ -125,6 +128,22 @@ function App() {
                     </ProtectedRoute>
                 }
             />
+
+
+            <Route
+                path="/deposer-annonce"
+                element={
+                    <ProtectedRoute>
+                        <>
+                            <HeaderConnected />
+                            <DeposerContenu />
+                            <Footer />
+                        </>
+                    </ProtectedRoute>
+                }
+            />
+
+
 
 
         </Routes>

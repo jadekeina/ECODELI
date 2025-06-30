@@ -19,13 +19,14 @@ const typeLabels: Record<string, string> = {
 const typeChamps: Record<string, string[]> = {
     colis_total: ["adresse_depart", "adresse_arrivee", "date_demande", "longueur", "largeur", "poids", "prix"],
     colis_partiel: ["adresse_depart", "adresse_arrivee", "date_demande", "longueur", "largeur", "poids", "prix"],
-    livraison_domicile: ["adresse_arrivee", "date_demande", "longueur", "largeur", "poids", "prix"],
+    livraison_domicile: ["adresse_depart", "adresse_arrivee", "date_demande", "longueur", "largeur", "poids", "prix"],
     transport_personne: ["adresse_depart", "adresse_arrivee", "date_demande", "heure_depart", "heure_arrivee", "prix"],
     courses: ["adresse_arrivee", "date_demande", "budget", "tarif_prestataire"],
     achat_etranger: ["adresse_arrivee", "date_demande", "budget", "tarif_prestataire"],
     service_domicile: ["adresse_arrivee", "date_demande", "tarif_prestataire"],
     box_stockage: ["adresse_depart", "date_demande", "taille_box", "duree"]
 };
+
 
 const calculerPrixViaDistance = async (origin: string, destination: string): Promise<number | null> => {
     try {

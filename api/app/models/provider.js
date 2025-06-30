@@ -19,6 +19,11 @@ exports.getProviderById = (id, callback) => {
     db.query("SELECT * FROM provider WHERE id = ?", [id], callback);
 };
 
+exports.getProviderByUserId = (userId, callback) => {
+    db.query("SELECT * FROM provider WHERE user_id = ?", [userId], callback);
+};
+
+
 exports.updateProvider = (id, updates, callback) => {
     const fields = Object.keys(updates).map(key => `${key} = ?`).join(", ");
     const values = Object.values(updates);
