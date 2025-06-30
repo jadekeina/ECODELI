@@ -78,3 +78,41 @@ CREATE TABLE shop_owner (
                             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
                             FOREIGN KEY (business_address_id) REFERENCES addresses(id) ON DELETE SET NULL
 );
+
+
+-- Annonce
+CREATE TABLE requests (
+                          id INT AUTO_INCREMENT PRIMARY KEY,
+                          user_id INT NOT NULL,
+                          type ENUM(
+                              'colis_total',
+                              'colis_partiel',
+                              'livraison_domicile',
+                              'transport_personne',
+                              'courses',
+                              'achat_etranger',
+                              'service_domicile',
+                              'box_stockage'
+                              ) NOT NULL,
+                          titre VARCHAR(255) NOT NULL,
+                          description TEXT,
+                          photo VARCHAR(255) DEFAULT NULL,
+                          longueur FLOAT DEFAULT NULL,
+                          largeur FLOAT DEFAULT NULL,
+                          poids FLOAT DEFAULT NULL,
+                          prix FLOAT DEFAULT NULL,
+                          prix_suggere FLOAT DEFAULT NULL,
+                          heure_depart TIME DEFAULT NULL,
+                          heure_arrivee TIME DEFAULT NULL,
+                          budget FLOAT DEFAULT NULL,
+                          tarif_prestataire FLOAT DEFAULT NULL,
+                          taille_box VARCHAR(50) DEFAULT NULL,
+                          duree VARCHAR(50) DEFAULT NULL,
+                          adresse_depart VARCHAR(255) DEFAULT NULL,
+                          adresse_arrivee VARCHAR(255) DEFAULT NULL,
+                          date_demande DATE DEFAULT NULL,
+                          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                          FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+

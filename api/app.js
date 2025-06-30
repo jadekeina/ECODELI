@@ -48,6 +48,10 @@ const postDocumentRoute = require("./app/routes/documents/post");
 const patchDocumentRoute = require("./app/routes/documents/patch");
 const getDocumentRoute = require("./app/routes/documents/get");
 
+
+//Requests
+const requestsRoutes = require("./app/routes/requests/post");
+
 // Users
 app.use("/users", userMeRoute);
 app.use("/users", userRoutesGet);
@@ -74,6 +78,10 @@ app.use("/shop-owner", shopOwnerPatch);
 app.use("/documents", postDocumentRoute);
 app.use("/documents", patchDocumentRoute);
 app.use("/documents", getDocumentRoute);
+
+//Requests
+app.use("/requests", requestsRoutes);
+
 
 app.get("/", (req, res) => {
   res.send("EcoDeli API is running ✅");
