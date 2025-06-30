@@ -51,6 +51,8 @@ const getDocumentRoute = require("./app/routes/documents/get");
 
 //Requests
 const requestsRoutes = require("./app/routes/requests/post");
+const requestsMyRoutes = require("./app/routes/requests/my");
+const requestsPublicRoutes = require("./app/routes/requests/public");
 
 // Users
 app.use("/users", userMeRoute);
@@ -81,6 +83,9 @@ app.use("/documents", getDocumentRoute);
 
 //Requests
 app.use("/requests", requestsRoutes);
+app.use("/requests/my", requestsMyRoutes);
+app.use("/requests/public", requestsPublicRoutes);
+
 
 
 app.get("/", (req, res) => {

@@ -36,3 +36,12 @@ exports.createRequest = (request, callback) => {
     );
 };
 
+// 🔍 Pour GET /requests/my
+exports.getRequestsByUserId = (userId, callback) => {
+    db.query("SELECT * FROM requests WHERE user_id = ?", [userId], callback);
+};
+
+// 🔍 Pour GET /requests/public
+exports.getAllRequests = (callback) => {
+    db.query("SELECT * FROM requests ORDER BY created_at DESC", callback);
+};

@@ -1,28 +1,4 @@
 ### TEST CREATION PROVIDER
-POST http://localhost:3002/requests
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm1haWwiOiJ0ZXN0QGljbG91ZC5jb20iLCJyb2xlIjoicHJvdmlkZXIiLCJ0aW1lc3RhbXAiOjE3NTEyODEyMzE3NjEsImlhdCI6MTc1MTI4MTIzMSwiZXhwIjoxNzUxMjg4NDMxfQ._g42pGaDcemfUUU9xRrcDt05YyPcgIJoiogOCM6xoKc
+GET http://localhost:3002/requests/public
+//Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm1haWwiOiJ0ZXN0QGljbG91ZC5jb20iLCJyb2xlIjoicHJvdmlkZXIiLCJ0aW1lc3RhbXAiOjE3NTEyODc0MjIzODQsImlhdCI6MTc1MTI4NzQyMiwiZXhwIjoxNzUxMjk0NjIyfQ.fODZQQdh00mgfA_4HboXZiQoplJCoMpvjsa6-Q5QfYI
 Content-Type: application/json
-
-{
-  "type": "colis_total",
-  "titre": "Envoyer une box urgente",
-  "description": "Petite box sécurisée.",
-  "photo": "https://cdn.exemple.com/image.jpg",
-  "longueur": 40,
-  "largeur": 30,
-  "poids": 5,
-  "prix": 25,
-  "prix_suggere": 23.5,
-  "heure_depart": "10:00:00",
-  "heure_arrivee": "12:30:00",
-  "budget": 50,
-  "tarif_prestataire": 20,
-  "taille_box": "2m²",
-  "duree": "5 jours",
-  "adresse_depart": "8 Rue des Lilas, Paris",
-  "adresse_arrivee": "14 Rue de Lyon, Marseille",
-  "date_demande": "2025-07-01"
-}
-
-
-
