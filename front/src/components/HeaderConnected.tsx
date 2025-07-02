@@ -151,9 +151,9 @@ const HeaderConnected = () => {
                             <ul className="space-y-3">
                                 <li><Link to="/dashboard" onClick={() => setIsUserMenuOpen(false)}>Tableau de bord</Link></li>
                                 <li><Link to="/mon-compte" onClick={() => setIsUserMenuOpen(false)}>Mon compte</Link></li>
-                                <li><Link to="/reservations" onClick={() => setIsUserMenuOpen(false)}>Mes réservations</Link></li>
+                                <li><Link to="/mes-prestations" onClick={() => setIsUserMenuOpen(false)}>Mes prestations</Link></li>
                                 <li><Link to="/mes-trajets" onClick={() => setIsUserMenuOpen(false)}>Mes trajets</Link></li>
-                                <li><Link to="/historique" onClick={() => setIsUserMenuOpen(false)}>Historique</Link></li>
+                                <li><Link to="/history" onClick={() => setIsUserMenuOpen(false)}>Historique</Link></li>
                                 <li><Link to="/abonnement" onClick={() => setIsUserMenuOpen(false)}>Abonnement</Link></li>
                                 <li><button onClick={handleLogout} className="text-red-600">Se déconnecter</button></li>
                             </ul>

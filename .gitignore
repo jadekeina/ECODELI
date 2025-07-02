@@ -2,3 +2,9 @@ admin.tar
 front.tar
 api.tar
 api/app/storage/*
+node_modules/
+.DS_Store
+.idea/
+*.log
+dist/
+
