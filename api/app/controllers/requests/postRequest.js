@@ -3,14 +3,19 @@ const { jsonResponse } = require("../../librairies/response");
 
 async function postRequest(req, res) {
     const data = req.body;
-    const userId = req.userId;
+    const userId = req.user?.id;
 
     const request = {
         ...data,
-        user_id: req.user?.id,
+        user_id: userId,
     };
 
-    console.log("👤 [postRequest] Utilisateur connecté ID:", req.user?.id);
+    // 🔒 Image par défaut si aucune image envoyée
+    if (!request.photo || request.photo.trim() === "") {
+        request.photo = "/storage/default-images/requests.webp";
+    }
+
+    console.log("👤 [postRequest] Utilisateur connecté ID:", userId);
 
     requestModel.createRequest(request, (err, result) => {
         if (err) {

@@ -26,10 +26,11 @@ async function loginUser(mail, password) {
           { expiresIn: "2h" }
       );
 
-      db.setUserToken(user.id, token, (updateErr) => {
-        if (updateErr) return reject(new Error("Erreur enregistrement du token"));
+        db.setUserToken(user.id, token, (updateErr) => {
+            if (updateErr) return reject(new Error("Erreur enregistrement du token"));
 
-        delete user.password;
+
+            delete user.password;
 
         resolve({
           token,
