@@ -1,0 +1,4 @@
+### TEST CREATION PROVIDER
+POST http://localhost:3002/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsIm1haWwiOiJzYW5kcmluZS5lYmVsZWJlQGdtYWlsLmNvbSIsInJvbGUiOiJjbGllbnQiLCJ0aW1lc3RhbXAiOjE3NTE0NjI5MzMzOTgsImlhdCI6MTc1MTQ2MjkzMywiZXhwIjoxNzUxNDcwMTMzfQ.rh56MXQh2D4ORxScK08mMHHaYCF0DuZ_0Vzf6oVIwMA
+Content-Type: application/json
