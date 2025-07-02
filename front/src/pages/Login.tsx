@@ -32,7 +32,10 @@ const Login = () => {
       const data = await response.json();
       console.log("Réponse login:", data);
 
-      if (!response.ok) throw new Error(data.message || "Erreur de connexion");
+      if (!response.ok) {
+        console.error("Erreur de connexion:", response.status, data.message);
+        throw new Error(data.message || `Erreur ${response.status}: ${response.statusText}`);
+      }
 
       localStorage.setItem("token", data.user.token);
       const { token, ...userSansToken } = data.user;
@@ -42,8 +45,9 @@ const Login = () => {
       setTimeout(() => {
         navigate("/app");
       }, 1500);
-    } catch {
-      setMessage("❌ Identifiants incorrects.");
+    } catch (error) {
+      console.error("Erreur lors de la connexion:", error);
+      setMessage(`❌ ${error instanceof Error ? error.message : "Erreur de connexion"}`);
     }
   };
 

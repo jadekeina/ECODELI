@@ -10,11 +10,9 @@ const Profil = () => {
   const [formData, setFormData] = useState({
     firstname: realUser?.firstname || "",
     lastname: realUser?.lastname || "",
-    mail: realUser?.mail || "",
     phone: realUser?.phone || "",
     birthday: realUser?.birthday || "",
     sexe: realUser?.sexe || "",
-    username: realUser?.username || "",
   });
   const [photo, setPhoto] = useState<string | null>(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -53,11 +51,9 @@ const Profil = () => {
     setFormData({
       firstname: realUser?.firstname || "",
       lastname: realUser?.lastname || "",
-      mail: realUser?.mail || "",
       phone: realUser?.phone || "",
       birthday: realUser?.birthday || "",
       sexe: realUser?.sexe || "",
-      username: realUser?.username || "",
     });
     setEditMode(false);
     setPhotoFile(null);
@@ -193,20 +189,18 @@ const Profil = () => {
         {/* Formulaire */}
         <div className="bg-white rounded-lg shadow p-6 xl:w-[65em]">
           <div className="space-y-4">
-            {["firstname", "lastname", "mail", "phone"].map((field) => (
+            {["firstname", "lastname", "phone"].map((field) => (
                 <div key={field}>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     {field === "firstname"
                         ? "Prénom"
                         : field === "lastname"
                             ? "Nom"
-                            : field === "mail"
-                                ? "Email"
-                                : "Téléphone"}
+                            : "Téléphone"}
                   </label>
                   <input
                       name={field}
-                      type={field === "mail" ? "email" : "text"}
+                      type="text"
                       value={formData[field as keyof typeof formData]}
                       onChange={handleChange}
                       readOnly={!editMode}
@@ -254,18 +248,6 @@ const Profil = () => {
               <option value="M">Masculin</option>
               <option value="X">Autre</option>
             </select>
-          </div>
-
-          {/* Username */}
-          <div>
-            <label className="block  mt-2  text-sm font-medium text-gray-700 mb-1">Nom d’utilisateur</label>
-            <input
-                type="text"
-                name="username"
-                value={formData.username}
-                readOnly
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-700"
-            />
           </div>
 
           {/* Boutons */}

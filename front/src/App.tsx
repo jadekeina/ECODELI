@@ -1,6 +1,12 @@
 import { useContext } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { UserContext } from "./contexts/UserContext";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
+   const stripePromise = loadStripe("pk_test_51RgCcfCSsQb1TgL54ywb1mfMDkdW7cHbFpqW02CZxIVBWN4UXMmmqc02RQqPFUwf0KKfJbf4qPX3jKml2ODXRug700BoaMX9CN"); // ta clé publique test ici
+
+
 
 // Components
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -22,15 +28,20 @@ import Register from "./pages/Register";
 import AppHome from "./pages/AppHome";
 import Dashboard from "./pages/Dashboard";
 import RegisterPro from "./pages/RegisterPro";
-import MonCompte from "./pages/MonCompte";
+import Account from "./pages/Account";
+import MesPrestations from "./pages/ServicesList";
+import MesTrajets from "./pages/Trips";
+import History from "./pages/History";
 
 function App() {
+
     const { user, loading } = useContext(UserContext);
 
     // 🔄 On attend que le UserContext ait fini de charger
     if (loading) return <div>Chargement...</div>;
 
     return (
+        <Elements stripe={stripePromise}>
         <Routes>
 
             {/* 🔓 Pages PUBLIQUES */}
@@ -102,15 +113,55 @@ function App() {
                     <ProtectedRoute>
                         <>
                             <HeaderConnected />
-                            <MonCompte />
+                            <Account />
                             <Footer />
                         </>
                     </ProtectedRoute>
                 }
             />
 
+            <Route
+                path="/mes-prestations"
+                element={
+                    <ProtectedRoute>
+                        <>
+                            <HeaderConnected />
+                            <MesPrestations />
+                            <Footer />
+                        </>
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/history"
+                element={
+                    <ProtectedRoute>
+                        <>
+                            <HeaderConnected />
+                            <History />
+                            <Footer />
+                        </>
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/mes-trajets"
+                element={
+                    <ProtectedRoute>
+                        <>
+                            <HeaderConnected />
+                            <MesTrajets />
+                            <Footer />
+                        </>
+                    </ProtectedRoute>
+                }
+            />
+            
+
         </Routes>
+        </Elements>
     );
+
 }
 
 export default App;

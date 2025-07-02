@@ -1,10 +1,12 @@
 import { useState } from "react";
-import Profil from "./Profil";
-import Paiement from "./Paiement";
+import Profil from "./Profile";
+import Paiement from "./Payment";
 import Securite from "./Securite";
-import Document from "./Document";
+import Document from "./Documents";
+import Parrainage from "./Referral";
 
-const MonCompte = () => {
+
+const Account = () => {
   const [ongletActif, setOngletActif] = useState("profil");
 
   const renderContenu = () => {
@@ -17,8 +19,10 @@ const MonCompte = () => {
       //   return <Entreprise />;
       case "securite":
            return <Securite />;
-      case "document":
-        return <Document />;
+      case "Document":
+        return <Document/>;
+      case "parrainage":
+        return <Parrainage />;
       // case "utilisateurs":
       //   return <Utilisateurs />;
       default:
@@ -31,6 +35,7 @@ const MonCompte = () => {
     { key: "securite", label: "Sécurité" },
     { key: "paiement", label: "Paiement" },
     { key: "Document", label: "Documents" },
+    { key: "parrainage", label: "Parrainage" }
   ];
 
   return (
@@ -61,4 +66,4 @@ const MonCompte = () => {
   );
 };
 
-export default MonCompte;
+export default Account;
