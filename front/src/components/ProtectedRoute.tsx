@@ -10,12 +10,10 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     const { user } = useContext(UserContext);
     const token = localStorage.getItem("token");
 
-    // Si aucun utilisateur connecté ou token invalide, on redirige vers /connexion
     if (!user || !token) {
         return <Navigate to="/connexion" replace />;
     }
 
-    // Sinon on affiche la page demandée
     return children;
 };
 

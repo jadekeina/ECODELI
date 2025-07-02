@@ -1,15 +1,20 @@
-// ROUTEUR COMPLET AVEC PAGES PUBLIQUES & PRIVEES
-import { Routes, Route } from "react-router-dom";
-import ProtectedRoute from "./components/ProtectedRoute";
+import { useContext } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { UserContext } from "./contexts/UserContext";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 
-// Headers
+   const stripePromise = loadStripe("pk_test_51RgCcfCSsQb1TgL54ywb1mfMDkdW7cHbFpqW02CZxIVBWN4UXMmmqc02RQqPFUwf0KKfJbf4qPX3jKml2ODXRug700BoaMX9CN"); // ta clé publique test ici
+
+
+
+// Components
+import ProtectedRoute from "./components/ProtectedRoute";
 import HeaderPublic from "./components/header";
 import HeaderConnected from "./components/HeaderConnected";
-
-// FOOTER
 import Footer from "./components/Footer";
 
-// PAGES PUBLIQUES
+// Pages publiques
 import Home from "./pages/Home";
 import Prix from "./pages/Prix";
 import NosEngagements from "./pages/NosEngagements";
@@ -19,16 +24,47 @@ import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
-// PAGES PRIVEES
-import AppHome from "./pages/AppHome"; // page d'accueil connectee
-import Dashboard from "./pages/Dashboard"; // menu Mon compte
+// Pages privées
+import AppHome from "./pages/AppHome";
+import Dashboard from "./pages/Dashboard";
+import RegisterPro from "./pages/RegisterPro";
+import Account from "./pages/Account";
+import MesPrestations from "./pages/ServicesList";
+import MesTrajets from "./pages/Trips";
+import History from "./pages/History";
+import MonCompte from "./pages/MonCompte";
+import CreateAnnonce from "./components/CreateAnnonce";
+import DeposerContenu from "./pages/DeposerContenu";
+
+
+
 
 function App() {
+
+    const { user, loading } = useContext(UserContext);
+
+    // 🔄 On attend que le UserContext ait fini de charger
+    if (loading) return <div>Chargement...</div>;
+
     return (
+        <Elements stripe={stripePromise}>
         <Routes>
 
-            {/* 🔓 Pages PUBLIQUES avec HeaderPublic + Footer */}
-            <Route path="/" element={<><HeaderPublic /><Home /><Footer /></>} />
+            {/* 🔓 Pages PUBLIQUES */}
+            <Route
+                path="/"
+                element={
+                    user ? (
+                        <Navigate to="/app" replace />
+                    ) : (
+                        <>
+                            <HeaderPublic />
+                            <Home />
+                            <Footer />
+                        </>
+                    )
+                }
+            />
             <Route path="/prix" element={<><HeaderPublic /><Prix /><Footer /></>} />
             <Route path="/NosEngagements" element={<><HeaderPublic /><NosEngagements /><Footer /></>} />
             <Route path="/Comment-ca-marche" element={<><HeaderPublic /><CommentCaMarche /><Footer /></>} />
@@ -37,7 +73,7 @@ function App() {
             <Route path="/connexion" element={<><HeaderPublic /><Login /><Footer /></>} />
             <Route path="/inscription" element={<><HeaderPublic /><Register /><Footer /></>} />
 
-            {/* 🔐 Pages PRIVEES - accessibles uniquement avec token */}
+            {/* 🔐 Pages PRIVEES */}
             <Route
                 path="/app"
                 element={
@@ -63,8 +99,105 @@ function App() {
                     </ProtectedRoute>
                 }
             />
+
+            <Route
+                path="/inscription-pro"
+                element={
+                    <ProtectedRoute>
+                        <>
+                            <HeaderConnected />
+                            <RegisterPro />
+                            <Footer />
+                        </>
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/mon-compte"
+                element={
+                    <ProtectedRoute>
+                        <>
+                            <HeaderConnected />
+                            <Account />
+                            <Footer />
+                        </>
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/mes-prestations"
+                element={
+                    <ProtectedRoute>
+                        <>
+                            <HeaderConnected />
+                            <MesPrestations />
+                            <Footer />
+                        </>
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/history"
+                element={
+                    <ProtectedRoute>
+                        <>
+                            <HeaderConnected />
+                            <History />
+                            <Footer />
+                        </>
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/mes-trajets"
+                element={
+                    <ProtectedRoute>
+                        <>
+                            <HeaderConnected />
+                            <MesTrajets />
+                            <Footer />
+                        </>
+                    </ProtectedRoute>
+                }
+            />
+
+
+            <Route
+                path="/deposer-annonce"
+                element={
+                    <ProtectedRoute>
+                        <>
+                            <HeaderConnected />
+                            <CreateAnnonce />
+                            <Footer />
+                        </>
+                    </ProtectedRoute>
+                }
+            />
+
+
+            <Route
+                path="/deposer-annonce"
+                element={
+                    <ProtectedRoute>
+                        <>
+                            <HeaderConnected />
+                            <DeposerContenu />
+                            <Footer />
+                        </>
+                    </ProtectedRoute>
+                }
+            />
+
+
+
+
         </Routes>
+        </Elements>
     );
+
 }
 
 export default App;

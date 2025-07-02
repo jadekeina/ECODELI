@@ -1,34 +1,50 @@
 import { createContext, useState, useEffect, ReactNode } from "react";
 
-// Typage de l'utilisateur
 interface User {
     id: number;
     firstname: string;
     lastname: string;
     email: string;
     token?: string;
-    // Ajoute d'autres propriétés ici si besoin
+    role?: string;
+    statut?: string;
+    profilpicture?: string;
+    [key: string]: any;
 }
 
 interface UserContextType {
     user: User | null;
     setUser: (user: User | null) => void;
+    loading: boolean;
+    mode: "client" | "pro";
+    setMode: (mode: "client" | "pro") => void;
+    hasProAccount: boolean;
 }
 
-// Création du contexte avec valeur par défaut
 export const UserContext = createContext<UserContextType>({
     user: null,
     setUser: () => {},
+    loading: true,
+    mode: "client",
+    setMode: () => {},
+    hasProAccount: false, // remplacé dynamiquement ci-dessous
 });
 
-// Provider
+
 export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [mode, setMode] = useState<"client" | "pro">("client");
 
     useEffect(() => {
         const fetchUser = async () => {
             const token = localStorage.getItem("token");
-            if (!token) return;
+
+            if (!token) {
+                setUser(null);
+                setLoading(false);
+                return;
+            }
 
             try {
                 const res = await fetch("http://localhost:3002/users/me", {
@@ -37,23 +53,62 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
                 if (!res.ok) {
                     setUser(null);
+                    setLoading(false);
                     return;
                 }
 
                 const data = await res.json();
-                setUser(data.data); // <- ⚠️ corrige selon ce que retourne ton backend
+                const userFromApi = data.data;
+
+                const role = userFromApi.role;
+
+                const statut = userFromApi.statut;
+
+                const mappedUser: User = {
+                    id: userFromApi.id,
+                    firstname: userFromApi.firstname,
+                    lastname: userFromApi.lastname,
+                    email: userFromApi.mail,
+                    token: userFromApi.token,
+                    role,
+                    statut,
+                    profilpicture: userFromApi.profilpicture,
+                };
+
+
+                console.log("📦 [UserContext] Utilisateur récupéré :", mappedUser);
+                setUser(mappedUser);
             } catch (err) {
-                console.error("Erreur lors de la récupération de l'utilisateur :", err);
+                console.error("❌ Erreur API /users/me :", err);
                 setUser(null);
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchUser();
     }, []);
 
+    const hasProAccount =
+        !!user &&
+        ["provider", "delivery-driver", "shop-owner"].includes(user.role || "") &&
+        user.statut === "valide";
+
+    console.log("🧩 [UserContext] hasProAccount :", hasProAccount);
+    console.log("🧑‍💼 [UserContext] user.role :", user?.role);
+    console.log("📃 [UserContext] user.statut :", user?.statut);
 
     return (
-        <UserContext.Provider value={{ user, setUser }}>
+        <UserContext.Provider
+            value={{
+                user,
+                setUser,
+                loading,
+                mode,
+                setMode,
+                hasProAccount,
+            }}
+        >
             {children}
         </UserContext.Provider>
     );

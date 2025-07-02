@@ -5,16 +5,18 @@ const { jsonResponse } = require("../../librairies/response");
 const db = require("../../models/users");
 
 router.post("/", (req, res) => {
-  const userId = req.body.userId;
-  if (!isPostMethod(req)) {
-    return jsonResponse(res, 405, {}, { message: "Méthode non autorisée" });
+  const { id } = req.body; // ✅ corriger ici (et pas userId)
+
+  if (!id) {
+    return res.status(400).json({ message: "ID manquant" });
   }
 
-  db.clearUserToken(userId, (err) => {
+  db.clearUserToken(id, (err) => {
     if (err) {
-      return jsonResponse(res, 500, {}, { message: "Erreur lors de la déconnexion" });
+      return res.status(500).json({ message: "Erreur lors de la déconnexion" });
     }
-    return jsonResponse(res, 200, {}, { message: "Déconnexion réussie" });
+
+    return res.status(200).json({ message: "Déconnexion réussie" });
   });
 });
 

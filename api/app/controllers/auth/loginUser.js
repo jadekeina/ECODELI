@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const db = require("../../models/users");
+const db = require("../../models/users"); // Chemin correct
 
 async function loginUser(mail, password) {
   return new Promise((resolve, reject) => {
@@ -12,31 +12,29 @@ async function loginUser(mail, password) {
       const isValid = await bcrypt.compare(password, user.password);
       if (!isValid) return reject(new Error("Mot de passe incorrect"));
 
-      // 🔐 Création du token avec un timestamp pour le rendre unique
+      console.log("[Login] SECRET_KEY utilisée pour signer:", process.env.SECRET_KEY);
+
       const token = jwt.sign(
           {
             userId: user.id,
             mail: user.mail,
-            timestamp: Date.now(), // ← ajoute une unicité
+            role: user.role,
+            status: user.status,
+            timestamp: Date.now(),
           },
           process.env.SECRET_KEY,
-          { expiresIn: "1h" }
+          { expiresIn: "2h" }
       );
 
-      // 💾 Enregistrement du token dans la base de données
-      db.setUserToken(user.id, token, (updateErr) => {
-        if (updateErr) return reject(new Error("Erreur enregistrement du token"));
+        db.setUserToken(user.id, token, (updateErr) => {
+            if (updateErr) return reject(new Error("Erreur enregistrement du token"));
 
-        // ✅ On enlève le mot de passe du retour
-        delete user.password;
 
-        // 🟢 On renvoie user + token
+            delete user.password;
+
         resolve({
           token,
-          user: {
             ...user,
-            token,
-          },
         });
       });
     });
