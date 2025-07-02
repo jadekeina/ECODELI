@@ -1,30 +1,45 @@
+// /storage/documents + multer.diskStorage
+
 const jwt = require("jsonwebtoken");
-const model = require("../../models/provider");
+const fs = require("fs");
+const path = require("path");
 
-async function createProvider(token, data) {
-    try {
-        const decoded = jwt.verify(token, process.env.SECRET_KEY);
-        const userId = decoded.userId;
+const ProviderModel = require("../../models/provider");
+const DocumentModel = require("../../models/documents");
 
-        const sql = `INSERT INTO prestataires (user_id, type_prestation, diplome, zone_deplacement, statut_validation)
-                 VALUES (?, ?, ?, ?, ?)`;
-        const values = [
-            userId,
-            data.type_prestation || null,
-            data.diplome || null,
-            data.zone_deplacement || null,
-            "en_attente"
-        ];
+async function createProvider(token, data, file) {
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const userId = decoded.userId;
 
-        return new Promise((resolve, reject) => {
-            model.query(sql, values, (err, result) => {
-                if (err) return reject(err);
-                resolve({ message: "Provider profile created successfully" });
-            });
-        });
-    } catch (err) {
-        throw new Error("Invalid or expired token");
+    const { type_prestation, zone_deplacement } = data;
+    if (!type_prestation || !zone_deplacement) {
+        throw new Error("Champs requis manquants.");
     }
+
+    if (!file || !file.path) {
+        throw new Error("Aucun fichier reçu.");
+    }
+
+    // 📍 chemin public enregistré en BDD (chemin relatif à partir de /storage)
+    const cheminFichier = `/storage/documents/${file.filename}`;
+
+    // ✅ Étape 1 : insérer dans provider
+    await new Promise((resolve, reject) => {
+        ProviderModel.insertProvider(userId, type_prestation, zone_deplacement, (err) => {
+            if (err) return reject(err);
+            resolve();
+        });
+    });
+
+    // ✅ Étape 2 : insérer dans documents_justificatifs
+    await new Promise((resolve, reject) => {
+        DocumentModel.insertDocument(userId, "diplome", cheminFichier, (err) => {
+            if (err) return reject(err);
+            resolve();
+        });
+    });
+
+    return { message: "Compte prestataire créé avec succès" };
 }
 
 module.exports = createProvider;

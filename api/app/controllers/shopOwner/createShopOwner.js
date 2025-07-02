@@ -1,30 +1,45 @@
-// controllers/shopOwner/createShopOwner.js
 const jwt = require("jsonwebtoken");
-const model = require("../../models/shopOwner");
+const ShopOwnerModel = require("../../models/shopOwner");
+const AddressModel = require("../../models/address");
+const DocumentModel = require("../../models/documents");
 
-async function createShopOwner(token, data) {
-    try {
-        const decoded = jwt.verify(token, process.env.SECRET_KEY);
-        const userId = decoded.userId;
+async function createShopOwner(token, data, file) {
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const userId = decoded.userId;
 
-        const sql = `INSERT INTO commercants (user_id, nom_entreprise, siret, statut_validation)
-                 VALUES (?, ?, ?, ?)`;
-        const values = [
+    const { nom_entreprise, siret, adresse } = data;
+    if (!nom_entreprise || !siret || !adresse) {
+        throw new Error("Champs 'nom_entreprise', 'siret' ou 'adresse' manquants");
+    }
+
+    const business_address_id = await new Promise((resolve, reject) => {
+        AddressModel.insertAddress(adresse, (err, result) => {
+            if (err) return reject(err);
+            resolve(result.insertId);
+        });
+    });
+
+    await new Promise((resolve, reject) => {
+        ShopOwnerModel.createShopOwner(
             userId,
-            data.nom_entreprise || null,
-            data.siret || null,
-            "en_attente"
-        ];
+            nom_entreprise,
+            siret,
+            business_address_id,
+            (err) => (err ? reject(err) : resolve())
+        );
+    });
 
-        return new Promise((resolve, reject) => {
-            model.query(sql, values, (err, result) => {
+    // ✅ Enregistrement du fichier SIRET dans documents_justificatifs
+    if (file?.path) {
+        await new Promise((resolve, reject) => {
+            DocumentModel.insertDocument(userId, "siret", file.path, (err) => {
                 if (err) return reject(err);
-                resolve({ message: "Shop owner profile created successfully" });
+                resolve();
             });
         });
-    } catch (err) {
-        throw new Error("Invalid or expired token");
     }
+
+    return { message: "Profil commerçant créé avec succès" };
 }
 
 module.exports = createShopOwner;

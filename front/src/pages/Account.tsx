@@ -35,7 +35,6 @@ const Account = () => {
     { key: "securite", label: "Sécurité" },
     { key: "paiement", label: "Paiement" },
     { key: "Document", label: "Documents" },
-    { key: "parrainage", label: "Parrainage" }
   ];
 
   return (

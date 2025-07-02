@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,13 +9,19 @@ import ChauffeurIcon from "@/assets/image/livreur-removebg-preview.svg";
 import PrestataireIcon from "@/assets/image/utilisateur-removebg-preview.svg";
 import BoutiqueIcon from "@/assets/image/boutique-removebg-preview_1.svg";
 
+const endpointMap: Record<string, string> = {
+    "delivery-driver": "/delivery-driver",
+    "provider": "/provider",
+    "shop-owner": "/shop-owner",
+};
+
+
 const AutocompleteInput = ({ name, label, value, onChange }: any) => {
     const [suggestions, setSuggestions] = useState<string[]>([]);
 
     const handleInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const inputVal = e.target.value;
         onChange(e);
-
         if (!inputVal) return setSuggestions([]);
 
         try {
@@ -31,7 +39,8 @@ const AutocompleteInput = ({ name, label, value, onChange }: any) => {
             );
 
             const data = await res.json();
-            const results = data?.suggestions?.map((s: any) => s?.placePrediction?.text?.text) || [];
+            const results =
+                data?.suggestions?.map((s: any) => s?.placePrediction?.text?.text) || [];
             setSuggestions(results);
         } catch (err) {
             console.error("Erreur API Suggestions:", err);
@@ -70,6 +79,56 @@ const AutocompleteInput = ({ name, label, value, onChange }: any) => {
     );
 };
 
+const submitProfessionalProfile = async (
+    role: string,
+    formData: any,
+    files: Record<string, File | null>,
+    setSuccessMessage: (msg: string) => void
+) => {
+    const token = localStorage.getItem("token");
+    const form = new FormData();
+
+    if (role === "delivery-driver") {
+        form.append("zone_deplacement", formData.zone);
+    }
+
+    if (role === "provider") {
+        form.append("zone_deplacement", formData.zone);
+        form.append("type_prestation", formData.type);
+    }
+
+    if (role === "shop-owner") {
+        form.append("adresse", formData.adresse);
+        form.append("siret", formData.siret);
+        form.append("nom_entreprise", formData.nom_entreprise);
+    }
+
+    Object.entries(files).forEach(([key, file]) => {
+        if (file) form.append(key, file);
+    });
+
+    try {
+        const res = await fetch(import.meta.env.VITE_API_URL + endpointMap[role], {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            body: form,
+        });
+
+        const contentType = res.headers.get("content-type");
+        const data = contentType?.includes("application/json") ? await res.json() : null;
+
+        if (!res.ok) {
+            throw new Error(data?.message || "Erreur lors de l'inscription");
+        }
+
+        setSuccessMessage("Profil professionnel créé avec succès !");
+    } catch (err) {
+        console.error(err);
+        setSuccessMessage(err instanceof Error ? err.message : "Erreur inconnue");
+    }
+};
 
 const roles = [
     { id: "delivery-driver", label: "Chauffeur", icon: ChauffeurIcon },
@@ -80,6 +139,7 @@ const roles = [
 export default function RegisterPro() {
     const [step, setStep] = useState(1);
     const [role, setRole] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         zone: "",
         siret: "",
@@ -90,13 +150,31 @@ export default function RegisterPro() {
     const [files, setFiles] = useState<Record<string, File | null>>({});
     const [errors, setErrors] = useState<{ siret?: string }>({});
 
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (successMessage) {
+            const timer = setTimeout(() => {
+                navigate("/mon-compte");
+            }, 3000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [successMessage, navigate]);
+
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
 
         if (name === "siret") {
             const isValid = /^[0-9]{14}$/.test(value);
-            setErrors({ ...errors, siret: isValid ? undefined : "Le numéro SIRET doit contenir exactement 14 chiffres." });
+            setErrors({
+                ...errors,
+                siret: isValid
+                    ? undefined
+                    : "Le numéro SIRET doit contenir exactement 14 chiffres.",
+            });
         }
     };
 
@@ -105,8 +183,11 @@ export default function RegisterPro() {
     };
 
     const handleSubmit = () => {
-        console.log("Données :", formData);
-        console.log("Fichiers :", files);
+        if (!role) {
+            alert("Veuillez d’abord choisir un statut professionnel.");
+            return;
+        }
+        submitProfessionalProfile(role, formData, files, setSuccessMessage);
     };
 
     return (
@@ -189,35 +270,81 @@ export default function RegisterPro() {
                     </div>
                 )}
 
-                {step === 3 && role !== "shop-owner" && (
+                {step === 3 && (
                     <div className="space-y-6">
                         <h2 className="text-4xl font-bold mb-4">Téléversement des documents</h2>
                         {role === "delivery-driver" && (
                             <div className="space-y-4">
-                                {["Permis de conduire", "Pièce d'identité", "Avis SIRENE", "Attestation URSSAF", "RC Pro"].map((label, i) => (
-                                    <div key={i}>
-                                        <Label className="text-lg">{label}</Label>
-                                        <Input className="h-12 text-base" type="file" onChange={(e) => handleFile(e, label)} />
-                                    </div>
-                                ))}
+                                <div>
+                                    <Label className="text-lg">Permis de conduire</Label>
+                                    <Input
+                                        type="file"
+                                        accept=".pdf,.png,.jpg,.jpeg"
+                                        className="h-12 text-base"
+                                        onChange={(e) => handleFile(e, "permis")}
+                                    />
+                                </div>
+                                <div>
+                                    <Label className="text-lg">Pièce d’identité</Label>
+                                    <Input
+                                        type="file"
+                                        accept=".pdf,.png,.jpg,.jpeg"
+                                        className="h-12 text-base"
+                                        onChange={(e) => handleFile(e, "piece_identite")}
+                                    />
+                                </div>
+                                <div>
+                                    <Label className="text-lg">Avis SIRENE</Label>
+                                    <Input
+                                        type="file"
+                                        accept=".pdf,.png,.jpg,.jpeg"
+                                        className="h-12 text-base"
+                                        onChange={(e) => handleFile(e, "avis_sirene")}
+                                    />
+                                </div>
+                                <div>
+                                    <Label className="text-lg">Attestation URSSAF</Label>
+                                    <Input
+                                        type="file"
+                                        accept=".pdf,.png,.jpg,.jpeg"
+                                        className="h-12 text-base"
+                                        onChange={(e) => handleFile(e, "attestation_urssaf")}
+                                    />
+                                </div>
+                                <div>
+                                    <Label className="text-lg">Responsabilité Civile Professionnelle</Label>
+                                    <Input
+                                        type="file"
+                                        accept=".pdf,.png,.jpg,.jpeg"
+                                        className="h-12 text-base"
+                                        onChange={(e) => handleFile(e, "rc_pro")}
+                                    />
+                                </div>
                             </div>
                         )}
+
                         {role === "provider" && (
                             <div>
                                 <Label className="text-lg">Diplôme</Label>
-                                <Input className="h-12 text-base" type="file" onChange={(e) => handleFile(e, "diplome")} />
+                                <Input
+                                    className="h-12 text-base"
+                                    type="file"
+                                    accept=".png, .jpg, .jpeg, .pdf"
+                                    onChange={(e) => handleFile(e, "diplome")}
+                                />
+
                             </div>
                         )}
-                        <div className="flex justify-between">
-                            <Button variant="outline" onClick={() => setStep(2)}>Retour</Button>
-                            <Button className="h-12 text-base px-6" onClick={handleSubmit}>Valider</Button>
-                        </div>
-                    </div>
-                )}
-
-                {step === 3 && role === "shop-owner" && (
-                    <div className="space-y-6">
-                        <div className="text-lg text-gray-600">Aucun document requis. Cliquez sur <strong>Valider</strong> pour finaliser.</div>
+                        {role === "shop-owner" && (
+                            <div className="text-lg text-gray-600">
+                                Aucun document requis. Cliquez sur <strong>Valider</strong> pour finaliser.
+                            </div>
+                        )}
+                        {successMessage && (
+                            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
+                                ✅ {successMessage}
+                            </div>
+                        )}
                         <div className="flex justify-between">
                             <Button variant="outline" onClick={() => setStep(2)}>Retour</Button>
                             <Button className="h-12 text-base px-6" onClick={handleSubmit}>Valider</Button>

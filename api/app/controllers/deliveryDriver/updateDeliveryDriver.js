@@ -1,29 +1,27 @@
-// controllers/deliveryDriver/updateProvider.js
 const jwt = require("jsonwebtoken");
-const model = require("../../models/deliveryDriver");
+const db = require("../../models/deliveryDriver");
+const AddressModel = require("../../models/address");
 
-async function updateDeliveryDriver(token, updates) {
+module.exports = async function updateDeliveryDriver(token, data) {
     try {
         const decoded = jwt.verify(token, process.env.SECRET_KEY);
         const userId = decoded.userId;
 
-        // Récupérer l'ID du livreur via userId
-        return new Promise((resolve, reject) => {
-            const sql = "SELECT id FROM livreurs WHERE user_id = ?";
-            model.rawQuery(sql, [userId], (err, result) => {
-                if (err || result.length === 0) return reject(new Error("Profil non trouvé"));
+        // Récupère l'adresse liée
+        const [result] = await db.query("SELECT zone_address_id FROM livreurs WHERE user_id = ?", [userId]);
+        const addressId = result[0]?.zone_address_id;
 
-                const livreurId = result[0].id;
+        if (!addressId) throw new Error("Adresse introuvable pour ce livreur.");
 
-                model.updateDeliveryDriver(livreurId, updates, (err2) => {
-                    if (err2) return reject(err2);
-                    resolve({ message: "Delivery driver profile updated" });
-                });
+        await new Promise((resolve, reject) => {
+            AddressModel.updateAddress(addressId, data.zone_deplacement, (err) => {
+                if (err) reject(err);
+                else resolve();
             });
         });
-    } catch (err) {
-        throw new Error("Invalid or expired token");
-    }
-}
 
-module.exports = updateDeliveryDriver;
+        return { message: "Adresse du livreur mise à jour" };
+    } catch (err) {
+        throw new Error(err.message || "Erreur lors de la mise à jour du livreur");
+    }
+};

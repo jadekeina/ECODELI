@@ -1,27 +1,31 @@
-// controllers/shopOwner/updateShopOwner.js
 const jwt = require("jsonwebtoken");
-const model = require("../../models/shopOwner");
+const db = require("../../models/shopOwner");
+const AddressModel = require("../../models/address");
 
-async function updateShopOwner(token, updates) {
+module.exports = async function updateShopOwner(token, data) {
     try {
         const decoded = jwt.verify(token, process.env.SECRET_KEY);
         const userId = decoded.userId;
 
-        return new Promise((resolve, reject) => {
-            const sql = "SELECT id FROM commercants WHERE user_id = ?";
-            model.rawQuery(sql, [userId], (err, result) => {
-                if (err || result.length === 0) return reject(new Error("Shop owner profile not found"));
+        const [result] = await db.query("SELECT business_address_id FROM commercants WHERE user_id = ?", [userId]);
+        const addressId = result[0]?.business_address_id;
 
-                const shopOwnerId = result[0].id;
-                model.updateShopOwner(shopOwnerId, updates, (err2) => {
-                    if (err2) return reject(err2);
-                    resolve({ message: "Shop owner profile updated" });
-                });
+        if (!addressId) throw new Error("Adresse introuvable pour ce commerçant.");
+
+        await new Promise((resolve, reject) => {
+            AddressModel.updateAddress(addressId, data.adresse, (err) => {
+                if (err) reject(err);
+                else resolve();
             });
         });
-    } catch (err) {
-        throw new Error("Invalid or expired token");
-    }
-}
 
-module.exports = updateShopOwner;
+        await db.query(
+            "UPDATE commercants SET nom_entreprise = ?, siret = ? WHERE user_id = ?",
+            [data.nom_entreprise, data.siret, userId]
+        );
+
+        return { message: "Profil commerçant mis à jour" };
+    } catch (err) {
+        throw new Error(err.message || "Erreur lors de la mise à jour du commerçant");
+    }
+};

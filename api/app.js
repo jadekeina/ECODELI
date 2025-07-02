@@ -16,6 +16,11 @@ app.use(express.urlencoded({ extended: true }));
 // Connexion MySQL
 require("./config/db");
 
+//api-google
+const distanceRoutes = require("./app/routes/distance.js");
+app.use("/distance", distanceRoutes);
+
+
 // Routes users
 const userMeRoute = require("./app/routes/users/me");
 const userRoutesGet = require("./app/routes/users/get");
@@ -43,6 +48,12 @@ const postDocumentRoute = require("./app/routes/documents/post");
 const patchDocumentRoute = require("./app/routes/documents/patch");
 const getDocumentRoute = require("./app/routes/documents/get");
 
+
+//Requests
+const requestsRoutes = require("./app/routes/requests/post");
+const requestsMyRoutes = require("./app/routes/requests/my");
+const requestsPublicRoutes = require("./app/routes/requests/public");
+
 // Users
 app.use("/users", userMeRoute);
 app.use("/users", userRoutesGet);
@@ -69,6 +80,18 @@ app.use("/shop-owner", shopOwnerPatch);
 app.use("/documents", postDocumentRoute);
 app.use("/documents", patchDocumentRoute);
 app.use("/documents", getDocumentRoute);
+
+//Requests
+app.use("/requests", requestsRoutes);
+app.use("/requests/my", requestsMyRoutes);
+app.use("/requests/public", requestsPublicRoutes);
+
+
+
+app.get("/", (req, res) => {
+  res.send("EcoDeli API is running ✅");
+});
+
 
 app.listen(process.env.PORT || 3002, () => {
   console.log(`✅ Serveur EcoDeli lancé sur http://localhost:${process.env.PORT || 3002}`);

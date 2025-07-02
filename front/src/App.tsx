@@ -32,6 +32,12 @@ import Account from "./pages/Account";
 import MesPrestations from "./pages/ServicesList";
 import MesTrajets from "./pages/Trips";
 import History from "./pages/History";
+import MonCompte from "./pages/MonCompte";
+import CreateAnnonce from "./components/CreateAnnonce";
+import DeposerContenu from "./pages/DeposerContenu";
+
+
+
 
 function App() {
 
@@ -156,7 +162,37 @@ function App() {
                     </ProtectedRoute>
                 }
             />
-            
+
+
+            <Route
+                path="/deposer-annonce"
+                element={
+                    <ProtectedRoute>
+                        <>
+                            <HeaderConnected />
+                            <CreateAnnonce />
+                            <Footer />
+                        </>
+                    </ProtectedRoute>
+                }
+            />
+
+
+            <Route
+                path="/deposer-annonce"
+                element={
+                    <ProtectedRoute>
+                        <>
+                            <HeaderConnected />
+                            <DeposerContenu />
+                            <Footer />
+                        </>
+                    </ProtectedRoute>
+                }
+            />
+
+
+
 
         </Routes>
         </Elements>
