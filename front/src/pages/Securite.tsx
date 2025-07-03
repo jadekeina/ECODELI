@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { UserContext } from "../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import API_URL from "@/config";
 
 const Securite = () => {
     const { user, setUser } = useContext(UserContext);
@@ -20,7 +21,7 @@ const Securite = () => {
         const token = localStorage.getItem("token");
         if (!token) return alert("Non connecté !");
         try {
-            await axios.delete("http://localhost:3002/users/me", {
+            await axios.delete(`${API_URL}/users/me`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             localStorage.removeItem("token");
@@ -40,7 +41,7 @@ const Securite = () => {
         const token = localStorage.getItem("token");
         if (!token) return alert("Non connecté !");
         try {
-            await axios.patch("http://localhost:3002/users/me", {
+            await axios.patch(`${API_URL}/users/me`, {
                 password: newPwd
             }, {
                 headers: { Authorization: `Bearer ${token}` }

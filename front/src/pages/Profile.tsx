@@ -1,6 +1,8 @@
 import { useContext, useState, useEffect } from "react";
 import { UserContext } from "../contexts/UserContext";
 import axios from "axios";
+import API_URL from "@/config";
+
 
 const Profil = () => {
   const { user, setUser } = useContext(UserContext);
@@ -20,7 +22,7 @@ const Profil = () => {
   useEffect(() => {
     const defaultPictures = ["default.jpg", "/uploads/default-avatar.png"];
     if (realUser?.profilpicture && !defaultPictures.includes(realUser.profilpicture)) {
-      setPhoto(`http://localhost:3002${realUser.profilpicture}`);
+      setPhoto(`${API_URL}${realUser.profilpicture}`);
     } else {
       setPhoto(null);
     }
@@ -58,7 +60,7 @@ const Profil = () => {
     setEditMode(false);
     setPhotoFile(null);
     if (realUser?.profilpicture) {
-      setPhoto(`http://localhost:3002${realUser.profilpicture}`);
+      setPhoto(`${API_URL}${realUser.profilpicture}`);
     } else {
       setPhoto(null);
     }
@@ -76,14 +78,11 @@ const Profil = () => {
     }
 
     try {
-      const { data: updatedUser } = await axios.delete(
-        "http://localhost:3002/users/me/photo",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const { data: updatedUser } = await axios.delete(`${API_URL}/users/me/photo`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setUser(updatedUser); // Mettre à jour le contexte
       setPhoto(null); // Mettre à jour l'aperçu local
       setPhotoFile(null);
@@ -105,7 +104,7 @@ const Profil = () => {
     try {
       console.log("Données envoyées pour la mise à jour :", formData);
       await axios.patch(
-        "http://localhost:3002/users/me",
+          `${API_URL}/users/me`,
         { ...formData },
         {
           headers: {
@@ -119,7 +118,7 @@ const Profil = () => {
         photoFormData.append("photo", photoFile);
 
         const { data: updatedUser } = await axios.patch(
-          "http://localhost:3002/users/me/photo",
+            `${API_URL}/users/me/photo`,
           photoFormData,
           {
             headers: {

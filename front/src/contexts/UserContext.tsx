@@ -1,4 +1,6 @@
 import { createContext, useState, useEffect, ReactNode } from "react";
+import API_URL from "@/config";
+
 
 interface User {
     id: number;
@@ -47,8 +49,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             }
 
             try {
-                const res = await fetch("http://localhost:3002/users/me", {
-                    headers: { Authorization: `Bearer ${token}` },
+                const res = await fetch(`${API_URL}/users/me`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
                 });
 
                 if (!res.ok) {
@@ -75,6 +79,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                     profilpicture: userFromApi.profilpicture,
                 };
 
+                console.log("🌐 API_URL = ", import.meta.env.VITE_API_URL);
 
                 console.log("📦 [UserContext] Utilisateur récupéré :", mappedUser);
                 setUser(mappedUser);

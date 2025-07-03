@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext";
 import { FaBriefcase, FaUserCircle } from "react-icons/fa";
 import { ChevronDown } from "lucide-react";
+import API_URL from "@/config";
+
 
 const HeaderConnected = () => {
     const { user, setUser, hasProAccount, mode, setMode } = useContext(UserContext);
@@ -38,7 +40,7 @@ const HeaderConnected = () => {
     const handleLogout = async () => {
         const token = localStorage.getItem("token");
         try {
-            await fetch("http://localhost:3002/auth/logout", {
+            await fetch(`${API_URL}/auth/logout`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -63,39 +65,14 @@ const HeaderConnected = () => {
 
             {/* Menu principal */}
             <nav className="hidden lg:flex gap-8 text-m font-medium">
-                <Dropdown title="Livraison">
-                    <Link to="/livraison/envoyer-colis">📦 Envoyer un colis</Link>
-                    <Link to="/livraison/partielle">🔁 Livraison partielle</Link>
-                    <Link to="/livraison/finale">🎯 Livraison finale</Link>
-                    <Link to="/livraison/suivi">🔍 Suivi en temps réel</Link>
-                    <Link to="/livraison/assurance">✅ Assurance incluse</Link>
-                </Dropdown>
-
-                <Dropdown title="Proposer un trajet">
-                    <Link to="/proposer-trajet/crowdshipping">🚗 Crowdshipping</Link>
-                    <Link to="/proposer-trajet/dernier-km">🚶 Dernier km uniquement</Link>
-                    <Link to="/proposer-trajet/groupage">📦 Livraison groupée</Link>
-                </Dropdown>
-
-                <Dropdown title="Courses & achats">
-                    <Link to="/courses-achats/chariot">🛒 Lâcher de chariot</Link>
-                    <Link to="/courses-achats/pour-client">👥 Courses pour un client</Link>
-                    <Link to="/courses-achats/etranger">🌍 Achat à l'étranger</Link>
-                </Dropdown>
-
-                <Dropdown title="Transport">
-                    <Link to="/transport/rdv-gare">🚉 Transport RDV / gare</Link>
-                    <Link to="/transport/aeroport">✈️ Transfert aéroport</Link>
-                    <Link to="/transport/aide">♿ Aide au déplacement</Link>
-                </Dropdown>
-
-                <Dropdown title="Aide à domicile">
-                    <Link to="/aide-domicile/animaux">🐶 Garde d'animaux</Link>
-                    <Link to="/aide-domicile/menage">🧼 Ménage</Link>
-                    <Link to="/aide-domicile/jardinage">🌿 Jardinage</Link>
-                    <Link to="/aide-domicile/travaux">🛠️ Petits travaux</Link>
-                </Dropdown>
+                <Link
+                    to={mode === "pro" ? "/annonces" : "/offres"}
+                    className="hover:underline"
+                >
+                    {mode === "pro" ? "Toues les Annonces" : "Toutes nos Offres"}
+                </Link>
             </nav>
+
 
             {/* Icônes à droite */}
             <div className="flex items-center gap-6 text-sm">
@@ -137,8 +114,11 @@ const HeaderConnected = () => {
                 <div className="relative flex flex-col items-center" ref={userMenuRef}>
                     <button onClick={toggleUserMenu} className="flex flex-col items-center text-[#1B4F3C] hover:text-[#0f3329]">
                         {hasCustomPhoto ? (
-                            <img src={`http://localhost:3002${realUser.profilpicture}`} alt="Profil" className="w-8 h-8 rounded-full object-cover" />
-                        ) : (
+                            <img
+                                src={`${API_URL}${realUser.profilpicture}`}
+                                alt="Profil"
+                                className="w-8 h-8 rounded-full object-cover"
+                            />                        ) : (
                             <FaUserCircle className="text-3xl" />
                         )}
                         <span className="text-sm mt-1">
@@ -168,6 +148,7 @@ const HeaderConnected = () => {
 export default HeaderConnected;
 
 // Dropdown
+// @ts-expect-error
 const Dropdown = ({ title, children }: { title: string; children: React.ReactNode }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);

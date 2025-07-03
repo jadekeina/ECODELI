@@ -1,5 +1,5 @@
-import PortraitPro from "../assets/Image/PortraitPro.png"
-import girl2 from "../assets/Image/girl2.jpg"
+import PortraitPro from "@/assets/image/PortraitPro.png"
+import girl2 from "@/assets/image/girl2.jpg"
 
 const NosEngagements = () => {
   return (
@@ -26,14 +26,14 @@ const NosEngagements = () => {
 
 
       <div className=" flex m-5 justify-center items-center px-40 ">
-      <div> <img src="src/assets/Image/greybg.jpg" className="w-200 h-100 rounded-xl" alt="" /> </div>
+      <div> <img src="../assets/image/greybg.jpg" className="w-200 h-100 rounded-xl" alt="" /> </div>
       <div className="px-30"> <h2>lorem</h2> <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam recusandae possimus repudiandae voluptates ducimus fugit quibusdam ipsa repellat, consectetur, ea quam cumque tenetur. Illum praesentium natus porro tenetur, eaque nam.</p></div>
       </div>
 
 
       <div className=" flex m-5 justify-center items-center px-40 ">
       <div className="px-30"> <h2>lorem</h2> <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam recusandae possimus repudiandae voluptates ducimus fugit quibusdam ipsa repellat, consectetur, ea quam cumque tenetur. Illum praesentium natus porro tenetur, eaque nam.</p></div>
-      <div> <img src="src/assets/Image/greybg.jpg" className="w-200 h-100 rounded-xl" alt="" /> </div>
+      <div> <img src="../assets/image/greybg.jpg" className="w-200 h-100 rounded-xl" alt="" /> </div>
       </div>
 
 

@@ -20,6 +20,8 @@ services:
       context: ./api
       dockerfile: Dockerfile.prod
     container_name: ecodeli_api
+    env_file:
+      - .env.prod
     environment:
       DB_HOST: mysql
       DB_USER: dev-admin
@@ -39,6 +41,8 @@ services:
       context: ./front
       dockerfile: Dockerfile.prod
     container_name: ecodeli_front
+    env_file:
+      - .env.prod
     ports:
       - "3000:3000"
     networks:
@@ -50,6 +54,8 @@ services:
       context: ./admin
       dockerfile: Dockerfile.prod
     container_name: ecodeli_admin
+    env_file:
+      - .env.prod
     ports:
       - "3001:3001"
     networks:

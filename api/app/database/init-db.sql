@@ -116,3 +116,40 @@ CREATE TABLE requests (
 );
 
 
+-- --------------------------------------------------------- Données
+
+-- 🔐 Utilisateurs (mot de passe = 'root')
+INSERT INTO users (firstname, lastname, username, mail, password, sexe, role)
+VALUES
+    ('Alice', 'Dupont', 'alice_d', 'alice@example.com', 'root', 'F', 'client'),
+    ('Jean', 'Morel', 'jeanmorel', 'jean@example.com', 'root', 'H', 'provider'),
+    ('Lina', 'Benz', 'linabenz', 'lina@example.com', 'root', 'F', 'delivery-driver'),
+    ('Tom', 'Martinez', 'tomdeluxe', 'tom@example.com', 'root', 'H', 'shop-owner'),
+    ('Sarah', 'Nguyen', 'sarahn', 'sarah@example.com', 'root', 'F', 'client'),
+    ('Admin', 'Ecodeli', 'admin', 'admin@ecodeli.com', 'root', 'Autre', 'admin');
+
+
+INSERT INTO addresses (full_address)
+VALUES
+    ('12 rue des Lilas, Paris'),
+    ('24 avenue Jean Jaurès, Lyon'),
+    ('108 boulevard Haussmann, Paris'),
+    ('75 rue Nationale, Lille');
+
+
+INSERT INTO shop_owner (user_id, nom_entreprise, siret, business_address_id, statut_validation)
+VALUES (4, 'Tom Épicerie Bio', '12345678901234', 1, 'valide');
+
+
+INSERT INTO provider (user_id, type_prestation, zone_deplacement, statut_validation)
+VALUES (2, 'Massage à domicile', 'Paris & banlieue', 'valide');
+
+INSERT INTO requests (user_id, type, titre, description, prix, adresse_depart, adresse_arrivee, date_demande)
+VALUES
+    (1, 'colis_total', 'Envoyer un colis urgent', 'Colis de 2 kg à envoyer rapidement.', 25, 'Paris 15e', 'Marseille', CURDATE()),
+    (2, 'service_domicile', 'Massage 1h', 'Massage bien-être à domicile dans Paris.', 60, NULL, NULL, CURDATE()),
+    (3, 'livraison_domicile', 'Livraison express documents', 'Documents importants à livrer à Neuilly.', 35, 'Paris 2e', 'Neuilly-sur-Seine', CURDATE()),
+    (4, 'achat_etranger', 'Achat produit Italie', 'Besoin d’acheter un vin spécifique à Rome.', 80, NULL, NULL, CURDATE()),
+    (5, 'transport_personne', 'Transport aéroport CDG', 'Trajet pour une cliente avec valises.', 50, 'Paris 11e', 'CDG Terminal 2E', CURDATE());
+
+

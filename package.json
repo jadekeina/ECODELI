@@ -18,6 +18,8 @@
   "homepage": "https://github.com/jadekeina/PA_ECODELI#readme",
   "description": "",
   "dependencies": {
+    "@stripe/react-stripe-js": "^3.7.0",
+    "@stripe/stripe-js": "^7.4.0",
     "axios": "^1.10.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",

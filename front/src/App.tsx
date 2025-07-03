@@ -4,6 +4,9 @@ import { UserContext } from "./contexts/UserContext";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 
+console.log("🌐 API_URL = ", import.meta.env.VITE_API_URL);
+
+
    const stripePromise = loadStripe("pk_test_51RgCcfCSsQb1TgL54ywb1mfMDkdW7cHbFpqW02CZxIVBWN4UXMmmqc02RQqPFUwf0KKfJbf4qPX3jKml2ODXRug700BoaMX9CN"); // ta clé publique test ici
 
 
@@ -32,9 +35,9 @@ import Account from "./pages/Account";
 import MesPrestations from "./pages/ServicesList";
 import MesTrajets from "./pages/Trips";
 import History from "./pages/History";
-import MonCompte from "./pages/MonCompte";
 import CreateAnnonce from "./components/CreateAnnonce";
 import DeposerContenu from "./pages/DeposerContenu";
+import Requests from "./pages/pro/RequestsPublic"
 
 
 
@@ -47,6 +50,7 @@ function App() {
     if (loading) return <div>Chargement...</div>;
 
     return (
+
         <Elements stripe={stripePromise}>
         <Routes>
 
@@ -191,7 +195,18 @@ function App() {
                 }
             />
 
-
+            <Route
+                path="/annonces"
+                element={
+                    <ProtectedRoute>
+                        <>
+                            <HeaderConnected />
+                            <Requests />
+                            <Footer />
+                        </>
+                    </ProtectedRoute>
+                }
+            />
 
 
         </Routes>

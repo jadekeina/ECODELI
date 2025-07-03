@@ -33,7 +33,7 @@ const CommentCaMarche = () => {
         </div>
         <div className="w-full md:w-1/2 flex justify-center">
           <img
-            src="src/assets/Image/greybg.jpg"
+            src="../assets/image/greybg.jpg"
             className="max-w-[300px] rounded-xl shadow-lg"
             alt="Illustration"
           />

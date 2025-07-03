@@ -1,5 +1,9 @@
-require("dotenv").config();
-
+const path = require("path");
+require("dotenv").config({
+  path: process.env.NODE_ENV === "production"
+      ? path.resolve(__dirname, "../.env.prod")
+      : path.resolve(__dirname, "../.env"),
+});
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -87,7 +91,6 @@ app.use("/requests/my", requestsMyRoutes);
 app.use("/requests/public", requestsPublicRoutes);
 
 //storage
-const path = require("path");
 app.use("/storage", express.static(path.join(__dirname, "app/storage")));
 
 
