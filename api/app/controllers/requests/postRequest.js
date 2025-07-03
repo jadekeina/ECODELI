@@ -12,8 +12,9 @@ async function postRequest(req, res) {
 
     // 🔒 Image par défaut si aucune image envoyée
     if (!request.photo || request.photo.trim() === "") {
-        request.photo = "/storage/default-images/requests.webp";
+        request.photo = `${process.env.VITE_API_URL}/storage/default-images/requests.webp`;
     }
+
 
     console.log("👤 [postRequest] Utilisateur connecté ID:", userId);
 
