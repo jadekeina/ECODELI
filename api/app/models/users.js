@@ -35,6 +35,7 @@ exports.setUserToken = (userId, token, callback) => {
 };
 
 
+
 exports.clearUserToken = (userId, callback) => {
   db.query("UPDATE users SET token = NULL WHERE id = ?", [userId], callback);
 };

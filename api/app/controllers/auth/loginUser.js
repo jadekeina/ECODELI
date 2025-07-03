@@ -26,17 +26,23 @@ async function loginUser(mail, password) {
           { expiresIn: "2h" }
       );
 
-        db.setUserToken(user.id, token, (updateErr) => {
-            if (updateErr) return reject(new Error("Erreur enregistrement du token"));
+        console.log("🧪 setUserToken appelé");
+        db.setUserToken(user.id, token, (updateErr, updateResult) => {
+            if (updateErr) {
+                console.error("❌ Erreur UPDATE token BDD :", updateErr);
+                return reject(new Error("Erreur enregistrement du token"));
+            }
 
+            console.log("✅ Token mis à jour en BDD :", token);
+            console.log("🗃️ Résultat de la mise à jour SQL :", updateResult);
 
             delete user.password;
 
-        resolve({
-          token,
-            ...user,
+            resolve({
+                token,
+                ...user,
+            });
         });
-      });
     });
   });
 }
