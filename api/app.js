@@ -91,9 +91,7 @@ app.use("/requests/my", requestsMyRoutes);
 app.use("/requests/public", requestsPublicRoutes);
 
 //storage
-app.use("/storage", express.static(path.join(__dirname, "app/storage")));
-
-
+app.use('/storage', express.static(path.join(__dirname, 'app', 'storage')));
 
 
 app.get("/", (req, res) => {
