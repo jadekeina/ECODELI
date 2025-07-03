@@ -4,15 +4,20 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm1ha
 Content-Type: application/json
 
 {
-  "type": "colis_total",
-  "titre": "Test sans image",
-  "description": "Une belle box mystère",
-  "longueur": 40,
-  "largeur": 30,
-  "poids": 5,
-  "prix": 25,
-  "prix_suggere": 20,
-  "adresse_depart": "Nice",
-  "adresse_arrivee": "Paris",
-  "date_demande": "2025-07-01"
+  "type": "colis_partiel",
+  "titre": "Livraison avec relais à Paris et Lille",
+  "description": "Un colis à récupérer à Marseille avec livraison finale à Bruxelles, en passant par des relais.",
+  "longueur": 50,
+  "largeur": 40,
+  "poids": 10,
+  "prix": 60,
+  "prix_suggere": 55,
+  "adresse_depart": "24 Rue Sainte, 13001 Marseille",
+  "adresse_arrivee": "10 Rue du Congrès, 1000 Bruxelles",
+  "date_demande": "2025-07-05",
+  "entrepots": [
+    "12 Avenue Jean Jaurès, 69007 Lyon",
+    "88 Rue de Rivoli, 75004 Paris",
+    "18 Rue Faidherbe, 59800 Lille"
+  ]
 }

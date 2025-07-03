@@ -38,6 +38,7 @@ import History from "./pages/History";
 import CreateAnnonce from "./components/CreateAnnonce";
 import DeposerContenu from "./pages/DeposerContenu";
 import Requests from "./pages/pro/RequestsPublic"
+import RequestDetails from "@/pages/pro/RequestDetails";
 
 
 
@@ -202,6 +203,19 @@ function App() {
                         <>
                             <HeaderConnected />
                             <Requests />
+                            <Footer />
+                        </>
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/requests/:id"
+                element={
+                    <ProtectedRoute>
+                        <>
+                            <HeaderConnected />
+                            <RequestDetails />
                             <Footer />
                         </>
                     </ProtectedRoute>

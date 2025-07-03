@@ -2,14 +2,17 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import API_URL from "@/config";
 
-const AnnonceDetailPro = () => {
+const AnnonceDetail = () => {
     const { id } = useParams();
     const [annonce, setAnnonce] = useState<any>(null);
 
     useEffect(() => {
         // À remplacer par ton vrai endpoint API
         fetch(`${API_URL}/requests/public/${id}`)
-            .then((res) => res.json())
+            .then((res) => {
+                if (!res.ok) throw new Error("Erreur serveur");
+                return res.json();
+            })
             .then((data) => setAnnonce(data))
             .catch((err) => console.error("Erreur chargement annonce:", err));
     }, [id]);
@@ -60,4 +63,4 @@ const AnnonceDetailPro = () => {
     );
 };
 
-export default AnnonceDetailPro;
+export default AnnonceDetail;

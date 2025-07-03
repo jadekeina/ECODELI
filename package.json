@@ -26,6 +26,7 @@
     "express": "^5.1.0",
     "morgan": "^1.10.0",
     "mysql2": "^3.14.1",
+    "nodemailer": "^7.0.4",
     "use-places-autocomplete": "^4.0.1"
   },
   "devDependencies": {
