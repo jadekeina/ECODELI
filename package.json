@@ -27,6 +27,7 @@
     "morgan": "^1.10.0",
     "mysql2": "^3.14.1",
     "nodemailer": "^7.0.4",
+    "react-datepicker": "^8.4.0",
     "use-places-autocomplete": "^4.0.1"
   },
   "devDependencies": {

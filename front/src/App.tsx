@@ -1,10 +1,13 @@
-import { useContext } from "react";
+import {JSX, useContext} from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { UserContext } from "./contexts/UserContext";
+import 'leaflet/dist/leaflet.css';
+
 
 import ProtectedRoute from "./components/ProtectedRoute";
+import RoleRoute from "./components/RoleRoute";
 import HeaderPublic from "./components/header";
 import Footer from "./components/Footer";
 
@@ -24,7 +27,12 @@ import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
-// Pages clients
+//Gestion erreur
+import AccessDenied from "./pages/AccessDenied";
+import NotFound from "./pages/NotFound";
+
+
+// Pages privées
 import AppHome from "./pages/AppHome";
 import Dashboard from "./pages/Dashboard";
 import Account from "./pages/Account";
@@ -32,6 +40,8 @@ import History from "./pages/History";
 import MesTrajets from "./pages/Trips";
 import CreateAnnonce from "./components/CreateAnnonce";
 import DeposerContenu from "./pages/DeposerContenu";
+import Trajet from "./pages/client/Trajet";
+
 
 // Pages pros
 import RegisterPro from "./pages/RegisterPro";
@@ -66,22 +76,8 @@ function App() {
     return (
         <Elements stripe={stripePromise}>
             <Routes>
-
-                {/* 🌐 Public pages */}
-                <Route
-                    path="/"
-                    element={
-                        user ? (
-                            <Navigate to="/app" replace />
-                        ) : (
-                            <>
-                                <HeaderPublic />
-                                <Home />
-                                <Footer />
-                            </>
-                        )
-                    }
-                />
+                {/* Public Pages */}
+                <Route path="/" element={user ? <Navigate to="/app" replace /> : <><HeaderPublic /><Home /><Footer /></>} />
                 <Route path="/prix" element={<><HeaderPublic /><Prix /><Footer /></>} />
                 <Route path="/NosEngagements" element={<><HeaderPublic /><NosEngagements /><Footer /></>} />
                 <Route path="/Comment-ca-marche" element={<><HeaderPublic /><CommentCaMarche /><Footer /></>} />
@@ -90,19 +86,29 @@ function App() {
                 <Route path="/connexion" element={<><HeaderPublic /><Login /><Footer /></>} />
                 <Route path="/inscription" element={<><HeaderPublic /><Register /><Footer /></>} />
 
-                {/* 🔐 Private pages (role-based layout) */}
+                {/* Gestion d'erreur */}
+                <Route path="/access-denied" element={<AccessDenied />} />
+                <Route path="*" element={<NotFound />} />
+
+
+                {/* Private Pages (Role-based Layouts) */}
                 <Route path="/app" element={<ProtectedRoute>{renderWithLayout(<AppHome />)}</ProtectedRoute>} />
                 <Route path="/dashboard" element={<ProtectedRoute>{renderWithLayout(<Dashboard />)}</ProtectedRoute>} />
                 <Route path="/mon-compte" element={<ProtectedRoute>{renderWithLayout(<Account />)}</ProtectedRoute>} />
                 <Route path="/history" element={<ProtectedRoute>{renderWithLayout(<History />)}</ProtectedRoute>} />
-                <Route path="/mes-trajets" element={<ProtectedRoute>{renderWithLayout(<MesTrajets />)}</ProtectedRoute>} />
-                <Route path="/mes-prestations" element={<ProtectedRoute>{renderWithLayout(<MesPrestations />)}</ProtectedRoute>} />
-                <Route path="/deposer-annonce" element={<ProtectedRoute>{renderWithLayout(<CreateAnnonce />)}</ProtectedRoute>} />
-                <Route path="/deposer-contenu" element={<ProtectedRoute>{renderWithLayout(<DeposerContenu />)}</ProtectedRoute>} />
-                <Route path="/inscription-pro" element={<ProtectedRoute>{renderWithLayout(<RegisterPro />)}</ProtectedRoute>} />
-                <Route path="/annonces" element={<ProtectedRoute>{renderWithLayout(<Requests />)}</ProtectedRoute>} />
-                <Route path="/requests/:id" element={<ProtectedRoute>{renderWithLayout(<RequestDetails />)}</ProtectedRoute>} />
 
+                {/* Client*/}
+                <Route path="/mes-trajets" element={<ProtectedRoute><RoleRoute allowedRoles={["client"]}>{renderWithLayout(<MesTrajets />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/trajet" element={<ProtectedRoute><RoleRoute allowedRoles={["client"]}>{renderWithLayout(<Trajet />)}</RoleRoute></ProtectedRoute>} />
+
+                <Route path="/mes-prestations" element={<ProtectedRoute><RoleRoute allowedRoles={["provider"]}>{renderWithLayout(<MesPrestations />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/annonces" element={<ProtectedRoute><RoleRoute allowedRoles={["provider", "delivery_driver", "shop_owner"]}>{renderWithLayout(<Requests />)}</RoleRoute></ProtectedRoute>} />
+
+                <Route path="/deposer-annonce" element={<ProtectedRoute><RoleRoute allowedRoles={["client"]}>{renderWithLayout(<CreateAnnonce />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/deposer-contenu" element={<ProtectedRoute><RoleRoute allowedRoles={["client"]}>{renderWithLayout(<DeposerContenu />)}</RoleRoute></ProtectedRoute>} />
+
+                <Route path="/inscription-pro" element={<ProtectedRoute>{renderWithLayout(<RegisterPro />)}</ProtectedRoute>} />
+                <Route path="/requests/:id" element={<ProtectedRoute>{renderWithLayout(<RequestDetails />)}</ProtectedRoute>} />
             </Routes>
         </Elements>
     );
