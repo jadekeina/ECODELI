@@ -1,5 +1,7 @@
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 const userModel = require("../../models/users");
+const sendMail = require("../../librairies/mailer");
 
 // Fonction utilitaire pour générer un username unique de base
 function generateUsername(firstname) {
@@ -14,6 +16,7 @@ async function createUser(data) {
 
   const hashedPassword = await bcrypt.hash(data.password, 10);
   const generatedUsername = generateUsername(data.firstname);
+  const token = crypto.randomBytes(32).toString("hex");
 
   const newUser = {
     firstname: data.firstname,
@@ -23,13 +26,29 @@ async function createUser(data) {
     password: hashedPassword,
     sexe: null,
     profilpicture: "./public/default-avatar.png",
-    birthday: null
+    birthday: null,
+    email_token: token,
+    email_verified: false,
   };
 
   return new Promise((resolve, reject) => {
-    userModel.createUser(newUser, (err, result) => {
+    userModel.createUser(newUser, async (err, result) => {
       if (err) return reject(err);
-      resolve({ id: result.insertId, ...newUser });
+
+      try {
+        const link = `${process.env.BASE_URL}/api/auth/verify-email/${token}`;
+        await sendMail({
+          to: data.mail,
+          subject: "Confirmez votre adresse email",
+          html: `<p>Merci pour votre inscription sur EcoDeli.</p>
+                 <p>Pour activer votre compte, cliquez ici :</p>
+                 <a href="${link}">${link}</a>`,
+        });
+
+        resolve({ id: result.insertId, ...newUser });
+      } catch (mailError) {
+        reject(mailError);
+      }
     });
   });
 }

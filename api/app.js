@@ -34,6 +34,9 @@ const userPatchRoute = require("./app/routes/users/patch");
 // Routes auth
 const authLoginRoute = require("./app/routes/auth/login");
 const authLogoutRoute = require("./app/routes/auth/logout");
+const verifyEmailRoute = require("./app/routes/auth/verifyEmail");
+const sendresetPasswordRoute = require("./app/routes/auth/sendResetPassword");
+const resetPasswordRoute = require("./app/routes/auth/resetPassword");
 
 // Routes livreurs
 const deliveryDriverRoute = require("./app/routes/deliveryDriver/post");
@@ -67,6 +70,9 @@ app.use("/users", userPatchRoute);
 // Auth
 app.use("/auth/login", authLoginRoute);
 app.use("/auth/logout", authLogoutRoute);
+app.use('/api/auth/verify-email', verifyEmailRoute);
+app.use('/api/auth',sendresetPasswordRoute);
+app.use('/api/auth', resetPasswordRoute);
 
 // Livreurs
 app.use("/delivery-driver", deliveryDriverRoute);
@@ -89,6 +95,12 @@ app.use("/documents", getDocumentRoute);
 app.use("/requests", requestsRoutes);
 app.use("/requests/my", requestsMyRoutes);
 app.use("/requests/public", requestsPublicRoutes);
+
+//Warehouses
+const warehousePublicRoutes = require("./app/routes/warehouses/public");
+const warehousePrivateRoutes = require("./app/routes/warehouses/private");
+app.use("/warehouses", warehousePublicRoutes);      // GET
+app.use("/admin/warehouses", warehousePrivateRoutes); // POST, DELETE, etc.
 
 //storage
 app.use('/storage', express.static(path.join(__dirname, 'app', 'storage')));

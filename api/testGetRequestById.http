@@ -1,4 +1,8 @@
-### TEST CREATION PROVIDER
-GET http://localhost:3002/users/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm1haWwiOiJ0ZXN0QGljbG91ZC5jb20iLCJyb2xlIjoicHJvdmlkZXIiLCJ0aW1lc3RhbXAiOjE3NTE1MzM1MjE2NjEsImlhdCI6MTc1MTUzMzUyMSwiZXhwIjoxNzUxNTQwNzIxfQ.uBGSWvLmOP07EN0Z4KSAQQRaHraYi2vExxeYcXC4QZo
+### 🔹 1. Créer un utilisateur (avec mail de confirmation)
+POST http://localhost:3002/api/auth/verify-email/e1b00411bf9575860962577ff73458abd37b1db94e14a9addbdd92f1e74395c4
 Content-Type: application/json
+
+{
+  "password": "root"
+}
+
