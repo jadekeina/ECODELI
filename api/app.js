@@ -14,7 +14,13 @@ app.use(express.static('public'));
 
 app.use(morgan("dev"));
 app.use(cors());
-app.use(express.json());
+app.use(
+    express.json({
+      verify: (req, res, buf) => {
+        req.rawBody = buf.toString();
+      },
+    })
+);
 app.use(express.urlencoded({ extended: true }));
 
 // Connexion MySQL
@@ -61,6 +67,16 @@ const requestsRoutes = require("./app/routes/requests/post");
 const requestsMyRoutes = require("./app/routes/requests/my");
 const requestsPublicRoutes = require("./app/routes/requests/public");
 
+//rides
+const ridePostRoute = require("./app/routes/rides/post");
+const rideGetRoute = require("./app/routes/rides/get");
+const rideInvoiceRoute = require("./app/routes/rides/getInvoice");
+
+//Payments
+const stripeWebhookRoute = require("./app/routes/payments/webhook");
+const stripePaymentRoute = require("./app/routes/payments/post");
+
+
 // Users
 app.use("/users", userMeRoute);
 app.use("/users", userRoutesGet);
@@ -101,6 +117,29 @@ const warehousePublicRoutes = require("./app/routes/warehouses/public");
 const warehousePrivateRoutes = require("./app/routes/warehouses/private");
 app.use("/warehouses", warehousePublicRoutes);      // GET
 app.use("/admin/warehouses", warehousePrivateRoutes); // POST, DELETE, etc.
+
+
+
+//Ride
+app.use("/rides", ridePostRoute);
+app.use("/rides", rideGetRoute);
+app.use("/rides", rideInvoiceRoute);
+
+//Payments
+app.use("/api/webhook/stripe", stripeWebhookRoute);
+app.use("/payments", stripePaymentRoute);
+
+// Invoices
+const invoiceRoutes = require("./app/routes/invoices/get");
+app.use("/invoices", invoiceRoutes);
+
+// Emails
+const emailRoutes = require("./app/routes/emails/notify");
+app.use("/emails", emailRoutes);
+
+// Status updates (dynamique selon la table)
+const statusRoutes = require("./app/routes/status/patch");
+app.use("/status", statusRoutes);
 
 //storage
 app.use('/storage', express.static(path.join(__dirname, 'app', 'storage')));

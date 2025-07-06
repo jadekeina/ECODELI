@@ -174,6 +174,39 @@ CREATE TABLE box (
                      FOREIGN KEY (entrepot_id) REFERENCES warehouse(id)
 );
 
+-- Trajet
+CREATE TABLE rides (
+                       id INT AUTO_INCREMENT PRIMARY KEY,
+                       user_id INT NOT NULL,
+                       depart_address VARCHAR(255),
+                       arrivee_address VARCHAR(255),
+                       distance_km DECIMAL(10, 2),
+                       duree TEXT,
+                       base_price DECIMAL(10, 2),
+                       commission DECIMAL(10, 2),
+                       tva DECIMAL(10, 2),
+                       total_price DECIMAL(10, 2),
+                       status ENUM('en_attente', 'acceptee', 'refusee', 'en_cours', 'terminee', 'annulee') DEFAULT 'en_attente',
+                       note TEXT,
+                       scheduled_date DATETIME,
+                       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+
+--Payments
+
+CREATE TABLE payments (
+                          id INT AUTO_INCREMENT PRIMARY KEY,
+                          ride_id INT NOT NULL,
+                          stripe_payment_id VARCHAR(255),
+                          amount DECIMAL(10, 2),
+                          status ENUM('succeeded', 'failed', 'pending') DEFAULT 'pending',
+                          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                          FOREIGN KEY (ride_id) REFERENCES rides(id)
+);
 
 
 

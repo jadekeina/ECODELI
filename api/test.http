@@ -1,0 +1,9 @@
+### 📧 Envoi d’email de confirmation
+POST http://localhost:3002/emails/ride/1/notify
+Content-Type: application/json
+
+{
+  "mail": "sandrine.ebelebe@gmail.com",
+  "subject": "Votre commande EcoDeli",
+  "message": "Votre course a bien été confirmée."
+}

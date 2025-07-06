@@ -1,0 +1,11 @@
+### 🔁 Paiement avec Stripe
+POST http://localhost:3002/payments
+Content-Type: application/json
+
+{
+  "type": "ride",
+  "data": {
+    "ride_id": 1,
+    "amount": 3960
+  }
+}
