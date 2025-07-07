@@ -91,3 +91,17 @@ exports.updatePassword = (userId, hashedPassword, callback) => {
   const sql = "UPDATE users SET password = ?, reset_token = NULL, reset_token_expires = NULL WHERE id = ?";
   db.query(sql, [hashedPassword, userId], callback);
 };
+
+exports.getUserByEmailToken = (token, callback) => {
+  db.query("SELECT * FROM users WHERE email_token = ?", [token], callback);
+};
+
+exports.clearUserEmailToken = (id, callback) => {
+  db.query("UPDATE users SET email_token = NULL, email_verified = 1 WHERE id = ?", [id], callback);
+};
+
+exports.updateEmailToken = (userId, emailToken, expiresAt, callback) => {
+  const sql = `UPDATE users SET email_token = ?, email_token_expires = ? WHERE id = ?`;
+  const values = [emailToken, expiresAt, userId];
+  db.query(sql, values, callback);
+};

@@ -11,7 +11,7 @@ router.get("/:token", async (req, res) => {
     }
 
     // Rechercher l'utilisateur correspondant au token
-    userModel.getUserByToken(token, (err, results) => {
+    userModel.getUserByEmailToken(token, (err, results) => {
         if (err) {
             console.error("Erreur DB :", err);
             return jsonResponse(res, 500, {}, { message: "Erreur serveur" });
@@ -24,7 +24,7 @@ router.get("/:token", async (req, res) => {
         const user = results[0];
 
         // Mettre le token à NULL = confirmation du compte
-        userModel.clearUserToken(user.id, (updateErr) => {
+        userModel.clearUserEmailToken(user.id, (updateErr) => {
             if (updateErr) {
                 return jsonResponse(res, 500, {}, { message: "Erreur lors de la validation" });
             }

@@ -4,25 +4,27 @@ USE ecodeli;
 
 -- 👤 Utilisateurs
 CREATE TABLE users (
-                       id                  INT AUTO_INCREMENT PRIMARY KEY,
-                       firstname           VARCHAR(100)        NOT NULL,
-                       lastname            VARCHAR(100)        NOT NULL,
-                       username            VARCHAR(100) UNIQUE NOT NULL,
-                       mail                VARCHAR(255) UNIQUE NOT NULL,
-                       password            TEXT                NOT NULL,
-                       sexe                ENUM('H', 'F', 'Autre') DEFAULT NULL,
-                       profilpicture       VARCHAR(255) DEFAULT 'default.jpg',
-                       birthday            DATE DEFAULT NULL,
-                       token               TEXT DEFAULT NULL,
-                       role                ENUM('client', 'provider', 'delivery-driver', 'shop-owner', 'admin') DEFAULT 'client',
-                       dateInscription     DATETIME DEFAULT CURRENT_TIMESTAMP,
+                       id                    INT AUTO_INCREMENT PRIMARY KEY,
+                       firstname             VARCHAR(100)        NOT NULL,
+                       lastname              VARCHAR(100)        NOT NULL,
+                       username              VARCHAR(100) UNIQUE NOT NULL,
+                       mail                  VARCHAR(255) UNIQUE NOT NULL,
+                       password              TEXT                NOT NULL,
+                       sexe                  ENUM('H', 'F', 'Autre') DEFAULT NULL,
+                       profilpicture         VARCHAR(255) DEFAULT 'default.jpg',
+                       birthday              DATE DEFAULT NULL,
+                       token                 TEXT DEFAULT NULL,
+                       role                  ENUM('client', 'provider', 'delivery-driver', 'shop-owner', 'admin') DEFAULT 'client',
+                       dateInscription       DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     -- Champs ajoutés pour gestion e-mail
-                       email_token         VARCHAR(255) DEFAULT NULL,
-                       email_verified      BOOLEAN DEFAULT FALSE,
-                       reset_token         VARCHAR(255) DEFAULT NULL,
-                       reset_token_expires DATETIME DEFAULT NULL
+                       email_token           VARCHAR(255) DEFAULT NULL,
+                       email_token_expires   DATETIME DEFAULT NULL,
+                       email_verified        BOOLEAN DEFAULT FALSE,
+                       reset_token           VARCHAR(255) DEFAULT NULL,
+                       reset_token_expires   DATETIME DEFAULT NULL
 );
+
 
 
 -- 📍 Adresses
@@ -195,14 +197,14 @@ CREATE TABLE rides (
 
 
 
---Payments
+-- Payments
 
 CREATE TABLE payments (
                           id INT AUTO_INCREMENT PRIMARY KEY,
                           ride_id INT NOT NULL,
                           stripe_payment_id VARCHAR(255),
                           amount DECIMAL(10, 2),
-                          status ENUM('succeeded', 'failed', 'pending') DEFAULT 'pending',
+                          status ENUM('succeeded', 'failed', 'pending', 'processing') DEFAULT 'pending',
                           created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                           updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                           FOREIGN KEY (ride_id) REFERENCES rides(id)

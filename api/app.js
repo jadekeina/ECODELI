@@ -1,155 +1,107 @@
 const path = require("path");
 require("dotenv").config({
-  path: process.env.NODE_ENV === "production"
-      ? path.resolve(__dirname, "../.env.prod")
-      : path.resolve(__dirname, "../.env"),
+    path: process.env.NODE_ENV === "production"
+        ? path.resolve(__dirname, ".env.prod")
+        : path.resolve(__dirname, ".env"),
 });
+
 const express = require("express");
 const app = express();
 const cors = require("cors");
 const morgan = require("morgan");
 
-// Middleware pour servir les fichiers statiques du dossier 'public'
-app.use(express.static('public'));
+const handleStripeWebhook = require("./app/controllers/payments/handleStripeWebhook");
 
+// ✅ Webhook Stripe - doit être mis **avant** express.json()
+// express.raw() met le corps brut de la requête dans req.body
+app.post(
+    "/webhooks/stripe",
+    express.raw({ type: "application/json" }),
+    handleStripeWebhook
+);
+
+// ✅ Middlewares généraux (pour toutes les autres routes)
+app.use(express.static("public"));
 app.use(morgan("dev"));
 app.use(cors());
-app.use(
-    express.json({
-      verify: (req, res, buf) => {
-        req.rawBody = buf.toString();
-      },
-    })
-);
+// express.json() sans l'option 'verify' car express.raw() gère déjà le webhook
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Connexion MySQL
+// ✅ Connexion MySQL
 require("./config/db");
 
-//api-google
-const distanceRoutes = require("./app/routes/distance.js");
-app.use("/distance", distanceRoutes);
-
-
-// Routes users
-const userMeRoute = require("./app/routes/users/me");
-const userRoutesGet = require("./app/routes/users/get");
-const userRoutesPost = require("./app/routes/users/post");
-const userPatchRoute = require("./app/routes/users/patch");
-
-// Routes auth
-const authLoginRoute = require("./app/routes/auth/login");
-const authLogoutRoute = require("./app/routes/auth/logout");
-const verifyEmailRoute = require("./app/routes/auth/verifyEmail");
-const sendresetPasswordRoute = require("./app/routes/auth/sendResetPassword");
-const resetPasswordRoute = require("./app/routes/auth/resetPassword");
-
-// Routes livreurs
-const deliveryDriverRoute = require("./app/routes/deliveryDriver/post");
-const deliveryDriverPatch = require("./app/routes/deliveryDriver/patch");
-
-// Routes prestataires
-const providerRoute = require("./app/routes/provider/post");
-const providerPatch = require("./app/routes/provider/patch");
-
-// Routes commerçants
-const shopOwnerRoute = require("./app/routes/shopOwner/post");
-const shopOwnerPatch = require("./app/routes/shopOwner/patch");
-
-// Routes documents
-const postDocumentRoute = require("./app/routes/documents/post");
-const patchDocumentRoute = require("./app/routes/documents/patch");
-const getDocumentRoute = require("./app/routes/documents/get");
-
-
-//Requests
-const requestsRoutes = require("./app/routes/requests/post");
-const requestsMyRoutes = require("./app/routes/requests/my");
-const requestsPublicRoutes = require("./app/routes/requests/public");
-
-//rides
-const ridePostRoute = require("./app/routes/rides/post");
-const rideGetRoute = require("./app/routes/rides/get");
-const rideInvoiceRoute = require("./app/routes/rides/getInvoice");
-
-//Payments
-const stripeWebhookRoute = require("./app/routes/payments/webhook");
-const stripePaymentRoute = require("./app/routes/payments/post");
-
+// Routes
+app.use("/distance", require("./app/routes/distance.js"));
 
 // Users
-app.use("/users", userMeRoute);
-app.use("/users", userRoutesGet);
-app.use("/users", userRoutesPost);
-app.use("/users", userPatchRoute);
+app.use("/users", require("./app/routes/users/me"));
+app.use("/users", require("./app/routes/users/get"));
+app.use("/users", require("./app/routes/users/post"));
+app.use("/users", require("./app/routes/users/patch"));
 
 // Auth
-app.use("/auth/login", authLoginRoute);
-app.use("/auth/logout", authLogoutRoute);
-app.use('/api/auth/verify-email', verifyEmailRoute);
-app.use('/api/auth',sendresetPasswordRoute);
-app.use('/api/auth', resetPasswordRoute);
+app.use("/auth/login", require("./app/routes/auth/login"));
+app.use("/auth/logout", require("./app/routes/auth/logout"));
+app.use("/api/auth/verify-email", require("./app/routes/auth/verifyEmail"));
+app.use("/api/auth", require("./app/routes/auth/sendResetPassword"));
+app.use("/api/auth", require("./app/routes/auth/resetPassword"));
+app.use("/api/auth/resend-email", require("./app/routes/auth/resend-mail"));
 
 // Livreurs
-app.use("/delivery-driver", deliveryDriverRoute);
-app.use("/delivery-driver", deliveryDriverPatch);
+app.use("/delivery-driver", require("./app/routes/deliveryDriver/post"));
+app.use("/delivery-driver", require("./app/routes/deliveryDriver/patch"));
 
 // Prestataires
-app.use("/provider", providerRoute);
-app.use("/provider", providerPatch);
+app.use("/provider", require("./app/routes/provider/post"));
+app.use("/provider", require("./app/routes/provider/patch"));
 
 // Commerçants
-app.use("/shop-owner", shopOwnerRoute);
-app.use("/shop-owner", shopOwnerPatch);
+app.use("/shop-owner", require("./app/routes/shopOwner/post"));
+app.use("/shop-owner", require("./app/routes/shopOwner/patch"));
 
 // Documents
-app.use("/documents", postDocumentRoute);
-app.use("/documents", patchDocumentRoute);
-app.use("/documents", getDocumentRoute);
+app.use("/documents", require("./app/routes/documents/post"));
+app.use("/documents", require("./app/routes/documents/patch"));
+app.use("/documents", require("./app/routes/documents/get"));
 
-//Requests
-app.use("/requests", requestsRoutes);
-app.use("/requests/my", requestsMyRoutes);
-app.use("/requests/public", requestsPublicRoutes);
+// Requests
+app.use("/requests", require("./app/routes/requests/post"));
+app.use("/requests/my", require("./app/routes/requests/my"));
+app.use("/requests/public", require("./app/routes/requests/public"));
 
-//Warehouses
-const warehousePublicRoutes = require("./app/routes/warehouses/public");
-const warehousePrivateRoutes = require("./app/routes/warehouses/private");
-app.use("/warehouses", warehousePublicRoutes);      // GET
-app.use("/admin/warehouses", warehousePrivateRoutes); // POST, DELETE, etc.
+// Warehouses
+app.use("/warehouses", require("./app/routes/warehouses/public"));
+app.use("/admin/warehouses", require("./app/routes/warehouses/private"));
 
+// Rides
+app.use("/rides", require("./app/routes/rides/post"));
+app.use("/rides", require("./app/routes/rides/get"));
+app.use("/rides", require("./app/routes/rides/getInvoice"));
+app.use("/rides", require("./app/routes/rides/status"));
+app.use("/rides", require("./app/routes/rides/assign"));
 
-
-//Ride
-app.use("/rides", ridePostRoute);
-app.use("/rides", rideGetRoute);
-app.use("/rides", rideInvoiceRoute);
-
-//Payments
-app.use("/api/webhook/stripe", stripeWebhookRoute);
-app.use("/payments", stripePaymentRoute);
+// Payments
+app.use("/payments", require("./app/routes/payments/post"));
 
 // Invoices
-const invoiceRoutes = require("./app/routes/invoices/get");
-app.use("/invoices", invoiceRoutes);
+app.use("/invoices", require("./app/routes/invoices/get"));
 
 // Emails
-const emailRoutes = require("./app/routes/emails/notify");
-app.use("/emails", emailRoutes);
+app.use("/emails", require("./app/routes/emails/notify"));
 
-// Status updates (dynamique selon la table)
-const statusRoutes = require("./app/routes/status/patch");
-app.use("/status", statusRoutes);
+// Status updates
+app.use("/status", require("./app/routes/status/patch"));
 
-//storage
+// Storage
 app.use('/storage', express.static(path.join(__dirname, 'app', 'storage')));
 
-
+// Default route
 app.get("/", (req, res) => {
-  res.send("EcoDeli API is running ✅");
+    res.send("EcoDeli API is running ✅");
 });
 
-
+// Start
 app.listen(process.env.PORT || 3002, () => {
-  console.log(`✅ Serveur EcoDeli lancé sur http://localhost:${process.env.PORT || 3002}`);
+    console.log(`✅ Serveur EcoDeli lancé sur http://localhost:${process.env.PORT || 3002}`);
 });
