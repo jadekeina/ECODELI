@@ -43,10 +43,12 @@ app.use("/users", require("./app/routes/users/patch"));
 // Auth
 app.use("/auth/login", require("./app/routes/auth/login"));
 app.use("/auth/logout", require("./app/routes/auth/logout"));
-app.use("/api/auth/verify-email", require("./app/routes/auth/verifyEmail"));
-app.use("/api/auth", require("./app/routes/auth/sendResetPassword"));
-app.use("/api/auth", require("./app/routes/auth/resetPassword"));
-app.use("/api/auth/resend-email", require("./app/routes/auth/resend-mail"));
+app.use("/auth/verify-email", require("./app/routes/auth/verifyEmail"));
+app.use("/auth/send-reset-password", require("./app/routes/auth/sendResetPassword"));
+app.use("/auth/reset-password", require("./app/routes/auth/resetPassword"));
+app.use("/auth/resend-email", require("./app/routes/auth/resend-mail"));
+app.use("/auth/forgot-password", require("./app/routes/auth/forgotPassword"));
+
 
 // Livreurs
 app.use("/delivery-driver", require("./app/routes/deliveryDriver/post"));

@@ -12,7 +12,7 @@ router.post("/", (req, res) => {
         return jsonResponse(res, 400, {}, { message: "Adresse mail manquante" });
     }
 
-    userModel.getUserByEmailToken(mail, (err, results) => {
+    userModel.getUserByEmail(mail, (err, results) => {
         if (err) return jsonResponse(res, 500, {}, { message: "Erreur serveur" });
 
         if (results.length === 0) {
@@ -31,16 +31,17 @@ router.post("/", (req, res) => {
         userModel.updateEmailToken(user.id, emailToken, expiresAt, async (updateErr) => {
             if (updateErr) return jsonResponse(res, 500, {}, { message: "Erreur enregistrement token" });
 
-            const confirmLink = `http://localhost:3002/api/auth/verify-email/${emailToken}`;
+            const confirmLink = `${process.env.FRONT_URL}/email-confirmed/${token}`;
 
             await sendMail({
-                to: mail,
-                subject: "Confirmation de votre adresse mail",
-                html: `<p>Bonjour ${user.firstname},</p>
-               <p>Veuillez confirmer votre adresse en cliquant ci-dessous :</p>
-               <a href="${confirmLink}">${confirmLink}</a>
-               <p>Ce lien expire dans 24h.</p>`
+                to: data.mail, // ou `mail` selon le contexte
+                subject: "Confirmez votre adresse email",
+                html: `<p>Merci pour votre inscription sur EcoDeli.</p>
+         <p>Pour activer votre compte, cliquez ici :</p>
+         <a href="${confirmLink}">${confirmLink}</a>`
             });
+
+
 
             return jsonResponse(res, 200, {}, { message: "Mail de confirmation renvoyé" });
         });

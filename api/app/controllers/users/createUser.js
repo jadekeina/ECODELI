@@ -1,56 +1,62 @@
 const bcrypt = require("bcrypt");
+const db = require("../../../config/db");
 const crypto = require("crypto");
-const userModel = require("../../models/users");
 const sendMail = require("../../librairies/mailer");
 
-// Fonction utilitaire pour générer un username unique de base
-function generateUsername(firstname) {
-  const suffix = Math.floor(1000 + Math.random() * 9000); // ex : jade4832
-  return `${firstname.toLowerCase()}${suffix}`;
-}
-
 async function createUser(data) {
-  if (!data.password || !data.mail || !data.firstname || !data.lastname) {
-    throw new Error("Champs obligatoires manquants");
-  }
+  try {
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const emailToken = crypto.randomBytes(32).toString("hex");
 
-  const hashedPassword = await bcrypt.hash(data.password, 10);
-  const generatedUsername = generateUsername(data.firstname);
-  const token = crypto.randomBytes(32).toString("hex");
+    const sql = `
+      INSERT INTO users
+      (firstname, lastname, username, mail, password, sexe, profilpicture, birthday, email_token, email_verified)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-  const newUser = {
-    firstname: data.firstname,
-    lastname: data.lastname,
-    username: generatedUsername,
-    mail: data.mail,
-    password: hashedPassword,
-    sexe: null,
-    profilpicture: "./public/default-avatar.png",
-    birthday: null,
-    email_token: token,
-    email_verified: false,
-  };
+    const values = [
+      data.firstname,
+      data.lastname,
+      data.username,
+      data.mail,
+      hashedPassword,
+      data.sexe || null,
+      data.profilpicture || "./public/default-avatar.png",
+      data.birthday || null,
+      emailToken,
+      false
+    ];
 
-  return new Promise((resolve, reject) => {
-    userModel.createUser(newUser, async (err, result) => {
-      if (err) return reject(err);
-
-      try {
-        const link = `${process.env.BASE_URL}/api/auth/verify-email/${token}`;
-        await sendMail({
-          to: data.mail,
-          subject: "Confirmez votre adresse email",
-          html: `<p>Merci pour votre inscription sur EcoDeli.</p>
-                 <p>Pour activer votre compte, cliquez ici :</p>
-                 <a href="${link}">${link}</a>`,
-        });
-
-        resolve({ id: result.insertId, ...newUser });
-      } catch (mailError) {
-        reject(mailError);
-      }
+    const result = await new Promise((resolve, reject) => {
+      db.query(sql, values, (err, results) => {
+        if (err) return reject(err);
+        return resolve(results);
+      });
     });
-  });
+
+    const confirmLink = `${process.env.FRONT_URL}/email-confirmed/${token}`;
+
+    await sendMail({
+      to: data.mail, // ou `mail` selon le contexte
+      subject: "Confirmez votre adresse email",
+      html: `<p>Merci pour votre inscription sur EcoDeli.</p>
+         <p>Pour activer votre compte, cliquez ici :</p>
+         <a href="${confirmLink}">${confirmLink}</a>`
+    });
+
+    return {
+      id: result.insertId,
+      firstname: data.firstname,
+      lastname: data.lastname,
+      username: data.username,
+      mail: data.mail,
+      profilpicture: data.profilpicture || "./public/default-avatar.png",
+      role: "client",
+      email_verified: false
+    };
+  } catch (error) {
+    console.error("❌ Erreur création utilisateur :", error);
+    throw error;
+  }
 }
 
 module.exports = createUser;

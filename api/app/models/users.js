@@ -105,3 +105,7 @@ exports.updateEmailToken = (userId, emailToken, expiresAt, callback) => {
   const values = [emailToken, expiresAt, userId];
   db.query(sql, values, callback);
 };
+
+exports.getUserByMail = (mail, callback) => {
+  db.query("SELECT * FROM users WHERE mail = ?", [mail], callback);
+};

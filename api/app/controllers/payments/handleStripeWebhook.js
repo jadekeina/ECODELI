@@ -71,7 +71,11 @@ const handleStripeWebhook = async (req, res) => {
             console.log("❌ Traitement d'un échec de paiement...");
             await updatePaymentStatus(payment.id, "failed");
         }
-        // Tu peux ajouter d'autres types d'événements Stripe à gérer ici si nécessaire
+
+        if (!sig) {
+            console.warn("⚠️ Signature Stripe manquante !");
+            return res.status(400).send("Signature manquante");
+        }
 
         console.log("📬 Webhook traité avec succès.");
         return res.status(200).json({ received: true });

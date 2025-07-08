@@ -26,6 +26,11 @@ import ExpedierOuRecevoir from "./pages/ExpedierOuRecevoir";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
+import ResendEmail from "./pages/auth/ResendEmail";
+import EmailConfirmed from "./pages/auth/EmailConfirmed";
+
 
 //Gestion erreur
 import AccessDenied from "./pages/AccessDenied";
@@ -85,6 +90,11 @@ function App() {
                 <Route path="/contact" element={<><HeaderPublic /><Contact /><Footer /></>} />
                 <Route path="/connexion" element={<><HeaderPublic /><Login /><Footer /></>} />
                 <Route path="/inscription" element={<><HeaderPublic /><Register /><Footer /></>} />
+                <Route path="/forgot-password" element={<><HeaderPublic /><ForgotPassword /><Footer /></>} />
+                <Route path="/reset-password/:token" element={<><HeaderPublic /><ResetPassword /><Footer /></>} />
+                <Route path="/resend-email" element={<><HeaderPublic /><ResendEmail /><Footer /></>} />
+                <Route path="/email-confirmed" element={<><HeaderPublic /><EmailConfirmed /><Footer /></>} />
+
 
                 {/* Gestion d'erreur */}
                 <Route path="/access-denied" element={<AccessDenied />} />

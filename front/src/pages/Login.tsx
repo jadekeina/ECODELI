@@ -86,12 +86,12 @@ const Login = () => {
           </span>
           </div>
 
-          <div className="flex-row">
+          <div className="flex-row mt-4">
             <div>
               <input type="checkbox" />
-              <label>Remember me </label>
+              <label> Se souvenir de moi </label>
             </div>
-            <span className="span">Forgot password?</span>
+            <Link to="/forgot-password" className="span">Mot de passe oublié ?</Link>
           </div>
 
           <button className="button-submit">Sign In</button>
@@ -102,8 +102,8 @@ const Login = () => {
               </p>
           )}
 
-          <p className="p">Don't have an account? <Link to="/inscription" className="span">Créez-en un</Link></p>
-          <p className="p line">Or With</p>
+          <p className="p">Vous n'avez pas de compte ?<Link to="/inscription" className="span">Créez-en un</Link></p>
+          <p className="p line">Ou avec</p>
 
           <div className="flex-row">
             <button className="btn google">
