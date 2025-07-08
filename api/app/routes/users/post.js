@@ -14,8 +14,14 @@ router.post("/", async (req, res) => {
     return jsonResponse(res, 201, {}, { message: "User created", user });
   } catch (error) {
     console.error("Error creating user:", error);
+
+    if (error.code === "ER_DUP_ENTRY") {
+      return jsonResponse(res, 409, {}, { message: "Adresse email déjà utilisée" });
+    }
+
     return jsonResponse(res, 500, {}, { message: "Internal Server Error", error: error.message });
   }
 });
+
 
 module.exports = router;

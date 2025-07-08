@@ -1,0 +1,8 @@
+### 🔹 1. Créer un utilisateur (avec mail de confirmation)
+POST http://localhost:3002/api/auth/verify-email/e1b00411bf9575860962577ff73458abd37b1db94e14a9addbdd92f1e74395c4
+Content-Type: application/json
+
+{
+  "password": "root"
+}
+
