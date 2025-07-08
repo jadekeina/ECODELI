@@ -1,0 +1,16 @@
+POST http://localhost:3002/webhooks/stripe
+Content-Type: application/json
+Stripe-Signature: t=1677600000,v1=YOUR_GENERATED_SIGNATURE_HERE // Ceci est un exemple, la vraie signature doit être générée
+
+{
+  "id": "evt_test_001",
+  "object": "event",
+  "type": "payment_intent.succeeded",
+  "data": {
+    "object": {
+      "id": "ch_3RiCDeCSsQb1TgL50lvEcA0H",
+      "object": "payment_intent"
+    }
+  }
+}
+

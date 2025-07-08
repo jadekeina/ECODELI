@@ -45,3 +45,10 @@ exports.getRequestsByUserId = (userId, callback) => {
 exports.getAllRequests = (callback) => {
     db.query("SELECT * FROM requests ORDER BY created_at DESC", callback);
 };
+
+// 🔍 Pour GET by Id /requests/public
+
+exports.getRequestById = (id, callback) => {
+    const sql = "SELECT * FROM requests WHERE id = ?";
+    db.query(sql, [id], callback);
+};

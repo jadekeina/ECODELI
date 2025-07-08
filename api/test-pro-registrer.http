@@ -1,18 +1,1 @@
-### TEST CREATION PROVIDER
-POST http://localhost:3002/requests/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm1haWwiOiJ0ZXN0QGljbG91ZC5jb20iLCJyb2xlIjoicHJvdmlkZXIiLCJ0aW1lc3RhbXAiOjE3NTE1MzM1MjE2NjEsImlhdCI6MTc1MTUzMzUyMSwiZXhwIjoxNzUxNTQwNzIxfQ.uBGSWvLmOP07EN0Z4KSAQQRaHraYi2vExxeYcXC4QZo
-Content-Type: application/json
-
-{
-  "type": "colis_total",
-  "titre": "Test sans image",
-  "description": "Une belle box mystère",
-  "longueur": 40,
-  "largeur": 30,
-  "poids": 5,
-  "prix": 25,
-  "prix_suggere": 20,
-  "adresse_depart": "Nice",
-  "adresse_arrivee": "Paris",
-  "date_demande": "2025-07-01"
-}
+GET http://localhost:3002/invoices/ride/1

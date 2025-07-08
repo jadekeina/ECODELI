@@ -1,0 +1,66 @@
+
+-- Entrepôts par région avec 3 box chacun
+INSERT INTO warehouse (title, size_m2, phone, address, photo) VALUES
+('Entrepôt Paris', 120.0, '0102030405', '15 Rue de la Paix, 75002 Paris', '/storage/default-images/warehouse.webp'),
+('Entrepôt Lyon', 110.0, '0601020304', '27 Rue de la République, 69002 Lyon', '/storage/default-images/warehouse.webp'),
+('Entrepôt Marseille', 90.0, '0405060708', '8 Boulevard Rabatau, 13010 Marseille', '/storage/default-images/warehouse.webp'),
+('Entrepôt Lille', 100.0, '0304050607', '12 Rue Nationale, 59800 Lille', '/storage/default-images/warehouse.webp'),
+('Entrepôt Bordeaux', 105.0, '0506070809', '22 Rue Sainte-Catherine, 33000 Bordeaux', '/storage/default-images/warehouse.webp'),
+('Entrepôt Toulouse', 115.0, '0708091011', '33 Avenue Jean Rieux, 31500 Toulouse', '/storage/default-images/warehouse.webp'),
+('Entrepôt Strasbourg', 95.0, '0809101112', '18 Rue du Faubourg-de-Pierre, 67000 Strasbourg', '/storage/default-images/warehouse.webp'),
+('Entrepôt Nantes', 98.0, '0910111213', '40 Rue du Calvaire, 44000 Nantes', '/storage/default-images/warehouse.webp'),
+('Entrepôt Rennes', 102.0, '0109111213', '14 Rue de la Monnaie, 35000 Rennes', '/storage/default-images/warehouse.webp'),
+('Entrepôt Nice', 88.0, '0612131415', '20 Rue Masséna, 06000 Nice', '/storage/default-images/warehouse.webp'),
+('Entrepôt Dijon', 93.0, '0713141516', '10 Rue de la Liberté, 21000 Dijon', '/storage/default-images/warehouse.webp'),
+('Entrepôt Ajaccio', 87.0, '0412131415', '5 Cours Napoléon, 20000 Ajaccio', '/storage/default-images/warehouse.webp');
+
+-- Box associées à chaque entrepôt (3 par entrepôt)
+INSERT INTO box (entrepot_id, titre, taillem2, numero, etat, dateHeureEntree, dateHeureSortie) VALUES
+-- Paris
+(1, 'Box A1', 10.0, 'A1', 'libre', NOW(), NULL),
+(1, 'Box A2', 8.0, 'A2', 'libre', NOW(), NULL),
+(1, 'Box A3', 12.0, 'A3', 'libre', NOW(), NULL),
+-- Lyon
+(2, 'Box B1', 9.0, 'B1', 'libre', NOW(), NULL),
+(2, 'Box B2', 11.0, 'B2', 'libre', NOW(), NULL),
+(2, 'Box B3', 10.0, 'B3', 'libre', NOW(), NULL),
+-- Marseille
+(3, 'Box C1', 7.0, 'C1', 'libre', NOW(), NULL),
+(3, 'Box C2', 10.0, 'C2', 'libre', NOW(), NULL),
+(3, 'Box C3', 9.0, 'C3', 'libre', NOW(), NULL),
+-- Lille
+(4, 'Box D1', 8.0, 'D1', 'libre', NOW(), NULL),
+(4, 'Box D2', 9.0, 'D2', 'libre', NOW(), NULL),
+(4, 'Box D3', 11.0, 'D3', 'libre', NOW(), NULL),
+-- Bordeaux
+(5, 'Box E1', 10.0, 'E1', 'libre', NOW(), NULL),
+(5, 'Box E2', 12.0, 'E2', 'libre', NOW(), NULL),
+(5, 'Box E3', 9.0, 'E3', 'libre', NOW(), NULL),
+-- Toulouse
+(6, 'Box F1', 10.0, 'F1', 'libre', NOW(), NULL),
+(6, 'Box F2', 8.0, 'F2', 'libre', NOW(), NULL),
+(6, 'Box F3', 11.0, 'F3', 'libre', NOW(), NULL),
+-- Strasbourg
+(7, 'Box G1', 9.0, 'G1', 'libre', NOW(), NULL),
+(7, 'Box G2', 10.0, 'G2', 'libre', NOW(), NULL),
+(7, 'Box G3', 12.0, 'G3', 'libre', NOW(), NULL),
+-- Nantes
+(8, 'Box H1', 8.0, 'H1', 'libre', NOW(), NULL),
+(8, 'Box H2', 10.0, 'H2', 'libre', NOW(), NULL),
+(8, 'Box H3', 11.0, 'H3', 'libre', NOW(), NULL),
+-- Rennes
+(9, 'Box I1', 10.0, 'I1', 'libre', NOW(), NULL),
+(9, 'Box I2', 8.0, 'I2', 'libre', NOW(), NULL),
+(9, 'Box I3', 12.0, 'I3', 'libre', NOW(), NULL),
+-- Nice
+(10, 'Box J1', 9.0, 'J1', 'libre', NOW(), NULL),
+(10, 'Box J2', 10.0, 'J2', 'libre', NOW(), NULL),
+(10, 'Box J3', 11.0, 'J3', 'libre', NOW(), NULL),
+-- Dijon
+(11, 'Box K1', 10.0, 'K1', 'libre', NOW(), NULL),
+(11, 'Box K2', 9.0, 'K2', 'libre', NOW(), NULL),
+(11, 'Box K3', 8.0, 'K3', 'libre', NOW(), NULL),
+-- Ajaccio
+(12, 'Box L1', 10.0, 'L1', 'libre', NOW(), NULL),
+(12, 'Box L2', 11.0, 'L2', 'libre', NOW(), NULL),
+(12, 'Box L3', 9.0, 'L3', 'libre', NOW(), NULL);
