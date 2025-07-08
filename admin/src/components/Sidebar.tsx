@@ -1,6 +1,6 @@
-import { Link, useLocation } from "react-router-dom"
-import { useState } from "react"
-import logo from "../assets/logo-title.webp"
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import logo from "../assets/logo-title.webp";
 import {
   LayoutDashboard,
   Users,
@@ -12,149 +12,180 @@ import {
   Settings,
   ChevronDown,
   ChevronRight
-} from "lucide-react"
+} from "lucide-react";
 
-export default function Sidebar() {
-  const location = useLocation()
-  const isActive = (path: string) => location.pathname === path
+const sections = [
+  {
+    key: "dashboard",
+    label: "Tableau de bord",
+    icon: <LayoutDashboard className="w-5 h-5" />,
+    links: [
+      { to: "/dashboard/overview", label: "Vue d'ensemble" },
+      { to: "/dashboard/alertes", label: "Alertes" }
+    ]
+  },
+  {
+    key: "utilisateurs",
+    label: "Utilisateurs",
+    icon: <Users className="w-5 h-5" />,
+    links: [
+      { to: "/utilisateurs/overview", label: "Vue d'ensemble" },
+      { to: "/utilisateurs/clients", label: "Clients" },
+      { to: "/utilisateurs/commercants", label: "Commerçants" },
+      { to: "/utilisateurs/prestataires", label: "Prestataires" },
+      { to: "/utilisateurs/admins", label: "Admins" }
+    ]
+  },
+  {
+    key: "documents",
+    label: "Documents",
+    icon: <FileText className="w-5 h-5" />,
+    links: [
+      { to: "/documents/overview", label: "Vue d'ensemble" },
+      { to: "/documents/validations", label: "Validations" },
+      { to: "/documents/contrats", label: "Contrats" },
+      { to: "/documents/export", label: "Exports" }
+    ]
+  },
+  {
+    key: "services",
+    label: "Services",
+    icon: <Package className="w-5 h-5" />,
+    links: [
+      { to: "/services/overview", label: "Vue d'ensemble" },
+      //{ to: "/services/livraisons", label: "Livraisons" },
+      { to: "/services/prestations", label: "Prestations" },
+      { to: "/services/annonces", label: "Annonces" },
+      //{ to: "/services/box", label: "Box" }
+    ]
+  },
+  {
+    key: "finance",
+    label: "Finance",
+    icon: <Euro className="w-5 h-5" />,
+    links: [
+      { to: "/finance/overview", label: "Vue d'ensemble" },
+      { to: "/finance/factures", label: "Factures" },
+      { to: "/finance/transactions", label: "Transactions" },
+      { to: "/finance/virements", label: "Virements" },
+      { to: "/stats/CA", label: "Chiffre d'affaires" },
+    ]
+  },
+  {
+    key: "support",
+    label: "Support",
+    icon: <MessageSquare className="w-5 h-5" />,
+    links: [
+      { to: "/support/overview", label: "Vue d'ensemble" },
+      { to: "/support/tickets", label: "Tickets" },
+      { to: "/support/conversations", label: "Conversations" },
+      { to: "/support/notifications", label: "Notifications" }
+    ]
+  },
 
-  const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
-    dashboard: true,
-    utilisateurs: true,
-    documents: false,
-    services: false,
-    finance: false,
-    support: false,
-    stats: false,
-    parametres: false
-  })
+  //{
+    //key: "stats",
+   // label: "Statistiques",
+   //icon: <BarChart className="w-5 h-5" />,
+  //  links: [
+    //  { to: "/stats/overview", label: "Vue d'ensemble" },
+    //  { to: "/stats/clients", label: "Clients" },
+    //  { to: "/stats/prestations", label: "Prestations" },
+     // { to: "/stats/livraisons", label: "Livraisons" },
+    
+   // ]
+ // },
 
-  const toggleMenu = (key: string) => {
-    setOpenMenus((prev) => ({ ...prev, [key]: !prev[key] }))
+  {
+    key: "parametres",
+    label: "Paramètres",
+    icon: <Settings className="w-5 h-5" />,
+    links: [
+      { to: "/parametres/overview", label: "Vue d'ensemble" },
+      { to: "/parametres/systeme", label: "Système" },
+      { to: "/parametres/langues", label: "Langues" },
+      { to: "/parametres/tarifs", label: "Tarifs" },
+      { to: "/parametres/services", label: "Services" }
+    ]
   }
+];
+
+export default function Sidebar({ open, setOpen }) {
+  const location = useLocation();
+  const isActive = (path) => location.pathname === path;
+
+  const [openMenus, setOpenMenus] = useState(
+      sections.reduce((acc, cur) => ({ ...acc, [cur.key]: false }), {})
+  );
+
+  const toggleMenu = (key) => {
+    setOpenMenus((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
 
   return (
-    <aside className="w-64 h-screen bg-green-900 text-white p-3 fixed top-0 left-0 shadow-lg overflow-y-auto">
-      <img src={logo} alt="EcoDeli Logo" className="h-12 w-auto mb-5 mt-2" />
-      <nav className="flex flex-col space-y-2 text-sm font-medium">
-
-        {/* Dashboard */}
-        <button onClick={() => toggleMenu("dashboard")} className="flex items-center justify-between px-3 py-2 rounded hover:bg-green-800 w-full">
-          <span className="flex items-center gap-2"><LayoutDashboard size={16} /> Tableau de bord</span>
-          {openMenus.dashboard ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-        </button>
-        {openMenus.dashboard && (
-          <div className="ml-5 flex flex-col space-y-1">
-            <Link to="/dashboard/overview" className={`${isActive("/dashboard/overview") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Vue d'ensemble</Link>
-            <Link to="/dashboard/alertes" className={`${isActive("/dashboard/alertes") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Alertes</Link>
-          </div>
+      <>
+        {/* Bouton d’ouverture burger TOUJOURS visible */}
+        {!open && (
+            <button
+                className="fixed z-30 top-4 left-4 p-2 rounded-lg bg-white shadow border border-gray-200"
+                onClick={() => setOpen(true)}
+            >
+              <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+              <span className="sr-only">Ouvrir menu</span>
+            </button>
         )}
-
-        {/* Utilisateurs */}
-        <button onClick={() => toggleMenu("utilisateurs")} className="flex items-center justify-between px-3 py-2 rounded hover:bg-green-800 w-full">
-          <span className="flex items-center gap-2"><Users size={16} /> Utilisateurs</span>
-          {openMenus.utilisateurs ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-        </button>
-        {openMenus.utilisateurs && (
-          <div className="ml-5 flex flex-col space-y-1">
-            <Link to="/utilisateurs/overview" className={`${isActive("/utilisateurs/overview") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Vue d'ensemble</Link>
-            <Link to="/utilisateurs/clients" className={`${isActive("/utilisateurs/clients") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Clients</Link>
-            <Link to="/utilisateurs/livreurs" className={`${isActive("/utilisateurs/livreurs") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Livreurs</Link>
-            <Link to="/utilisateurs/commercants" className={`${isActive("/utilisateurs/commercants") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Commerçants</Link>
-            <Link to="/utilisateurs/prestataires" className={`${isActive("/utilisateurs/prestataires") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Prestataires</Link>
-            <Link to="/utilisateurs/admins" className={`${isActive("/utilisateurs/admins") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Admins</Link>
+        {/* Sidebar */}
+        <aside
+            className={`
+          ${open ? "flex" : "hidden"}
+          fixed top-0 left-0 z-20 flex-col w-64 h-full pt-4 bg-white border-r border-gray-200 transition-all duration-300
+        `}
+            aria-label="Sidebar"
+        >
+          <div className="flex items-center justify-between px-4">
+            <img src={logo} alt="EcoDeli Logo" className="h-10 w-auto" />
+            <button
+                className="p-1 rounded hover:bg-gray-100 text-gray-700"
+                onClick={() => setOpen(false)}
+            >
+              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
-        )}
-
-        {/* Documents */}
-        <button onClick={() => toggleMenu("documents")} className="flex items-center justify-between px-3 py-2 rounded hover:bg-green-800 w-full">
-          <span className="flex items-center gap-2"><FileText size={16} /> Documents</span>
-          {openMenus.documents ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-        </button>
-        {openMenus.documents && (
-          <div className="ml-5 flex flex-col space-y-1">
-            <Link to="/documents/overview" className={`${isActive("/documents/overview") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Vue d'ensemble</Link>
-            <Link to="/documents/validations" className={`${isActive("/documents/validations") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Validations</Link>
-            <Link to="/documents/contrats" className={`${isActive("/documents/contrats") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Contrats</Link>
-            <Link to="/documents/export" className={`${isActive("/documents/export") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Exports</Link>
-          </div>
-        )}
-
-        {/* Services */}
-        <button onClick={() => toggleMenu("services")} className="flex items-center justify-between px-3 py-2 rounded hover:bg-green-800 w-full">
-          <span className="flex items-center gap-2"><Package size={16} /> Services</span>
-          {openMenus.services ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-        </button>
-        {openMenus.services && (
-          <div className="ml-5 flex flex-col space-y-1">
-            <Link to="/services/overview" className={`${isActive("/services/overview") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Vue d'ensemble</Link>
-            <Link to="/services/livraisons" className={`${isActive("/services/livraisons") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Livraisons</Link>
-            <Link to="/services/prestations" className={`${isActive("/services/prestations") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Prestations</Link>
-            <Link to="/services/annonces" className={`${isActive("/services/annonces") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Annonces</Link>
-            <Link to="/services/box" className={`${isActive("/services/box") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Box</Link>
-          </div>
-        )}
-
-        {/* Finance */}
-        <button onClick={() => toggleMenu("finance")} className="flex items-center justify-between px-3 py-2 rounded hover:bg-green-800 w-full">
-          <span className="flex items-center gap-2"><Euro size={16} /> Finance</span>
-          {openMenus.finance ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-        </button>
-        {openMenus.finance && (
-          <div className="ml-5 flex flex-col space-y-1">
-            <Link to="/finance/overview" className={`${isActive("/finance/overview") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Vue d'ensemble</Link>
-            <Link to="/finance/factures" className={`${isActive("/finance/factures") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Factures</Link>
-            <Link to="/finance/transactions" className={`${isActive("/finance/transactions") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Transactions</Link>
-            <Link to="/finance/abonnements" className={`${isActive("/finance/abonnements") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Abonnements</Link>
-            <Link to="/finance/virements" className={`${isActive("/finance/virements") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Virements</Link>
-          </div>
-        )}
-
-        {/* Support */}
-        <button onClick={() => toggleMenu("support")} className="flex items-center justify-between px-3 py-2 rounded hover:bg-green-800 w-full">
-          <span className="flex items-center gap-2"><MessageSquare size={16} /> Support</span>
-          {openMenus.support ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-        </button>
-        {openMenus.support && (
-          <div className="ml-5 flex flex-col space-y-1">
-            <Link to="/support/overview" className={`${isActive("/support/overview") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Vue d'ensemble</Link>
-            <Link to="/support/tickets" className={`${isActive("/support/tickets") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Tickets</Link>
-            <Link to="/support/conversations" className={`${isActive("/support/conversations") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Conversations</Link>
-            <Link to="/support/notifications" className={`${isActive("/support/notifications") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Notifications</Link>
-          </div>
-        )}
-
-        {/* Statistiques */}
-        <button onClick={() => toggleMenu("stats")} className="flex items-center justify-between px-3 py-2 rounded hover:bg-green-800 w-full">
-          <span className="flex items-center gap-2"><BarChart size={16} /> Statistiques</span>
-          {openMenus.stats ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-        </button>
-        {openMenus.stats && (
-          <div className="ml-5 flex flex-col space-y-1">
-            <Link to="/stats/overview" className={`${isActive("/stats/overview") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Vue d'ensemble</Link>
-            <Link to="/stats/clients" className={`${isActive("/stats/clients") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Clients</Link>
-            <Link to="/stats/prestations" className={`${isActive("/stats/prestations") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Prestations</Link>
-            <Link to="/stats/livraisons" className={`${isActive("/stats/livraisons") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Livraisons</Link>
-            <Link to="/stats/CA" className={`${isActive("/stats/CA") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Chiffre d'affaires</Link>
-          </div>
-        )}
-
-        {/* Paramètres */}
-        <button onClick={() => toggleMenu("parametres")} className="flex items-center justify-between px-3 py-2 rounded hover:bg-green-800 w-full">
-          <span className="flex items-center gap-2"><Settings size={16} /> Paramètres</span>
-          {openMenus.parametres ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-        </button>
-        {openMenus.parametres && (
-          <div className="ml-5 flex flex-col space-y-1">
-            <Link to="/parametres/overview" className={`${isActive("/parametres/overview") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Vue d'ensemble</Link>
-            <Link to="/parametres/systeme" className={`${isActive("/parametres/systeme") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Système</Link>
-            <Link to="/parametres/langues" className={`${isActive("/parametres/langues") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Langues</Link>
-            <Link to="/parametres/tarifs" className={`${isActive("/parametres/tarifs") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Tarifs</Link>
-            <Link to="/parametres/services" className={`${isActive("/parametres/services") ? "bg-green-800" : ""} px-3 py-2 rounded hover:bg-green-800`}>Services</Link>
-          </div>
-        )}
-
-      </nav>
-    </aside>
-  )
+          <nav className="flex flex-col flex-1 px-3 mt-8 space-y-2 font-normal overflow-y-auto">
+            {sections.map((section) => (
+                <div key={section.key}>
+                  <button
+                      onClick={() => toggleMenu(section.key)}
+                      className="flex items-center w-full p-2 text-base text-gray-900 rounded-lg transition hover:bg-gray-100 group"
+                  >
+                    {section.icon}
+                    <span className="flex-1 ml-3 text-left whitespace-nowrap">{section.label}</span>
+                    {openMenus[section.key] ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                  </button>
+                  {openMenus[section.key] && (
+                      <div className="ml-5 flex flex-col space-y-1 mt-1">
+                        {section.links.map((link) => (
+                            <Link
+                                key={link.to}
+                                to={link.to}
+                                className={`
+                        px-3 py-2 rounded-lg text-gray-700 transition font-medium
+                        ${isActive(link.to) ? "bg-gray-100 text-primary-700 font-bold" : "hover:bg-gray-100"}
+                      `}
+                            >
+                              {link.label}
+                            </Link>
+                        ))}
+                      </div>
+                  )}
+                </div>
+            ))}
+          </nav>
+        </aside>
+      </>
+  );
 }
