@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import DashboardOverview from "./pages/dashboard/Overview";
 import Alertes from "./pages/dashboard/Alertes";
@@ -29,6 +29,7 @@ function App() {
                 <Header />
                 <main>
                     <Routes>
+                    <Route index element={<Navigate to="/dashboard/overview" replace />} />
                         <Route path="/dashboard/overview" element={<DashboardOverview />} />
                         <Route path="/dashboard/Alertes" element={<Alertes />} />
                         <Route path="/utilisateurs/livreurs" element={<Livreurs />} />

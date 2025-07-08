@@ -4,7 +4,7 @@ import App from "./App.tsx";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import { UserProvider } from "./contexts/UserContext";
-import "/node_modules/leaflet/dist/leaflet.css";
+import "leaflet/dist/leaflet.css";
 
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
