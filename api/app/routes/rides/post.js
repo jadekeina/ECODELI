@@ -1,8 +1,7 @@
-// Fichier : api/app/routes/rides/post.js
-
 const express = require("express");
 const router = express.Router();
 const createRide = require("../../controllers/rides/createRide");
+const payWithStripe = require("../../controllers/payments/payWithStripe"); // ← à ajouter
 const { isPostMethod } = require("../../librairies/method");
 const { jsonResponse } = require("../../librairies/response");
 
@@ -19,5 +18,21 @@ router.post("/", async (req, res) => {
         return jsonResponse(res, 500, {}, { message: "Internal Server Error", error: error.message });
     }
 });
+
+
+router.post("/:rideId/pay", async (req, res) => {
+    try {
+        const { rideId } = req.params;
+
+        // ✅ C’est ici qu’on adapte l’appel à ce que le contrôleur attend :
+        const result = await payWithStripe({ ride_id: rideId });
+
+        return jsonResponse(res, 200, {}, { message: "Paiement initié", ...result });
+    } catch (error) {
+        console.error("Erreur paiement Stripe :", error);
+        return jsonResponse(res, 500, {}, { message: "Erreur paiement", error: error.message });
+    }
+});
+
 
 module.exports = router;

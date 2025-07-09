@@ -11,15 +11,16 @@ const createRide = async (data) => {
     const PRIX_PAR_KM = 1.2;
 
     const distance = parseFloat(data.distance_km);
-    if (isNaN(distance)) {
+    if (!distance || isNaN(distance) || distance <= 0) {
         throw new Error("Distance invalide");
     }
 
-    const prixBase = +(distance * PRIX_PAR_KM).toFixed(2);
-    const commission = COMMISSION_FIXE;
-    const prixAvecCommission = prixBase + commission;
-    const tva = +(prixAvecCommission * TVA_TAUX).toFixed(2);
-    const prixTotal = +(prixAvecCommission + tva).toFixed(2);
+    const base_price = 4;
+    const commission = 3;
+    const tarif = distance * 1.25;
+    const sous_total = base_price + commission + tarif;
+    const tva = 0.2 * sous_total;
+    const total_price = sous_total + tva;
 
     const rideData = {
         user_id: data.user_id,
@@ -27,14 +28,15 @@ const createRide = async (data) => {
         arrivee_address: data.arrivee_address,
         distance_km: distance,
         duree: data.duree || null,
-        base_price: prixBase,
+        base_price : base_price,          // ✅ CORRECT
         commission,
         tva,
-        total_price: prixTotal,
+        total_price : total_price,         // ✅ CORRECT
         scheduled_date: data.scheduled_at,
         note: data.note || "",
         status: "en_attente",
     };
+
 
     const createdRide = await Ride.create(rideData);
 

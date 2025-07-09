@@ -1,4 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useContext } from "react";
+import API_URL from "@/config";
+import { UserContext } from "@/contexts/UserContext";
+import {useNavigate} from "react-router-dom";
+
 
 const Trajet = () => {
     const [center] = useState({ lat: 48.8049, lng: 2.1204 });
@@ -10,6 +14,7 @@ const Trajet = () => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [commentaire, setCommentaire] = useState("");
     const [erreurHeure, setErreurHeure] = useState("");
+    const [distanceKm, setDistanceKm] = useState<number | null>(null);
 
     const mapRef = useRef<HTMLDivElement>(null);
     const departInputRef = useRef<HTMLInputElement>(null);
@@ -19,6 +24,89 @@ const Trajet = () => {
     const arriveeMarker = useRef<google.maps.Marker | null>(null);
     const polylineRef = useRef<google.maps.Polyline | null>(null);
     const polylineShadowRef = useRef<google.maps.Polyline | null>(null);
+
+    const { user, loading } = useContext(UserContext);
+    const token = user?.token || localStorage.getItem("token");
+
+    const navigate = useNavigate();
+
+
+    const handleCommander = async () => {
+        if (!depart || !arrivee || !selectedDate || !prixEstime) {
+            alert("Veuillez remplir toutes les informations.");
+            return;
+        }
+
+        if (!token) {
+            alert("Utilisateur non authentifié.");
+            return;
+        }
+
+        if (!distanceKm || isNaN(distanceKm)) {
+            alert("Erreur : la distance est invalide. Vérifiez vos adresses.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/rides`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    user_id: user?.id,
+                    depart_address: depart,
+                    arrivee_address: arrivee,
+                    distance_km: distanceKm,
+                    duree,
+                    scheduled_at: selectedDate.toISOString(),
+                    note: commentaire,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                console.error("❌ Réponse backend :", data);
+                throw new Error(data.message || "Erreur lors de la commande");
+            }
+
+            const rideId = data.ride?.ride_id;
+            console.log("🎯 ID reçu du backend :", rideId);
+            console.log("🧾 Réponse complète backend :", data);
+
+
+            if (!rideId) {
+                throw new Error("Identifiant de course manquant.");
+            }
+
+            console.log("🎯 ID ride créé :", rideId);
+
+            // Paiement après création
+            const paymentResponse = await fetch(`${API_URL}/rides/${rideId}/pay`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            const paymentData = await paymentResponse.json();
+
+            if (!paymentResponse.ok) {
+                throw new Error(paymentData.message || "Erreur lors du paiement");
+            }
+
+            // ✅ Redirection uniquement si tout est OK
+            navigate("/confirmation-trajet", { state: { rideId } });
+
+        } catch (err) {
+            console.error("❌ Erreur commande :", err);
+            alert("Erreur lors de la commande ou du paiement.");
+        }
+    };
+
+
 
     const calculateDistanceAndDuration = (origin: google.maps.LatLng, destination: google.maps.LatLng) => {
         const service = new google.maps.DistanceMatrixService();
@@ -38,20 +126,34 @@ const Trajet = () => {
                 ) {
                     const distanceText = response.rows[0].elements[0].distance.text;
                     const dureeText = response.rows[0].elements[0].duration.text;
-                    setDistance(distanceText);
-                    setDuree(dureeText);
+                    const parsedKm = parseFloat(distanceText.replace(" km", "").replace(",", "."));
 
-                    const distanceKm = parseFloat(distanceText.replace(" km", ""));
-                    const base = 4;
-                    const tarif = distanceKm * 1.25;
-                    const commission = 3;
-                    const sousTotal = base + tarif + commission;
-                    const tva = 0.2 * sousTotal;
-                    const prix = sousTotal + tva;
-                    setPrixEstime(prix.toFixed(2));
+                    console.log("📏 Google Distance Text:", distanceText);
+                    console.log("🔢 Distance km (float):", parsedKm);
+
+                    if (!isNaN(parsedKm)) {
+                        setDistance(distanceText);
+                        setDuree(dureeText);
+                        setDistanceKm(parsedKm);
+
+                        const base = 4;
+                        const tarif = parsedKm * 1.25;
+                        const commission = 3;
+                        const sousTotal = base + tarif + commission;
+                        const tva = 0.2 * sousTotal;
+                        const prix = sousTotal + tva;
+                        setPrixEstime(prix.toFixed(2));
+                    } else {
+                        setDistance("Distance inconnue");
+                        setDuree("Durée inconnue");
+                        setPrixEstime("");
+                        setDistanceKm(null);
+                    }
                 } else {
                     setDistance("Distance inconnue");
                     setDuree("Durée inconnue");
+                    setPrixEstime("");
+                    setDistanceKm(null);
                 }
             }
         );
@@ -135,9 +237,7 @@ const Trajet = () => {
                     if (!arriveeMarker.current) {
                         arriveeMarker.current = new google.maps.Marker({
                             map: mapInstance.current,
-                            icon: {
-                                url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-                            },
+                            icon: { url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png" },
                         });
                     }
                     arriveeMarker.current.setPosition(location);
@@ -178,14 +278,12 @@ const Trajet = () => {
                     onChange={(e) => setArrivee(e.target.value)}
                 />
 
-                {distance && (
-                    <p className="text-sm text-gray-700 mt-2">📍 Distance : {distance}</p>
-                )}
-                {duree && (
-                    <p className="text-sm text-gray-700">⏱️ Durée estimée : {duree}</p>
-                )}
+                {distance && <p className="text-sm text-gray-700 mt-2">📍 Distance : {distance}</p>}
+                {duree && <p className="text-sm text-gray-700">⏱️ Durée estimée : {duree}</p>}
                 {prixEstime && (
-                    <p className="text-sm text-gray-700">💰 Prix estimé : {prixEstime} € (incl. commission + TVA)</p>
+                    <p className="text-sm text-gray-700">
+                        💰 Prix estimé : {prixEstime} € (incl. commission + TVA)
+                    </p>
                 )}
 
                 <div className="space-y-2">
@@ -231,9 +329,16 @@ const Trajet = () => {
                     />
                 </div>
 
-                <button className="w-full mt-4 bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded text-sm font-medium">
+                <button
+                    onClick={handleCommander}
+                    disabled={loading}
+                    className={`w-full mt-4 ${
+                        loading ? "bg-gray-400 cursor-not-allowed" : "bg-emerald-600 hover:bg-emerald-700"
+                    } text-white py-2 rounded text-sm font-medium`}
+                >
                     Commander
                 </button>
+
 
                 <p className="text-xs text-gray-500 italic pt-1">
                     Paiement via Stripe uniquement – la commission de 3€ + TVA est incluse dans le prix.
