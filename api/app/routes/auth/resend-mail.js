@@ -37,9 +37,10 @@ router.post("/", (req, res) => {
                 to: data.mail, // ou `mail` selon le contexte
                 subject: "Confirmez votre adresse email",
                 html: `<p>Merci pour votre inscription sur EcoDeli.</p>
-         <p>Pour activer votre compte, cliquez ici :</p>
-         <a href="${confirmLink}">${confirmLink}</a>`
-            });
+                 <p>Pour activer votre compte, cliquez ici :</p>
+                 <a href="${confirmLink}">${confirmLink}</a>`
+                    });
+
 
 
 

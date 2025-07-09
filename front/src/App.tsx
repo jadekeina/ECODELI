@@ -31,7 +31,6 @@ import ResetPassword from "./pages/auth/ResetPassword";
 import ResendEmail from "./pages/auth/ResendEmail";
 import EmailConfirmed from "./pages/auth/EmailConfirmed";
 
-
 //Gestion erreur
 import AccessDenied from "./pages/AccessDenied";
 import NotFound from "./pages/NotFound";
@@ -46,7 +45,7 @@ import MesTrajets from "./pages/Trips";
 import CreateAnnonce from "./components/CreateAnnonce";
 import DeposerContenu from "./pages/DeposerContenu";
 import Trajet from "./pages/client/Trajet";
-
+import ConfirmationTrajet from "./pages/client/ConfirmationTrajet";
 
 // Pages pros
 import RegisterPro from "./pages/RegisterPro";
@@ -110,6 +109,7 @@ function App() {
                 {/* Client*/}
                 <Route path="/mes-trajets" element={<ProtectedRoute><RoleRoute allowedRoles={["client"]}>{renderWithLayout(<MesTrajets />)}</RoleRoute></ProtectedRoute>} />
                 <Route path="/trajet" element={<ProtectedRoute><RoleRoute allowedRoles={["client"]}>{renderWithLayout(<Trajet />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/confirmation-trajet" element={<ProtectedRoute><RoleRoute allowedRoles={["client"]}>{renderWithLayout(<ConfirmationTrajet />)}</RoleRoute></ProtectedRoute>} />
 
                 <Route path="/mes-prestations" element={<ProtectedRoute><RoleRoute allowedRoles={["provider"]}>{renderWithLayout(<MesPrestations />)}</RoleRoute></ProtectedRoute>} />
                 <Route path="/annonces" element={<ProtectedRoute><RoleRoute allowedRoles={["provider", "delivery_driver", "shop_owner"]}>{renderWithLayout(<Requests />)}</RoleRoute></ProtectedRoute>} />

@@ -43,6 +43,7 @@ async function createUser(data) {
          <a href="${confirmLink}">${confirmLink}</a>`
     });
 
+
     return {
       id: result.insertId,
       firstname: data.firstname,

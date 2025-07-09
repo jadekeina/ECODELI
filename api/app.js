@@ -75,6 +75,8 @@ app.use("/requests/public", require("./app/routes/requests/public"));
 // Warehouses
 app.use("/warehouses", require("./app/routes/warehouses/public"));
 app.use("/admin/warehouses", require("./app/routes/warehouses/private"));
+app.use("/warehouses", require("./app/routes/warehouses/get"));
+
 
 // Rides
 app.use("/rides", require("./app/routes/rides/post"));

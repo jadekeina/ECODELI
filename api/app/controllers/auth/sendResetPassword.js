@@ -13,7 +13,7 @@ async function sendResetPassword(mail) {
             userModel.setResetToken(user.id, token, expires, async (updateErr) => {
                 if (updateErr) return reject(new Error("Erreur lors de l'enregistrement du token"));
 
-                const link = `${process.env.BASE_URL}/reset-password/${token}`;
+                const link = `${process.env.FRONT_URL}/reset-password/${token}`;
 
                 await sendMail({
                     to: user.mail,

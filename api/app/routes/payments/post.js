@@ -1,39 +1,23 @@
 const express = require("express");
 const router = express.Router();
-const createPaymentIntent = require("../../controllers/payments/createPaymentIntent");
+const createRide = require("../../controllers/rides/createRide");
+const payWithStripe = require("../../controllers/payments/payWithStripe"); // ← à ajouter
 const { isPostMethod } = require("../../librairies/method");
 const { jsonResponse } = require("../../librairies/response");
 
 router.post("/", async (req, res) => {
     if (!isPostMethod(req)) {
-        return jsonResponse(res, 405, {}, { message: "Méthode non autorisée" });
+        return jsonResponse(res, 405, {}, { message: "Method Not Allowed" });
     }
 
     try {
-        const { type, data } = req.body;
-
-        if (!data || !data.ride_id) {
-            return jsonResponse(res, 400, {}, { message: "Champ ride_id requis" });
-        }
-
-        const paymentIntent = await createPaymentIntent({ type, data });
-        return jsonResponse(
-            res,
-            201,
-            {},
-            {
-                message: "PaymentIntent créé",
-                client_secret: paymentIntent.client_secret,
-            }
-        );
+        const ride = await createRide(req.body);
+        return jsonResponse(res, 201, {}, { message: "Ride created", ride });
     } catch (error) {
-        console.error("Erreur création PaymentIntent :", error);
-        const status = error.status || 500;
-        return jsonResponse(res, status, {}, {
-            message: "Erreur serveur lors du paiement",
-            error: error.message,
-        });
+        console.error("Error creating ride:", error);
+        return jsonResponse(res, 500, {}, { message: "Internal Server Error", error: error.message });
     }
 });
+
 
 module.exports = router;
