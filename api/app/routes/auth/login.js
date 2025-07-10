@@ -12,17 +12,12 @@ router.post("/", async (req, res) => {
   try {
     const result = await loginUser(req.body.mail, req.body.password);
 
-    // 🔐 Blocage si email non confirmé
-    if (result.email_verified === 0) {
-      return jsonResponse(res, 403, {}, {
-        message: "Veuillez confirmer votre adresse email pour vous connecter"
-      });
-    }
-
+    // 👉 À ce stade, `loginUser` a déjà tout géré (email non vérifié, envoi du mail, etc.)
     return jsonResponse(res, 200, {}, {
       message: "Connexion réussie",
       user: result
     });
+
   } catch (error) {
     return jsonResponse(res, 401, {}, { message: error.message });
   }
