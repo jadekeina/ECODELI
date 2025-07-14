@@ -4,6 +4,7 @@ import DashboardOverview from "./pages/dashboard/Overview";
 import Alertes from "./pages/dashboard/Alertes";
 import Livreurs from "./pages/utilisateurs/livreurs/Livreurs";
 import UsersOverview from "./pages/utilisateurs/Overview";
+import UserEditPage from "./pages/utilisateurs/UserEditPage";
 import Admins from "./pages/utilisateurs/admins/Admins";
 import Clients from "./pages/utilisateurs/clients/Clients";
 import Commercants from "./pages/utilisateurs/commercants/Commercants";
@@ -34,6 +35,7 @@ function App() {
                         <Route path="/dashboard/Alertes" element={<Alertes />} />
                         <Route path="/utilisateurs/livreurs" element={<Livreurs />} />
                         <Route path="/utilisateurs/Overview" element={<UsersOverview />} />
+                        <Route path="/utilisateurs/edit/:id" element={<UserEditPage />} />
                         <Route path="/utilisateurs/admins" element={<Admins />} />
                         <Route path="/utilisateurs/clients" element={<Clients />} />
                         <Route path="/utilisateurs/commercants" element={<Commercants />} />

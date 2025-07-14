@@ -1,34 +1,68 @@
+import { useEffect, useState } from "react";
 import UsersTable from "../../../components/Graph/UsersTable";
+import axios from "axios";
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-  status: string;
-  avatar: string;
-}
+const API_URL = import.meta.env.VITE_API_URL;
 
-function Commercants() {
-  const allUsers: User[] = [
-    {
-      id: 1,
-      name: "Marie Martin",
-      email: "marie.martin@example.com",
-      role: "Commerçant",
-      status: "Active",
-      avatar: "/default-avatar.jpg"
+export default function Commercants() {
+  const [users, setUsers] = useState<any[]>([]);
+
+  useEffect(() => {
+    axios.get(`${API_URL}/api/users/`)
+      .then(res => {
+        // Filtre seulement les commerçants
+        const commercants = res.data.users.filter((user: any) => user.role === 'shop-owner');
+        setUsers(commercants);
+      })
+      .catch(err => console.error("Erreur chargement commerçants:", err));
+  }, []);
+
+  // Suppression
+  const handleDeleteUser = (userId: number) => {
+    if (!window.confirm("Supprimer ce commerçant ?")) return;
+    axios.delete(`${API_URL}/api/users/${userId}`)
+      .then(() => setUsers(users.filter(u => u.id !== userId)))
+      .catch(() => alert("Erreur lors de la suppression"));
+  };
+
+  // Edition
+  const handleEditUser = async (userId: number, newData?: any) => {
+    // Affiche une modale ou un prompt pour éditer
+    // Ici exemple simple avec prompt
+    const newFirstname = window.prompt("Nouveau prénom ?");
+    const newLastname = window.prompt("Nouveau nom ?");
+    if (!newFirstname && !newLastname) return;
+
+    try {
+      await axios.patch(`${API_URL}/api/users/${userId}`, {
+        firstname: newFirstname,
+        lastname: newLastname,
+        ...newData,
+      });
+      // Refresh
+      const res = await axios.get(`${API_URL}/api/users/`);
+      const commercants = res.data.users.filter((user: any) => user.role === 'shop-owner');
+      setUsers(commercants);
+    } catch (e) {
+      alert("Erreur lors de la modification");
     }
-  ];
-
-  const commercants = allUsers.filter((user: User) => user.role === "Commerçant");
+  };
 
   return (
-    <div className=" bg-gray-50 p-6">
-      <h1 className="text-2xl font-bold mb-6 ">Liste des commerçants</h1>
-      <UsersTable users={commercants} showEmail={true} showRole={true} showActions={true} />
+    <div className="p-6 bg-gray-50">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Gestion des Commerçants</h1>
+        <p className="text-gray-600 mt-2">Consultez et gérez tous les commerçants de la plateforme</p>
+      </div>
+      <UsersTable
+        usersApi={users}
+        showEmail={true}
+        showRole={true}
+        showActions={true}
+        rowsLimit={null}
+        onDeleteUser={handleDeleteUser}
+        onEditUser={handleEditUser}
+      />
     </div>
   );
 }
-
-export default Commercants;

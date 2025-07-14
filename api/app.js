@@ -35,10 +35,19 @@ require("./config/db");
 app.use("/distance", require("./app/routes/distance.js"));
 
 // Users
-app.use("/users", require("./app/routes/users/me"));
+app.use("/api/users", require("./app/routes/users"));
+app.use("/api/users/last", require("./app/routes/users/last"));
 app.use("/users", require("./app/routes/users/get"));
-app.use("/users", require("./app/routes/users/post"));
-app.use("/users", require("./app/routes/users/patch"));
+
+
+
+
+//Stats
+app.use("/api/stats/inscriptions", require("./app/routes/stats/inscriptions"));
+app.use("/api/stats/ca", require("./app/routes/stats/ca"));
+
+
+
 
 // Auth
 app.use("/auth/login", require("./app/routes/auth/login"));

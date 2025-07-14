@@ -1,64 +1,64 @@
-import { useState } from "react";
-import UsersTable from "../../components/Graph/UsersTable";
+// Overview.tsx
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-  status: string;
-  avatar: string;
-}
+import { useEffect, useState } from "react";
+import UsersTable from "../../components/Graph/UsersTable";
+import axios from "axios";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function UsersOverview() {
-  // Données d'exemple pour les utilisateurs
-  const allUsers: User[] = [
-    {
-      id: 1,
-      name: "Jean Dupont",
-      email: "jean.dupont@example.com",
-      role: "Client",
-      status: "Active",
-      avatar: "/default-avatar.jpg"
-    },
-    {
-      id: 2,
-      name: "Marie Martin",
-      email: "marie.martin@example.com",
-      role: "Commerçant",
-      status: "Active",
-      avatar: "/default-avatar.jpg"
-    },
-    {
-      id: 3,
-      name: "Pierre Durand",
-      email: "pierre.durand@example.com",
-      role: "Livreur",
-      status: "Inactive",
-      avatar: "/default-avatar.jpg"
-    },
-    {
-      id: 4,
-      name: "Sophie Bernard",
-      email: "sophie.bernard@example.com",
-      role: "Prestataire",
-      status: "Active",
-      avatar: "/default-avatar.jpg"
+  const [users, setUsers] = useState<any[]>([]);
+
+  useEffect(() => {
+    axios.get(`${API_URL}/api/users/`)
+      .then(res => setUsers(res.data.users))
+      .catch(err => console.error("Erreur chargement users:", err));
+  }, []);
+
+  // Suppression
+  const handleDeleteUser = (userId: number) => {
+    if (!window.confirm("Supprimer cet utilisateur ?")) return;
+    axios.delete(`${API_URL}/api/users/${userId}`)
+      .then(() => setUsers(users.filter(u => u.id !== userId)))
+      .catch(() => alert("Erreur lors de la suppression"));
+  };
+
+  // Edition
+  const handleEditUser = async (userId: number, newData?: any) => {
+    // Affiche une modale ou un prompt pour éditer
+    // Ici exemple simple avec prompt
+    const newFirstname = window.prompt("Nouveau prénom ?");
+    const newLastname = window.prompt("Nouveau nom ?");
+    if (!newFirstname && !newLastname) return;
+
+    try {
+      await axios.patch(`${API_URL}/api/users/${userId}`, {
+        firstname: newFirstname,
+        lastname: newLastname,
+        ...newData,
+      });
+      // Refresh
+      const res = await axios.get(`${API_URL}/api/users/`);
+      setUsers(res.data.users);
+    } catch (e) {
+      alert("Erreur lors de la modification");
     }
-  ];
+  };
 
   return (
-    <div className="p-6 bg-gray-50 p-6">
+    <div className="p-6 bg-gray-50">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Gestion des Utilisateurs</h1>
         <p className="text-gray-600 mt-2">Consultez et gérez tous les utilisateurs de la plateforme</p>
       </div>
-      
-      <UsersTable 
-        users={allUsers} 
-        showEmail={true} 
-        showRole={true} 
-        showActions={true} 
+      <UsersTable
+        usersApi={users}
+        showEmail={true}
+        showRole={true}
+        showActions={true}
+        rowsLimit={null}
+        onDeleteUser={handleDeleteUser}
+        onEditUser={handleEditUser}
       />
     </div>
   );

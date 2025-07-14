@@ -31,7 +31,8 @@ router.post("/", (req, res) => {
         userModel.updateEmailToken(user.id, emailToken, expiresAt, async (updateErr) => {
             if (updateErr) return jsonResponse(res, 500, {}, { message: "Erreur enregistrement token" });
 
-            const confirmLink = `${process.env.FRONT_URL}/email-confirmed/${token}`;
+            const confirmLink = `${process.env.BACKEND_URL}/verify-email/${emailToken}`;
+
 
             await sendMail({
                 to: data.mail, // ou `mail` selon le contexte

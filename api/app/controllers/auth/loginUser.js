@@ -13,6 +13,16 @@ async function loginUser(mail, password) {
       if (!isValid) return reject(new Error("Mot de passe incorrect"));
 
       console.log("[Login] SECRET_KEY utilisée pour signer:", process.env.SECRET_KEY);
+      
+      console.log("Avant updateLastLogin");
+      db.updateLastLogin(user.id, (errUpdate) => {
+        if (errUpdate) {
+          console.error("Erreur MAJ last_login:", errUpdate);
+        } else {
+          console.log("last_login MAJ pour user id", user.id);
+        }
+      });
+      console.log("Après updateLastLogin");
 
       const token = jwt.sign(
           {
@@ -35,6 +45,9 @@ async function loginUser(mail, password) {
 
             console.log("✅ Token mis à jour en BDD :", token);
             console.log("🗃️ Résultat de la mise à jour SQL :", updateResult);
+
+            // Log the login in user_logins
+         
 
             delete user.password;
 
