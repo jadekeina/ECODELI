@@ -22,7 +22,7 @@ router.get("/:token", async (req, res) => {
             }
 
             // 🔁 Redirection vers le frontend après validation
-            return res.redirect(`${process.env.BASE_URL}/email-confirmed`);
+            return res.redirect(`${process.env.BASE_URL}/email-confirmed/${token}`);
         });
     });
 });

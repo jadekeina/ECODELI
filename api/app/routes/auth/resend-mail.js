@@ -31,18 +31,19 @@ router.post("/", (req, res) => {
         userModel.updateEmailToken(user.id, emailToken, expiresAt, async (updateErr) => {
             if (updateErr) return jsonResponse(res, 500, {}, { message: "Erreur enregistrement token" });
 
-            const confirmLink = `${process.env.BACKEND_URL}/verify-email/${emailToken}`;
-
+            const confirmLink = `${process.env.FRONT_URL}/email-confirmed/${emailToken}`;
 
             await sendMail({
-                to: data.mail, // ou `mail` selon le contexte
+                to: mail,
                 subject: "Confirmez votre adresse email",
-                html: `<p>Merci pour votre inscription sur EcoDeli.</p>
-                 <p>Pour activer votre compte, cliquez ici :</p>
-                 <a href="${confirmLink}">${confirmLink}</a>`
-                    });
+                html: `
+                  <p>Merci pour votre inscription sur EcoDeli.</p>
+                  <p>Pour activer votre compte, cliquez ici :</p>
+                  <a href="${confirmLink}">${confirmLink}</a>
+                `,
+            });
 
-
+            console.log("📨 Envoi du mail de confirmation à :", mail);
 
 
             return jsonResponse(res, 200, {}, { message: "Mail de confirmation renvoyé" });

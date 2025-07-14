@@ -41,6 +41,8 @@ const sendConfirmationEmail = async (type, id) => {
 
     const filePath = path.resolve(__dirname, "../../storage/invoices/ride-" + id + ".pdf");
 
+    console.log("✉️ Envoi d'email à :", to, "avec sujet :", subject);
+
     const info = await transporter.sendMail({
         from: '"EcoDeli" <no-reply@kls-ecodeli.dev>',
         to: user.mail,
@@ -53,6 +55,15 @@ const sendConfirmationEmail = async (type, id) => {
             },
         ],
     });
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error("❌ Erreur lors de l'envoi de l'email :", error);
+        } else {
+            console.log("✅ Email envoyé :", info.response);
+        }
+    });
+
 
 
     return info;
