@@ -1,8 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const getUsers = require("../../controllers/users/getUsers");
+const db = require("../../models/users");
 const { isGetMethod } = require("../../librairies/method");
 const { jsonResponse } = require("../../librairies/response");
+ 
 
 // Tous les utilisateurs
 router.get("/", async (req, res) => {
@@ -10,7 +12,7 @@ router.get("/", async (req, res) => {
 
   try {
     const data = await getUsers();
-    return jsonResponse(res, 200, {}, { message: "Users retrieved", data });
+    return jsonResponse(res, 200, {}, { users: data });
   } catch (error) {
     return jsonResponse(res, 500, {}, { message: error.message });
   }
@@ -27,5 +29,20 @@ router.get("/:id", async (req, res) => {
     return jsonResponse(res, 404, {}, { message: error.message });
   }
 });
+
+router.delete("/:id", (req, res) => {
+  const userId = req.params.id;
+  db.deleteUserById(userId, (err, result) => {
+    if (err) {
+      console.error("Erreur suppression utilisateur:", err);
+      return res.status(500).json({ error: "Erreur suppression" });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Utilisateur non trouvé" });
+    }
+    res.json({ message: "Utilisateur supprimé" });
+  });
+});
+
 
 module.exports = router;

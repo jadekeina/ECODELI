@@ -7,7 +7,7 @@ CREATE TABLE users (
                        id                    INT AUTO_INCREMENT PRIMARY KEY,
                        firstname             VARCHAR(100)        NOT NULL,
                        lastname              VARCHAR(100)        NOT NULL,
-                       username              VARCHAR(100) UNIQUE NOT NULL,
+                       username              VARCHAR(100) UNIQUE NULL,
                        mail                  VARCHAR(255) UNIQUE NOT NULL,
                        password              TEXT                NOT NULL,
                        sexe                  ENUM('H', 'F', 'Autre') DEFAULT NULL,
@@ -16,13 +16,24 @@ CREATE TABLE users (
                        token                 TEXT DEFAULT NULL,
                        role                  ENUM('client', 'provider', 'delivery-driver', 'shop-owner', 'admin') DEFAULT 'client',
                        dateInscription       DATETIME DEFAULT CURRENT_TIMESTAMP,
+                       last_login            DATETIME DEFAULT NULL,
+                       updated_at            DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     -- Champs ajoutés pour gestion e-mail
                        email_token           VARCHAR(255) DEFAULT NULL,
                        email_token_expires   DATETIME DEFAULT NULL,
                        email_verified        BOOLEAN DEFAULT FALSE,
                        reset_token           VARCHAR(255) DEFAULT NULL,
-                       reset_token_expires   DATETIME DEFAULT NULL
+                       reset_token_expires   DATETIME DEFAULT NULL,
+
+    -- Champs d'adresse et informations supplémentaires
+                       country               VARCHAR(100) DEFAULT NULL,
+                       city                  VARCHAR(100) DEFAULT NULL,
+                       address               VARCHAR(255) DEFAULT NULL,
+                       phone                 VARCHAR(30) DEFAULT NULL,
+                       organization          VARCHAR(255) DEFAULT NULL,
+                       department            VARCHAR(100) DEFAULT NULL,
+                       zipcode               VARCHAR(20) DEFAULT NULL
 );
 
 
@@ -213,4 +224,6 @@ CREATE TABLE payments (
 
 
 -- --------------------------------------------------------- Données
+
+
 

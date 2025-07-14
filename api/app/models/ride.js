@@ -38,4 +38,20 @@ const Ride = {
     },
 };
 
+// models/rides.js
+exports.countRidesThisMonth = (callback) => {
+    const sql = `
+      SELECT COUNT(*) AS count 
+      FROM rides 
+      WHERE status = 'terminee'
+        AND MONTH(created_at) = MONTH(NOW()) 
+        AND YEAR(created_at) = YEAR(NOW())
+    `;
+    db.query(sql, (err, results) => {
+      if (err) return callback(err);
+      callback(null, results[0].count);
+    });
+  };
+  
+
 module.exports = Ride;

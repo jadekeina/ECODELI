@@ -21,3 +21,12 @@ exports.updateStatus = (docId, statut, callback) => {
     const sql = `UPDATE documents_justificatifs SET statut = ? WHERE id = ?`;
     db.query(sql, [statut, docId], callback);
 };
+
+exports.countDocsPending = (callback) => {
+    const sql = "SELECT COUNT(*) AS count FROM documents_justificatifs WHERE statut = 'en_attente'";
+    db.query(sql, (err, results) => {
+      if (err) return callback(err);
+      callback(null, results[0].count);
+    });
+  };
+  

@@ -52,3 +52,5 @@ exports.getRequestById = (id, callback) => {
     const sql = "SELECT * FROM requests WHERE id = ?";
     db.query(sql, [id], callback);
 };
+
+

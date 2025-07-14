@@ -19,7 +19,7 @@ exports.createUser = (userData, callback) => {
 };
 
 exports.getAllUsers = (callback) => {
-  db.query("SELECT * FROM users", callback);
+  db.query("SELECT * FROM users ORDER BY dateInscription DESC", callback);
 };
 
 exports.getUserById = (id, callback) => {
@@ -108,4 +108,76 @@ exports.updateEmailToken = (userId, emailToken, expiresAt, callback) => {
 
 exports.getUserByMail = (mail, callback) => {
   db.query("SELECT * FROM users WHERE mail = ?", [mail], callback);
+};
+
+
+exports.countUsersLast24h = (callback) => {
+  const sql = "SELECT COUNT(*) AS count FROM users WHERE dateInscription >= NOW() - INTERVAL 1 DAY";
+  db.query(sql, (err, results) => {
+    if (err) return callback(err);
+    callback(null, results[0].count);
+  });
+};
+
+exports.updateLastLogin = (userId, callback) => {
+  const sql = "UPDATE users SET last_login = NOW() WHERE id = ?";
+  db.query(sql, [userId], callback);
+};
+
+exports.countConnectionsLast24h = (callback) => {
+  const sql = `
+    SELECT COUNT(*) AS count
+    FROM users
+    WHERE last_login >= CONVERT_TZ(NOW(), 'UTC', 'Europe/Paris') - INTERVAL 1 DAY
+  `;
+  db.query(sql, (err, results) => {
+    if (err) return callback(err);
+    callback(null, results[0].count);
+  });
+};
+
+exports.countInscriptionsParJourSemaine = (callback) => {
+  const sql = `
+    SELECT
+      DATE(dateInscription) as day,
+      COUNT(*) as count
+    FROM users
+    WHERE CONVERT_TZ(dateInscription, '+00:00', '+02:00') >= CURDATE() - INTERVAL 6 DAY
+    GROUP BY day
+    ORDER BY day ASC
+  `;
+  db.query(sql, (err, results) => {
+    if (err) return callback(err);
+    callback(null, results);
+  });
+};
+
+
+exports.getLastUsers = (limit = 5, callback) => {
+  const sql = `
+    SELECT id, firstname, lastname, mail, profilpicture, role, dateInscription
+    FROM users
+    ORDER BY dateInscription DESC
+    LIMIT ?
+  `;
+  db.query(sql, [limit], callback);
+};
+
+exports.deleteUserById = (id, callback) => {
+  db.query("DELETE FROM users WHERE id = ?", [id], callback);
+};
+
+
+exports.updateUserById = (id, updates, callback) => {
+  const fields = [];
+  const values = [];
+
+  for (const [key, value] of Object.entries(updates)) {
+    fields.push(`${key} = ?`);
+    values.push(value);
+  }
+  if (!fields.length) return callback(null, null); // Rien à mettre à jour
+
+  const sql = `UPDATE users SET ${fields.join(", ")} WHERE id = ?`;
+  db.query(sql, [...values, id], callback);
 };

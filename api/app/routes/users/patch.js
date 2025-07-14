@@ -6,6 +6,7 @@ const deleteUserPhoto = require("../../controllers/users/deleteUserPhoto");
 const upload = require("../../librairies/upload");
 const { isPatchMethod } = require("../../librairies/method");
 const deleteUser = require("../../controllers/users/deleteUser");
+const db = require("../../models/users");
 
 // Route pour mettre à jour les informations textuelles du profil
 router.patch("/me", async (req, res) => {
@@ -78,5 +79,21 @@ router.delete("/me", async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
+
+// PATCH /api/users/:id
+router.patch("/:id", (req, res) => {
+  const userId = req.params.id;
+  const updates = req.body;
+
+  // Appelle la méthode du modèle pour mettre à jour l'utilisateur
+  db.updateUserById(userId, updates, (err, result) => {
+    if (err){ 
+       console.error("Erreur SQL PATCH user:", err);
+       return res.status(500).json({ error: "Erreur serveur" });
+      }
+    res.json({ message: "Utilisateur mis à jour", updated: updates });
+  });
+});
+
 
 module.exports = router;
