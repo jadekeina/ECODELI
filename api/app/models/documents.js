@@ -29,4 +29,8 @@ exports.countDocsPending = (callback) => {
       callback(null, results[0].count);
     });
   };
-  
+
+
+exports.rawQuery = (sql, values, callback) => {
+    db.query(sql, values, callback);
+};

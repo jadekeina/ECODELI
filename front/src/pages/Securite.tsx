@@ -20,9 +20,11 @@ const Securite = () => {
         if (!confirmDelete) return;
         const token = localStorage.getItem("token");
         if (!token) return alert("Non connecté !");
+        
         try {
             await axios.delete(`${API_URL}/users/me`, {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true // Utiliser les cookies en plus
             });
             localStorage.removeItem("token");
             setUser(null);
@@ -40,11 +42,13 @@ const Securite = () => {
         setLoading(true);
         const token = localStorage.getItem("token");
         if (!token) return alert("Non connecté !");
+        
         try {
             await axios.patch(`${API_URL}/users/me`, {
                 password: newPwd
             }, {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true // Utiliser les cookies en plus
             });
             alert("Mot de passe changé !");
             setEditPwd(false);

@@ -127,9 +127,12 @@ const Paiement = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
-
+    
     axios
-      .get("/payments/me", { headers: { Authorization: `Bearer ${token}` } })
+      .get("/payments/me", { 
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true // Utiliser les cookies en plus
+      })
       .then(({ data }) => {
         // <— Fallbacks sûrs
         setCards(Array.isArray(data.cards) ? data.cards : []);
@@ -146,7 +149,10 @@ const Paiement = () => {
   /* ───────────── Supprimer carte */
   const removeCard = async (id: number) => {
     const token = localStorage.getItem("token");
-    await axios.delete(`/payments/cards/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+    await axios.delete(`/payments/cards/${id}`, { 
+      headers: { Authorization: `Bearer ${token}` },
+      withCredentials: true // Utiliser les cookies en plus
+    });
     setCards(c => c.filter(k => k.id !== id));
   };
 
@@ -156,7 +162,10 @@ const Paiement = () => {
   const saveIban = async () => {
     const token = localStorage.getItem("token");
     await axios.patch("/payments/iban", { iban: newIban },
-      { headers: { Authorization: `Bearer ${token}` } });
+      { 
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true // Utiliser les cookies en plus
+      });
     setIban(newIban); setEditing(false);
   };
 

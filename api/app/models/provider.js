@@ -35,3 +35,12 @@ exports.updateProvider = (id, updates, callback) => {
 exports.rawQuery = (sql, values, callback) => {
     db.query(sql, values, callback);
 };
+
+// Count prestations (providers) created in the current month
+exports.countPrestationsThisMonth = (callback) => {
+    const sql = `SELECT COUNT(*) AS count FROM provider WHERE MONTH(created_at) = MONTH(CURRENT_DATE()) AND YEAR(created_at) = YEAR(CURRENT_DATE())`;
+    db.query(sql, [], (err, results) => {
+        if (err) return callback(err);
+        callback(null, results[0].count);
+    });
+};

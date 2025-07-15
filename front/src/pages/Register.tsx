@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import API_URL from "@/config";
+import GoogleLoginButton from "../components/GoogleLoginButton";
 
 
 const Register = () => {
@@ -112,6 +113,17 @@ const Register = () => {
           <p className="p">
             Vous avez déjà un compte ? <Link to="/connexion" className="span">Connectez-vous</Link>
           </p>
+          <div className="flex-row">
+            <GoogleLoginButton 
+              onSuccess={() => {
+                setMessage("✅ Inscription Google réussie !");
+                setTimeout(() => navigate("/app"), 2000);
+              }}
+              onError={(error) => {
+                setMessage(`❌ ${error}`);
+              }}
+            />
+          </div>
         </form>
       </StyledWrapper>
   );
@@ -197,6 +209,25 @@ const StyledWrapper = styled.div`
     color: #2d79f3;
     font-weight: 500;
     cursor: pointer;
+  }
+
+    .btn {
+    width: 100%;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 500;
+    gap: 10px;
+    border: 1px solid #ededef;
+    background-color: white;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+  }
+
+  .btn:hover {
+    border: 1px solid #2d79f3;
   }
 `;
 
