@@ -13,7 +13,7 @@ interface DocRow {
 }
 
 const DOC_LABELS: Record<DocType, string> = {
-  cni: "Carte d’identité (recto/verso)",
+  cni: "Carte d'identité (recto/verso)",
   justif: "Justificatif de domicile < 3 mois",
   permis: "Permis de conduire",
 };
@@ -33,7 +33,10 @@ const DocumentsPage = () => {
   const refresh = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get("/documents", { headers });
+      const { data } = await axios.get("/documents", { 
+        headers,
+        withCredentials: true // Utiliser les cookies en plus
+      });
       const map: Record<DocType, DocRow> = {
         cni: { type: "cni", label: DOC_LABELS.cni, status: "missing" },
         justif: { type: "justif", label: DOC_LABELS.justif, status: "missing" },
@@ -67,17 +70,22 @@ const DocumentsPage = () => {
   };
 
   const handleUpload = async (type: DocType) => {
-    if (!files[type]) return;
+    const file = files[type];
+    if (!file) return;
+
     setLoading(true);
     const formData = new FormData();
-    formData.append("file", files[type] as Blob);
+    formData.append("file", file);
 
     try {
-      await axios.post(`/documents/${type}`, formData, { headers });
+      await axios.post(`/documents/${type}`, formData, { 
+        headers,
+        withCredentials: true // Utiliser les cookies en plus
+      });
       await refresh();
       setFiles((prev) => ({ ...prev, [type]: null }));
     } catch (err) {
-      alert("Erreur lors de l’upload !");
+      alert("Erreur lors de l'upload !");
     }
     setLoading(false);
   };

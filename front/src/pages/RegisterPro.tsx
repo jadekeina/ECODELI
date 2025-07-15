@@ -113,6 +113,7 @@ const submitProfessionalProfile = async (
             headers: {
                 Authorization: `Bearer ${token}`,
             },
+            credentials: "include",
             body: form,
         });
 
@@ -184,7 +185,7 @@ export default function RegisterPro() {
 
     const handleSubmit = () => {
         if (!role) {
-            alert("Veuillez d’abord choisir un statut professionnel.");
+            alert("Veuillez d'abord choisir un statut professionnel.");
             return;
         }
         submitProfessionalProfile(role, formData, files, setSuccessMessage);
@@ -285,7 +286,7 @@ export default function RegisterPro() {
                                     />
                                 </div>
                                 <div>
-                                    <Label className="text-lg">Pièce d’identité</Label>
+                                    <Label className="text-lg">Pièce d'identité</Label>
                                     <Input
                                         type="file"
                                         accept=".pdf,.png,.jpg,.jpeg"

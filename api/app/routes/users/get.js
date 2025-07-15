@@ -4,7 +4,21 @@ const getUsers = require("../../controllers/users/getUsers");
 const db = require("../../models/users");
 const { isGetMethod } = require("../../librairies/method");
 const { jsonResponse } = require("../../librairies/response");
- 
+const auth = require('../../librairies/authMiddleware');
+
+// Route /me - DOIT être AVANT /:id
+router.get("/me", auth, async (req, res) => {
+  if (!isGetMethod(req)) {
+    return jsonResponse(res, 405, {}, { message: "Méthode non autorisée" });
+  }
+
+  try {
+    // req.user est déjà disponible grâce au middleware d'authentification
+    return jsonResponse(res, 200, {}, { message: "Utilisateur connecté ✅", data: req.user });
+  } catch (error) {
+    return jsonResponse(res, 404, {}, { message: error.message });
+  }
+});
 
 // Tous les utilisateurs
 router.get("/", async (req, res) => {

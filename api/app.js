@@ -9,6 +9,12 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const morgan = require("morgan");
+const cookieParser = require('cookie-parser');
+const auth = require('./app/librairies/authMiddleware');
+
+
+app.use(cookieParser());
+
 
 const handleStripeWebhook = require("./app/controllers/payments/handleStripeWebhook");
 
@@ -23,8 +29,10 @@ app.post(
 // ✅ Middlewares généraux (pour toutes les autres routes)
 app.use(express.static("public"));
 app.use(morgan("dev"));
-app.use(cors());
-// express.json() sans l'option 'verify' car express.raw() gère déjà le webhook
+app.use(cors({
+    origin: ["http://localhost:3000", "http://localhost:3001"],
+    credentials: true
+  }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -35,9 +43,11 @@ require("./config/db");
 app.use("/distance", require("./app/routes/distance.js"));
 
 // Users
-app.use("/api/users", require("./app/routes/users"));
+
 app.use("/api/users/last", require("./app/routes/users/last"));
 app.use("/users", require("./app/routes/users/get"));
+app.use("/users", require("./app/routes/users/me"));
+app.use("/users", require("./app/routes/users"));
 
 
 
@@ -52,6 +62,7 @@ app.use("/api/stats/ca", require("./app/routes/stats/ca"));
 // Auth
 app.use("/auth/login", require("./app/routes/auth/login"));
 app.use("/auth/logout", require("./app/routes/auth/logout"));
+app.use("/auth/google", require("./app/routes/auth/google"));
 app.use("/auth/verify-email", require("./app/routes/auth/verifyEmail"));
 app.use("/auth/send-reset-password", require("./app/routes/auth/sendResetPassword"));
 app.use("/auth/reset-password", require("./app/routes/auth/resetPassword"));
@@ -114,7 +125,11 @@ app.get("/", (req, res) => {
     res.send("EcoDeli API is running ✅");
 });
 
-// Start
+app.get('/api/protected', auth, (req, res) => {
+  res.json({ message: "Accès autorisé", user: req.user });
+});
+
+
 app.listen(process.env.PORT || 3002, () => {
     console.log(`✅ Serveur EcoDeli lancé sur http://localhost:${process.env.PORT || 3002}`);
 });

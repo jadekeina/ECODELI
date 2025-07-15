@@ -30,7 +30,6 @@ function App() {
                 <Header />
                 <main>
                     <Routes>
-                    <Route index element={<Navigate to="/dashboard/overview" replace />} />
                         <Route path="/dashboard/overview" element={<DashboardOverview />} />
                         <Route path="/dashboard/Alertes" element={<Alertes />} />
                         <Route path="/utilisateurs/livreurs" element={<Livreurs />} />

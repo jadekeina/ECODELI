@@ -36,7 +36,7 @@ exports.getUserByToken = (token, callback) => {
 
 
 exports.setUserToken = (userId, token, callback) => {
-  const sql = "UPDATE users SET token = ? WHERE id = ?";
+  const sql = "UPDATE users SET token = ?, updated_at = NOW() WHERE id = ?";
   db.query(sql, [token, userId], callback);
 };
 
@@ -180,4 +180,9 @@ exports.updateUserById = (id, updates, callback) => {
 
   const sql = `UPDATE users SET ${fields.join(", ")} WHERE id = ?`;
   db.query(sql, [...values, id], callback);
+};
+
+exports.logUserLogin = (userId, callback) => {
+  const sql = "INSERT INTO user_logins (user_id) VALUES (?)";
+  db.query(sql, [userId], callback);
 };

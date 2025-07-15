@@ -7,9 +7,15 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-    const { user } = useContext(UserContext);
+    const { user, loading } = useContext(UserContext);
     const token = localStorage.getItem("token");
 
+    // Attendre que le chargement soit terminé
+    if (loading) {
+        return <div>Chargement...</div>;
+    }
+
+    // Rediriger si pas d'utilisateur connecté OU pas de token
     if (!user || !token) {
         return <Navigate to="/connexion" replace />;
     }
