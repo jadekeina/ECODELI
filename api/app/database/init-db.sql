@@ -179,7 +179,8 @@ CREATE TABLE box (
 -- Trajet
 CREATE TABLE rides (
                        id INT AUTO_INCREMENT PRIMARY KEY,
-                       user_id INT NOT NULL,
+                       user_id INT NOT NULL, -- client
+                       provider_id INT DEFAULT NULL, -- prestataire
                        depart_address VARCHAR(255),
                        arrivee_address VARCHAR(255),
                        distance_km DECIMAL(10, 2),
@@ -188,12 +189,23 @@ CREATE TABLE rides (
                        commission DECIMAL(10, 2),
                        tva DECIMAL(10, 2),
                        total_price DECIMAL(10, 2),
-                       status ENUM('en_attente', 'acceptee', 'refusee', 'en_cours', 'terminee', 'annulee') DEFAULT 'en_attente',
+                       status ENUM(
+                           'en_attente',
+                           'acceptee',
+                           'refusee',
+                           'en_cours',
+                           'terminee',
+                           'annulee'
+                           ) DEFAULT 'en_attente',
                        note TEXT,
                        scheduled_date DATETIME,
                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+                       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                       FOREIGN KEY (provider_id) REFERENCES provider(id) ON DELETE SET NULL
 );
+
 
 
 
@@ -209,6 +221,21 @@ CREATE TABLE payments (
                           updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                           FOREIGN KEY (ride_id) REFERENCES rides(id)
 );
+
+CREATE TABLE provider_payments (
+                                   id INT AUTO_INCREMENT PRIMARY KEY,
+                                   provider_id INT NOT NULL,
+                                   ride_id INT DEFAULT NULL,
+                                   amount DECIMAL(10, 2) NOT NULL,
+                                   status ENUM('en_attente', 'en_cours', 'effectue') DEFAULT 'en_attente',
+                                   method ENUM('virement', 'paypal', 'stripe') DEFAULT 'virement',
+                                   payment_date DATETIME DEFAULT NULL,
+                                   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                                   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                   FOREIGN KEY (provider_id) REFERENCES provider(id) ON DELETE CASCADE,
+                                   FOREIGN KEY (ride_id) REFERENCES rides(id) ON DELETE SET NULL
+);
+
 
 
 

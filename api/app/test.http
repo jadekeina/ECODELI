@@ -1,0 +1,18 @@
+### Test GET rides for provider
+GET http://localhost:3002/rides/provider/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm1haWwiOiJha291YWxhYjVAZ21haWwuY29tIiwicm9sZSI6InByb3ZpZGVyIiwidGltZXN0YW1wIjoxNzUyNjU3Njk0MjYzLCJpYXQiOjE3NTI2NTc2OTQsImV4cCI6MTc1MjY2NDg5NH0.kZ24xxcLqPYVKIaIfmIoQrcAFoOdtCpMImX2GRq28dk
+Accept: application/json
+
+###
+
+### Test GET requests for provider
+GET http://localhost:3002/requests/provider/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm1haWwiOiJha291YWxhYjVAZ21haWwuY29tIiwicm9sZSI6InByb3ZpZGVyIiwidGltZXN0YW1wIjoxNzUyNjU3Njk0MjYzLCJpYXQiOjE3NTI2NTc2OTQsImV4cCI6MTc1MjY2NDg5NH0.kZ24xxcLqPYVKIaIfmIoQrcAFoOdtCpMImX2GRq28dk
+Accept: application/json
+
+###
+
+### Test GET provider payments
+GET http://localhost:3002/provider_payments/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm1haWwiOiJha291YWxhYjVAZ21haWwuY29tIiwicm9sZSI6InByb3ZpZGVyIiwidGltZXN0YW1wIjoxNzUyNjU3Njk0MjYzLCJpYXQiOjE3NTI2NTc2OTQsImV4cCI6MTc1MjY2NDg5NH0.kZ24xxcLqPYVKIaIfmIoQrcAFoOdtCpMImX2GRq28dk
+Accept: application/json

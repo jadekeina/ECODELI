@@ -46,6 +46,10 @@ import CreateAnnonce from "./components/CreateAnnonce";
 import DeposerContenu from "./pages/DeposerContenu";
 import Trajet from "./pages/client/Trajet";
 import ConfirmationTrajet from "./pages/client/ConfirmationTrajet";
+import ProviderCourses from "./pages/provider/ProviderCourses";
+import CourseDetail from "./pages/provider/CourseDetail";
+import DashboardProvider from "./pages/provider/DashBoardProvider";
+
 
 // Pages pros
 import RegisterPro from "./pages/RegisterPro";
@@ -92,7 +96,7 @@ function App() {
                 <Route path="/forgot-password" element={<><HeaderPublic /><ForgotPassword /><Footer /></>} />
                 <Route path="/reset-password/:token" element={<><HeaderPublic /><ResetPassword /><Footer /></>} />
                 <Route path="/resend-email" element={<><HeaderPublic /><ResendEmail /><Footer /></>} />
-                <Route path="/email-confirmed" element={<><HeaderPublic /><EmailConfirmed /><Footer /></>} />
+                <Route path="/email-confirmed/:token" element={<><HeaderPublic /><EmailConfirmed /><Footer /></>} />
 
 
                 {/* Gestion d'erreur */}
@@ -119,6 +123,12 @@ function App() {
 
                 <Route path="/inscription-pro" element={<ProtectedRoute>{renderWithLayout(<RegisterPro />)}</ProtectedRoute>} />
                 <Route path="/requests/:id" element={<ProtectedRoute>{renderWithLayout(<RequestDetails />)}</ProtectedRoute>} />
+
+                {/* Provider */}
+                <Route path="/provider/courses" element={<ProtectedRoute><RoleRoute allowedRoles={["provider"]}>{renderWithLayout(<ProviderCourses />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/provider/courses/:id" element={<ProtectedRoute><RoleRoute allowedRoles={["provider"]}>{renderWithLayout(<CourseDetail />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/provider/dashboard" element={<ProtectedRoute><RoleRoute allowedRoles={["provider"]}>{renderWithLayout(<DashboardProvider />)}</RoleRoute></ProtectedRoute>} />
+
             </Routes>
         </Elements>
     );

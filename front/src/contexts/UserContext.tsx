@@ -1,6 +1,5 @@
-import { createContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import API_URL from "@/config";
-
 
 interface User {
     id: number;
@@ -29,9 +28,10 @@ export const UserContext = createContext<UserContextType>({
     loading: true,
     mode: "client",
     setMode: () => {},
-    hasProAccount: false, // remplacé dynamiquement ci-dessous
+    hasProAccount: false,
 });
 
+export const useUserContext = (): UserContextType => useContext(UserContext);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
@@ -50,9 +50,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
             try {
                 const res = await fetch(`${API_URL}/users/me`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    headers: { Authorization: `Bearer ${token}` },
                 });
 
                 if (!res.ok) {
@@ -64,24 +62,20 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                 const data = await res.json();
                 const userFromApi = data.data;
 
-                const role = userFromApi.role;
-
-                const statut = userFromApi.statut;
-
                 const mappedUser: User = {
                     id: userFromApi.id,
                     firstname: userFromApi.firstname,
                     lastname: userFromApi.lastname,
-                    email: userFromApi.mail,
+                    email: userFromApi.email,
                     token: userFromApi.token,
-                    role,
-                    statut,
+                    role: userFromApi.role,
+                    statut: userFromApi.statut,
                     profilpicture: userFromApi.profilpicture,
                 };
 
                 console.log("🌐 API_URL = ", import.meta.env.VITE_API_URL);
-
                 console.log("📦 [UserContext] Utilisateur récupéré :", mappedUser);
+
                 setUser(mappedUser);
             } catch (err) {
                 console.error("❌ Erreur API /users/me :", err);
@@ -105,14 +99,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
     return (
         <UserContext.Provider
-            value={{
-                user,
-                setUser,
-                loading,
-                mode,
-                setMode,
-                hasProAccount,
-            }}
+            value={{ user, setUser, loading, mode, setMode, hasProAccount }}
         >
             {children}
         </UserContext.Provider>

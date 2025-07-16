@@ -1,4 +1,8 @@
-### TEST CREATION PROVIDER
-GET http://localhost:3002/users/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm1haWwiOiJ0ZXN0QGljbG91ZC5jb20iLCJyb2xlIjoicHJvdmlkZXIiLCJ0aW1lc3RhbXAiOjE3NTE1MzM1MjE2NjEsImlhdCI6MTc1MTUzMzUyMSwiZXhwIjoxNzUxNTQwNzIxfQ.uBGSWvLmOP07EN0Z4KSAQQRaHraYi2vExxeYcXC4QZo
+### Assignation d'une course à un prestataire
+PATCH http://localhost:3000/rides/12/assign
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm1haWwiOiJha291YWxhYjVAZ21haWwuY29tIiwicm9sZSI6InByb3ZpZGVyIiwidGltZXN0YW1wIjoxNzUyNDg5MDAzNzYwLCJpYXQiOjE3NTI0ODkwMDMsImV4cCI6MTc1MjQ5NjIwM30.eGlAI451_G91GLpNriD8ho12HDzf5mMwc5E3mVQ1HQw
 Content-Type: application/json
+
+{
+  "provider_id": 1
+}

@@ -54,9 +54,12 @@ app.use("/auth/forgot-password", require("./app/routes/auth/forgotPassword"));
 app.use("/delivery-driver", require("./app/routes/deliveryDriver/post"));
 app.use("/delivery-driver", require("./app/routes/deliveryDriver/patch"));
 
-// Prestataires
+// Providers
 app.use("/provider", require("./app/routes/provider/post"));
 app.use("/provider", require("./app/routes/provider/patch"));
+app.use("/provider_payments", require("./app/routes/providerPayments/get"));
+app.use("/requests/provider", require("./app/routes/requests/provider"));
+
 
 // Commerçants
 app.use("/shop-owner", require("./app/routes/shopOwner/post"));
@@ -71,6 +74,7 @@ app.use("/documents", require("./app/routes/documents/get"));
 app.use("/requests", require("./app/routes/requests/post"));
 app.use("/requests/my", require("./app/routes/requests/my"));
 app.use("/requests/public", require("./app/routes/requests/public"));
+app.use("/requests/provider", require("./app/routes/requests/provider"));
 
 // Warehouses
 app.use("/warehouses", require("./app/routes/warehouses/public"));
@@ -84,6 +88,9 @@ app.use("/rides", require("./app/routes/rides/get"));
 app.use("/rides", require("./app/routes/rides/getInvoice"));
 app.use("/rides", require("./app/routes/rides/status"));
 app.use("/rides", require("./app/routes/rides/assign"));
+app.use("/rides/en-attente", require("./app/routes/rides/en-attente"));
+app.use("/rides/provider", require("./app/routes/rides/providerRides"));
+app.use("/provider_payments", require("./app/routes/providerPayments/get"));
 
 // Payments
 app.use("/payments", require("./app/routes/payments/post"));
