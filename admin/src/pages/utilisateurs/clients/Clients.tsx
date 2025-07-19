@@ -8,7 +8,7 @@ export default function Clients() {
   const [users, setUsers] = useState<any[]>([]);
 
   useEffect(() => {
-    axios.get(`${API_URL}/api/users/`)
+    axios.get(`${API_URL}/api/users`)
       .then(res => {
         // Filtre seulement les clients
         const clients = res.data.users.filter((user: any) => user.role === 'client');

@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const path = require("path");
-const uploadDocument = require("../../controllers/documents/uploadDocument");
+const uploadDocument = require("../../controllers/documents/uploadDocumentController");
 const { jsonResponse } = require("../../librairies/response");
 const { isPostMethod } = require("../../librairies/method");
 
@@ -32,6 +32,12 @@ router.post("/", upload.single("document"), async (req, res) => {
 
     const token = authHeader.split(" ")[1];
     const { type } = req.body;
+    
+    // Vérifier qu'un fichier a été uploadé
+    if (!req.file) {
+        return jsonResponse(res, 400, {}, { message: "Aucun fichier 'document' fourni" });
+    }
+    
     const filepath = path.join("uploads/docs", req.file.filename);
 
     try {

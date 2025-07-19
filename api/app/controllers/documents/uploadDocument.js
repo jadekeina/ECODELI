@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const path = require("path");
-const uploadDocument = require("../../controllers/documents/uploadDocument");
+const uploadDocument = require("./uploadDocumentController");
 const { jsonResponse } = require("../../librairies/response");
 const { isPostMethod } = require("../../librairies/method");
 

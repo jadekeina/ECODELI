@@ -1,7 +1,14 @@
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+
+function getInitials(firstname: string, lastname: string) {
+  if (!firstname && !lastname) return "??";
+  return (
+    (firstname?.charAt(0)?.toUpperCase() || "?") +
+    (lastname?.charAt(0)?.toUpperCase() || "?")
+  );
+}
 
 export default function UserSettingsPage() {
   // Données fictives pour pré-remplir (à remplacer par l'appel API plus tard)
@@ -19,9 +26,8 @@ export default function UserSettingsPage() {
     department: "",
     zipcode: ""
   });
-
-  // Pour l'upload photo, tu ajoutes ta logique plus tard
-  const [avatar, setAvatar] = useState("/images/users/bonnie-green-2x.png");
+  const [avatar, setAvatar] = useState<string | null>(null);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const { id } = useParams();
   const [editMode, setEditMode] = useState(false);
 
@@ -29,58 +35,138 @@ export default function UserSettingsPage() {
     if (!id) return;
     axios.get(`${import.meta.env.VITE_API_URL}/api/users/${id}`)
       .then(res => {
-        console.log("Réponse API:", res.data);
-        const user = res.data.user || res.data.data; // adapte selon la vraie structure
-        if (!user) return; // ou affiche un message d'erreur
+        const user = res.data.user || res.data.data;
+        if (!user) return;
         setForm(form => ({
           ...form,
           firstName: user.firstname || "",
           lastName: user.lastname || "",
-          email: user.mail || "",
-          // Ajoute ici les correspondances pour les autres champs si besoin
-          // country: user.country || "",
-          // city: user.city || "",
-          // etc.
+          email: user.mail || user.email || "",
+          country: user.country || "",
+          city: user.city || "",
+          address: user.address || "",
+          phone: user.phone || "",
+          birthday: user.birthday ? user.birthday.slice(0, 10) : "",
+          organization: user.organization || "",
+          role: user.role || "",
+          department: user.department || "",
+          zipcode: user.zipcode || ""
         }));
-        // Si tu veux aussi l’avatar :
-        if (user.profilpicture) setAvatar(user.profilpicture);
+        // Correction logique avatar
+        if (
+          user.profilpicture &&
+          user.profilpicture !== "default.jpg" &&
+          user.profilpicture !== "/uploads/default-avatar.png" &&
+          user.profilpicture !== "" &&
+          user.profilpicture !== null &&
+          user.profilpicture !== undefined
+        ) {
+          setAvatar(`${import.meta.env.VITE_API_URL}${user.profilpicture}`);
+        } else {
+          setAvatar(null);
+        }
       })
-      .catch(() => {
-        // Optionnel : gestion d’erreur
+      .catch((err) => {
+        console.error("Erreur chargement utilisateur:", err);
       });
   }, [id]);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setAvatar(URL.createObjectURL(file));
+      setAvatarFile(file);
+    }
+  };
+
+  const handleDeleteAvatar = async () => {
+    if (!id) return;
+    if (!window.confirm("Supprimer la photo de profil ?")) return;
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/users/${id}/photo`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      setAvatar(null);
+      setAvatarFile(null);
+    } catch (err: any) {
+      console.error("Erreur lors de la suppression de la photo:", err);
+      alert("Erreur lors de la suppression de la photo: " + (err?.response?.data?.message || err.message));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!id) return;
     const payload = {
-        firstname: form.firstName,
-        lastname: form.lastName,
-        country: form.country,
-        city: form.city,
-        address: form.address,
-        phone: form.phone,
-        birthday: form.birthday ? form.birthday:null,
-        organization: form.organization,
-        role: form.role || "client",
-        department: form.department,
-        zipcode: form.zipcode,
-        // Ajoute d'autres champs si besoin
-      };
-
-  try {
-    await axios.patch(`${import.meta.env.VITE_API_URL}/api/users/${id}`, payload);
-    setEditMode(false);
-    // Optionnel : affiche un message de succès
-    alert("Modifications enregistrées !");
-  } catch (err) {
-    // Optionnel : affiche un message d'erreur
-    alert("Erreur lors de l'enregistrement !");
-  }
-
+      firstname: form.firstName,
+      lastname: form.lastName,
+      country: form.country,
+      city: form.city,
+      address: form.address,
+      phone: form.phone,
+      birthday: form.birthday ? form.birthday : null,
+      organization: form.organization,
+      role: form.role || "client",
+      department: form.department,
+      zipcode: form.zipcode,
+    };
+    try {
+      const token = localStorage.getItem("token");
+      await axios.patch(`${import.meta.env.VITE_API_URL}/api/users/${id}`, payload, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (avatarFile) {
+        const formData = new FormData();
+        formData.append("photo", avatarFile);
+        await axios.patch(`${import.meta.env.VITE_API_URL}/api/users/${id}/photo`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        });
+        setAvatarFile(null);
+      }
+      setEditMode(false);
+      alert("Modifications enregistrées !");
+      // Refresh user data
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/${id}`);
+      const user = res.data.user || res.data.data;
+      setForm(form => ({
+        ...form,
+        firstName: user.firstname || "",
+        lastName: user.lastname || "",
+        email: user.mail || user.email || "",
+        country: user.country || "",
+        city: user.city || "",
+        address: user.address || "",
+        phone: user.phone || "",
+        birthday: user.birthday ? user.birthday.slice(0, 10) : "",
+        organization: user.organization || "",
+        role: user.role || "",
+        department: user.department || "",
+        zipcode: user.zipcode || ""
+      }));
+      if (
+        user.profilpicture &&
+        user.profilpicture !== "default.jpg" &&
+        user.profilpicture !== "/uploads/default-avatar.png" &&
+        user.profilpicture !== "" &&
+        user.profilpicture !== null &&
+        user.profilpicture !== undefined
+      ) {
+        setAvatar(`${import.meta.env.VITE_API_URL}${user.profilpicture}`);
+      } else {
+        setAvatar(null);
+      }
+    } catch (err: any) {
+      console.error("Erreur lors de l'enregistrement:", err);
+      alert("Erreur lors de l'enregistrement: " + (err?.response?.data?.message || err.message));
+    }
   };
 
   return (
@@ -115,23 +201,29 @@ export default function UserSettingsPage() {
       <div className="col-span-full xl:col-auto flex flex-col space-y-4">
         <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
           <div className="flex flex-col items-center">
-            <img className="mb-4 rounded-lg w-28 h-28 object-cover" src={avatar} alt="Avatar" />
+            {avatar ? (
+              <img className="mb-4 rounded-lg w-28 h-28 object-cover" src={avatar} alt="Avatar" />
+            ) : (
+              <div className="mb-4 w-28 h-28 rounded-full bg-[#E9FADF] text-[#1B4F3C] flex items-center justify-center text-4xl font-bold">
+                {getInitials(form.firstName, form.lastName)}
+              </div>
+            )}
             <div>
               <h3 className="mb-1 text-xl font-bold text-gray-900 dark:text-white">Profile picture</h3>
               <div className="mb-4 text-sm text-gray-500 dark:text-gray-400">
                 JPG, GIF or PNG. Max size of 800K
               </div>
               <div className="flex items-center space-x-4">
-                <button
-                  type="button"
-                  className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-                >
+                <label className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 cursor-pointer">
                   <svg className="w-4 h-4 mr-2 -ml-1" fill="currentColor" viewBox="0 0 20 20"><path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z"></path><path d="M9 13h2v5a1 1 0 11-2 0v-5z"></path></svg>
                   Upload picture
-                </button>
-                <button type="button" className="py-2 px-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                  Delete
-                </button>
+                  <input type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
+                </label>
+                {avatar && (
+                  <button type="button" onClick={handleDeleteAvatar} className="py-2 px-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                    Delete
+                  </button>
+                )}
               </div>
             </div>
           </div>
