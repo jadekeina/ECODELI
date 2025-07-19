@@ -9,7 +9,12 @@ exports.insertDocument = (userId, type_document, chemin_fichier, callback) => {
 };
 
 exports.getDocumentsByUser = (userId, callback) => {
-    const sql = `SELECT * FROM documents_justificatifs WHERE user_id = ?`;
+    const sql = `
+        SELECT d.*, u.firstname, u.lastname 
+        FROM documents_justificatifs d
+        LEFT JOIN users u ON d.user_id = u.id
+        WHERE d.user_id = ?
+    `;
     db.query(sql, [userId], callback);
 };
 
@@ -29,6 +34,16 @@ exports.countDocsPending = (callback) => {
       callback(null, results[0].count);
     });
   };
+
+exports.getAllPendingDocumentsWithUser = (callback) => {
+    const sql = `
+      SELECT d.id, d.type_document, d.chemin_fichier, d.statut, d.date_upload, u.firstname, u.lastname, u.id as user_id
+      FROM documents_justificatifs d
+      JOIN users u ON d.user_id = u.id
+      WHERE d.statut = 'en_attente'
+    `;
+    db.query(sql, callback);
+};
 
 
 exports.rawQuery = (sql, values, callback) => {

@@ -10,7 +10,7 @@ export default function UsersOverview() {
   const [users, setUsers] = useState<any[]>([]);
 
   useEffect(() => {
-    axios.get(`${API_URL}/api/users/`)
+    axios.get(`${API_URL}/api/users`)
       .then(res => setUsers(res.data.users))
       .catch(err => console.error("Erreur chargement users:", err));
   }, []);

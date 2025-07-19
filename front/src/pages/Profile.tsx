@@ -152,10 +152,11 @@ const Profil = () => {
         <div className="flex flex-col items-center gap-3 mb-6">
           <div className="relative w-28 h-28">
             {photo ? (
-                <img
-                    src={photo}
-                    className="w-28 h-28 rounded-full object-cover border border-gray-300"
-                />
+              <img
+              src={photo}
+              onError={() => setPhoto(null)}   // ← si l’URL renvoie 404 on repasse aux initiales
+              className="w-28 h-28 rounded-full object-cover border border-gray-300"
+            />
             ) : (
                 <div className="w-28 h-28 rounded-full bg-[#E9FADF] text-[#1B4F3C] flex items-center justify-center text-4xl font-bold">
                   {getInitials()}

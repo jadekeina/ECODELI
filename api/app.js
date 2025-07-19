@@ -43,11 +43,9 @@ require("./config/db");
 app.use("/distance", require("./app/routes/distance.js"));
 
 // Users
-
 app.use("/api/users/last", require("./app/routes/users/last"));
-app.use("/users", require("./app/routes/users/get"));
-app.use("/users", require("./app/routes/users/me"));
-app.use("/users", require("./app/routes/users"));
+app.use("/api/users", require("./app/routes/users"));
+
 
 
 
@@ -85,7 +83,7 @@ app.use("/shop-owner", require("./app/routes/shopOwner/patch"));
 // Documents
 app.use("/documents", require("./app/routes/documents/post"));
 app.use("/documents", require("./app/routes/documents/patch"));
-app.use("/documents", require("./app/routes/documents/get"));
+   app.use("/documents", require("./app/routes/documents/get"));
 
 // Requests
 app.use("/requests", require("./app/routes/requests/post"));
