@@ -60,16 +60,23 @@ const HeaderShopOwner = () => {
             )}
 
             <header className="w-full bg-white px-6 py-4 flex justify-between items-center shadow text-[#1a1a1a] text-lg relative z-50">
-                <Link to="/app" className="text-2xl font-bold text-[#1B4F3C]">
+                <Link to="/dashboard" className="text-2xl font-bold text-[#1B4F3C]">
                     ecodeli
                 </Link>
 
-                <nav className="hidden lg:flex gap-10 font-semibold">
-                    <Link to="/produits" className="hover:text-[#1B4F3C]">Mes produits</Link>
-                    <Link to="/offres-boutique" className="hover:text-[#1B4F3C]">Offres en cours</Link>
+                {/* Desktop Navigation */}
+                <nav className="hidden lg:flex gap-8 font-medium">
+                    <Link to="/annonces/nouvelle" className="hover:text-[#1B4F3C]">Créer une annonces</Link>
+                    <Link to="/annonces" className="hover:text-[#1B4F3C]">Annonces</Link>
+                    <Link to="/livraisons" className="hover:text-[#1B4F3C]">Livraisons</Link>
+                    <Link to="/paiements" className="hover:text-[#1B4F3C]">Paiements</Link>
+                    <Link to="/abonnement" className="hover:text-[#1B4F3C]">Abonnement</Link>
+                    <Link to="/support" className="hover:text-[#1B4F3C]">Support</Link>
+                    <Link to="/chat" className="hover:text-[#1B4F3C]">Chat</Link>
                 </nav>
 
-                <div className="flex items-center gap-6 text-xl">
+                {/* Notifications & User */}
+                <div className="flex items-center gap-5 text-xl">
                     <Link to="/notifications" className="hover:text-[#1B4F3C]">
                         <FaBell className="text-2xl" />
                     </Link>
@@ -80,40 +87,49 @@ const HeaderShopOwner = () => {
                                 <img
                                     src={`${API_URL}${realUser.profilpicture}`}
                                     alt="Profil"
-                                    className="w-8 h-8 rounded-full object-cover"
+                                    className="w-9 h-9 rounded-full object-cover"
                                 />
                             ) : (
                                 <FaUserCircle className="text-3xl" />
                             )}
-                            <span className="text-sm mt-1">
-                {realUser?.firstname ? `${realUser.firstname} ${realUser.lastname?.charAt(0) || ""}.` : ""}
-              </span>
+                            <span className="text-sm mt-1 font-medium">
+                                {realUser?.firstname ? `${realUser.firstname} ${realUser.lastname?.charAt(0) || ""}.` : ""}
+                            </span>
                         </button>
 
                         {isUserMenuOpen && (
                             <div className="absolute right-0 mt-3 w-64 bg-white border rounded-lg shadow-lg text-sm p-4 z-50">
                                 <ul className="space-y-3">
                                     <li><Link to="/dashboard" onClick={() => setIsUserMenuOpen(false)}>Dashboard</Link></li>
-                                    <li><Link to="/mon-compte" onClick={() => setIsUserMenuOpen(false)}>Mon compte</Link></li>
+                                    <li><Link to="/documents" onClick={() => setIsUserMenuOpen(false)}>Documents</Link></li>
+                                    <li><Link to="/contrat" onClick={() => setIsUserMenuOpen(false)}>Contrat</Link></li>
+                                    <li><Link to="/profil-boutique" onClick={() => setIsUserMenuOpen(false)}>Profil boutique</Link></li>
                                     <li><button onClick={handleLogout} className="text-red-600">Se déconnecter</button></li>
                                 </ul>
                             </div>
                         )}
                     </div>
 
+                    {/* Mobile menu button */}
                     <button className="lg:hidden text-2xl" onClick={toggleMobileMenu}>
                         <FaBars />
                     </button>
                 </div>
 
+                {/* Mobile Menu */}
                 <div
                     className={`fixed top-0 right-0 h-full w-64 bg-white shadow-lg flex flex-col items-start gap-4 px-6 py-8 z-50 text-base font-medium transform transition-transform duration-300 ${
                         isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
                     }`}
                 >
                     <button className="self-end mb-4 text-xl" onClick={closeMobileMenu}>✕</button>
-                    <Link to="/produits" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Mes produits</Link>
-                    <Link to="/offres-boutique" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Offres en cours</Link>
+                    <Link to="/annonces/nouvelle" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Créer une annonce</Link>
+                    <Link to="/annonces" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Annonces</Link>
+                    <Link to="/livraisons" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Livraisons</Link>
+                    <Link to="/paiements" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Paiements</Link>
+                    <Link to="/abonnement" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Abonnement</Link>
+                    <Link to="/support" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Support</Link>
+                    <Link to="/chat" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Chat</Link>
                 </div>
             </header>
         </>

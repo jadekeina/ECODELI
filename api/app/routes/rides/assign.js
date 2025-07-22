@@ -18,8 +18,11 @@ router.patch(
         const rideId = req.params.id;
         const providerId = req.user.id;
 
+        console.log("👤 Utilisateur connecté :", req.user);
+
+
         try {
-            const result = await assignProviderToRide(rideId, providerId);
+            const result = await assignProviderToRide(rideId, req.user.id);
             return jsonResponse(res, 200, {}, { message: "Course assignée ✅", result });
         } catch (error) {
             console.error("Erreur assignation chauffeur :", error);

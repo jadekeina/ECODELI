@@ -1,8 +1,9 @@
-### Assignation d'une course à un prestataire
-PATCH http://localhost:3000/rides/12/assign
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm1haWwiOiJha291YWxhYjVAZ21haWwuY29tIiwicm9sZSI6InByb3ZpZGVyIiwidGltZXN0YW1wIjoxNzUyNDg5MDAzNzYwLCJpYXQiOjE3NTI0ODkwMDMsImV4cCI6MTc1MjQ5NjIwM30.eGlAI451_G91GLpNriD8ho12HDzf5mMwc5E3mVQ1HQw
-Content-Type: application/json
+### Récupérer les trajets du client connecté
+GET http://localhost:3002/rides/client/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsIm1haWwiOiJzYW5kcmluZS5lYmVsZWJlQGdtYWlsLmNvbSIsInJvbGUiOiJjbGllbnQiLCJ0aW1lc3RhbXAiOjE3NTMwODc1NDAzNzYsImlhdCI6MTc1MzA4NzU0MCwiZXhwIjoxNzUzMDk0NzQwfQ.aQ837gIENADq88v4QzNVFi14OHSlv4fxgrD1KBOIKm0
+Accept: application/json
 
-{
-  "provider_id": 1
-}
+
+### Get Rides for a Provider
+GET http://localhost:3002/rides/provider/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm1haWwiOiJha291YWxhYjVAZ21haWwuY29tIiwicm9sZSI6InByb3ZpZGVyIiwidGltZXN0YW1wIjoxNzUzMDk5ODQ0OTI5LCJpYXQiOjE3NTMwOTk4NDQsImV4cCI6MTc1MzEwNzA0NH0.HtmuiOMVFq9P9ANVXVWEGfrwUZaIwvxXITjy2eEukGU

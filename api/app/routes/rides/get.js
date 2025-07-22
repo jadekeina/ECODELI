@@ -12,7 +12,7 @@ const auth = require("../../librairies/auth");
 const authorizeRoles = require("../../librairies/authorizeRoles");
 
 // GET /rides/get/:id (sécurisé)
-router.get("/get/:id", auth, authorizeRoles("admin", "provider"), async (req, res) => {
+router.get("/get/:id", auth, authorizeRoles("admin", "provider", "client"), async (req, res) => {
     if (!isGetMethod(req)) {
         return jsonResponse(res, 405, {}, { message: "Méthode non autorisée" });
     }
@@ -31,7 +31,7 @@ router.get("/get/:id", auth, authorizeRoles("admin", "provider"), async (req, re
 });
 
 // GET /rides/get (sécurisé)
-router.get("/get", auth, authorizeRoles("admin", "provider"), async (req, res) => {
+router.get("/get", auth, authorizeRoles("admin", "provider", "client"), async (req, res) => {
     if (!isGetMethod(req)) {
         return jsonResponse(res, 405, {}, { message: "Méthode non autorisée" });
     }
@@ -46,32 +46,35 @@ router.get("/get", auth, authorizeRoles("admin", "provider"), async (req, res) =
     }
 });
 
-// GET /rides/user/:id (non protégé)
-router.get("/user/:id", async (req, res) => {
+// GET /rides/get/:id (sécurisé)
+router.get("/get/:id", auth, authorizeRoles("admin", "provider", "client"), async (req, res) => { // 'client' ajouté ici
     if (!isGetMethod(req)) {
         return jsonResponse(res, 405, {}, { message: "Méthode non autorisée" });
     }
 
     try {
-        const rides = await getUserRides(req.params.id);
-        return jsonResponse(res, 200, {}, { message: "Courses utilisateur récupérées", rides });
-    } catch (error) {
-        console.error("Erreur récupération courses utilisateur:", error);
-        return jsonResponse(res, 500, {}, { message: "Erreur serveur", error: error.message });
-    }
-});
+        const rideId = req.params.id;
+        const userId = req.user.id; // L'ID de l'utilisateur connecté, disponible grâce au middleware 'auth'
+        const userRole = req.user.role; // Le rôle de l'utilisateur, disponible aussi
 
-// GET /rides/provider/:id (non protégé mais tu peux le sécuriser aussi si tu veux)
-router.get("/provider/:id", async (req, res) => {
-    if (!isGetMethod(req)) {
-        return jsonResponse(res, 405, {}, { message: "Méthode non autorisée" });
-    }
+        const ride = await findRideById(rideId); // Assurez-vous que findRideById retourne un objet 'ride' avec client_id
 
-    try {
-        const rides = await getProviderRides(req.params.id);
-        return jsonResponse(res, 200, {}, { message: "Courses du prestataire", rides });
+        if (!ride) {
+            return jsonResponse(res, 404, {}, { message: "Course introuvable" });
+        }
+
+        // --- AJOUT DE LA VÉRIFICATION DE PROPRIÉTÉ POUR LES CLIENTS ---
+        // Les admins et providers peuvent voir toutes les courses.
+        // Les clients ne peuvent voir que leurs propres courses.
+        if (userRole === "client" && ride.client_id !== userId) {
+            // Si c'est un client et que la course ne lui appartient pas
+            return jsonResponse(res, 403, {}, { message: "Accès interdit : Cette course ne vous appartient pas." });
+        }
+        // -----------------------------------------------------------
+
+        return jsonResponse(res, 200, { ride }, { message: "Course trouvée" }); // Notez que 'ride' est dans un objet
     } catch (error) {
-        console.error("Erreur récupération courses prestataire:", error);
+        console.error("Erreur lors de la récupération de la course:", error);
         return jsonResponse(res, 500, {}, { message: "Erreur serveur", error: error.message });
     }
 });

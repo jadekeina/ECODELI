@@ -54,6 +54,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                 });
 
                 if (!res.ok) {
+                    localStorage.removeItem("token");
                     setUser(null);
                     setLoading(false);
                     return;
@@ -66,8 +67,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                     id: userFromApi.id,
                     firstname: userFromApi.firstname,
                     lastname: userFromApi.lastname,
-                    email: userFromApi.email,
-                    token: userFromApi.token,
+                    email: userFromApi.email, // Corrigé de 'mail' à 'email' si c'est la clé correcte de l'API
+                    token: token, // <-- C'est LA LIGNE CLÉ !
                     role: userFromApi.role,
                     statut: userFromApi.statut,
                     profilpicture: userFromApi.profilpicture,
@@ -79,6 +80,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                 setUser(mappedUser);
             } catch (err) {
                 console.error("❌ Erreur API /users/me :", err);
+                localStorage.removeItem("token");
                 setUser(null);
             } finally {
                 setLoading(false);

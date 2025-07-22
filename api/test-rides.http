@@ -1,17 +1,8 @@
-### 🔹 Créer une course avec d'autres données
-POST http://localhost:3002/rides
+### Mettre à jour le statut d'une course
+PATCH http://localhost:3002/rides/123/status
 Content-Type: application/json
+Authorization: Bearer ton_token_ici
 
 {
-  "user_id": 2,
-  "depart_address": "Gare de Lyon, Paris",
-  "arrivee_address": "Aéroport Charles de Gaulle, Roissy",
-  "distance_km": 35,
-  "duree": 45,
-  "scheduled_at": "2025-07-10T18:15:00",
-  "note": "Course urgente, soyez à l'heure !",
-  "prix_base": 42,
-  "commission": 5,
-  "tva": 9.4,
-  "prix_total": 56.4
+  "status": "terminee"
 }

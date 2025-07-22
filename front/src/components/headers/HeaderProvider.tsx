@@ -66,7 +66,6 @@ const HeaderProvider = () => {
 
                 <nav className="hidden lg:flex gap-10 font-semibold">
                     <Link to="/prestations" className="hover:text-[#1B4F3C]">Mes prestations</Link>
-                    <Link to="/offres-prestations" className="hover:text-[#1B4F3C]">Offres disponibles</Link>
                     <Link to="/annonces" className="hover:text-[#1B4F3C]">Toutes les offres</Link>
                     <Link to="/provider/courses" className="hover:text-[#1B4F3C]">Courses disponibles</Link>
 
@@ -116,7 +115,6 @@ const HeaderProvider = () => {
                 >
                     <button className="self-end mb-4 text-xl" onClick={closeMobileMenu}>✕</button>
                     <Link to="/prestations" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Mes prestations</Link>
-                    <Link to="/offres-prestations" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Offres disponibles</Link>
                     <Link to="/annonces" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Toutes les offres</Link>
                     <Link to="/provider/courses" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Courses disponibles</Link>
 

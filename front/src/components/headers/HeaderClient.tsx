@@ -108,7 +108,7 @@ const HeaderClient = () => {
                         {isUserMenuOpen && (
                             <div className="absolute right-0 mt-3 w-64 bg-white border rounded-lg shadow-lg text-sm p-4 z-50">
                                 <ul className="space-y-3">
-                                    <li><Link to="/dashboard" onClick={() => setIsUserMenuOpen(false)}>Dashboard</Link></li>
+                                    <li><Link to="/dashboard-client" onClick={() => setIsUserMenuOpen(false)}>Dashboard</Link></li>
                                     <li><Link to="/mon-compte" onClick={() => setIsUserMenuOpen(false)}>Mon compte</Link></li>
                                     <li><Link to="/mes-prestations" onClick={() => setIsUserMenuOpen(false)}>Mes prestations</Link></li>
                                     <li><Link to="/trajet" onClick={() => setIsUserMenuOpen(false)}>Mes trajets</Link></li>

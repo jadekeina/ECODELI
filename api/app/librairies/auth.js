@@ -15,11 +15,11 @@ const auth = (req, res, next) => {
         const decoded = jwt.verify(token, JWT_SECRET);
 
         req.user = {
-            id: decoded.id,
-            email: decoded.email,
+            id: decoded.userId,
+            email: decoded.mail,
             role: decoded.role,
+            status: decoded.status,
         };
-
         next();
     } catch (error) {
         console.error("Erreur vérification token JWT :", error);

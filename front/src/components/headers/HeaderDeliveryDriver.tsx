@@ -6,8 +6,9 @@ import API_URL from "@/config";
 
 const HeaderDeliveryDriver = () => {
     const { user, setUser } = useContext(UserContext);
-    const realUser = user?.user || user;
+    const realUser = user;
 
+    // hasCustomPhoto est déjà sécurisé avec `?.`
     const defaultPictures = ["default.jpg", "/uploads/default-avatar.png"];
     const hasCustomPhoto = realUser?.profilpicture && !defaultPictures.includes(realUser.profilpicture);
 
@@ -27,6 +28,14 @@ const HeaderDeliveryDriver = () => {
         };
     }, []);
 
+    useEffect(() => {
+        if (realUser && realUser.token) {
+            console.log("[HeaderDeliveryDriver] Token du driver disponible:", realUser.token.substring(0, 10) + "...");
+        } else {
+            console.log("[HeaderDeliveryDriver] Pas de token de driver disponible.");
+        }
+    }, [realUser]);
+
     const toggleUserMenu = () => setIsUserMenuOpen(!isUserMenuOpen);
     const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
     const closeMobileMenu = () => setIsMobileMenuOpen(false);
@@ -43,7 +52,7 @@ const HeaderDeliveryDriver = () => {
                 body: JSON.stringify({ userId: user?.id }),
             });
         } catch (error) {
-            console.error("Logout error:", error);
+            console.error("Erreur de déconnexion:", error);
         }
         localStorage.removeItem("token");
         setUser(null);
@@ -67,7 +76,10 @@ const HeaderDeliveryDriver = () => {
                 <nav className="hidden lg:flex gap-10 font-semibold">
                     <Link to="/livraisons" className="hover:text-[#1B4F3C]">Mes livraisons</Link>
                     <Link to="/offres-livraison" className="hover:text-[#1B4F3C]">Offres disponibles</Link>
+                    <Link to="/livraisons/historique" className="hover:text-[#1B4F3C]">Historique</Link>
+                    <Link to="/livraisons/paiements" className="hover:text-[#1B4F3C]">Paiements</Link>
                 </nav>
+
 
                 <div className="flex items-center gap-6 text-xl">
                     <Link to="/notifications" className="hover:text-[#1B4F3C]">
@@ -76,7 +88,8 @@ const HeaderDeliveryDriver = () => {
 
                     <div className="relative flex flex-col items-center" ref={userMenuRef}>
                         <button onClick={toggleUserMenu} className="flex flex-col items-center text-[#1a1a1a] hover:text-[#1B4F3C]">
-                            {hasCustomPhoto ? (
+                            {/* Correction ici : Vérifier que realUser existe avant d'accéder à profilpicture */}
+                            {realUser && hasCustomPhoto ? (
                                 <img
                                     src={`${API_URL}${realUser.profilpicture}`}
                                     alt="Profil"
@@ -86,8 +99,8 @@ const HeaderDeliveryDriver = () => {
                                 <FaUserCircle className="text-3xl" />
                             )}
                             <span className="text-sm mt-1">
-                {realUser?.firstname ? `${realUser.firstname} ${realUser.lastname?.charAt(0) || ""}.` : ""}
-              </span>
+                                {realUser?.firstname ? `${realUser.firstname} ${realUser.lastname?.charAt(0) || ""}.` : ""}
+                            </span>
                         </button>
 
                         {isUserMenuOpen && (
@@ -112,8 +125,8 @@ const HeaderDeliveryDriver = () => {
                     }`}
                 >
                     <button className="self-end mb-4 text-xl" onClick={closeMobileMenu}>✕</button>
-                    <Link to="/livraisons" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Mes livraisons</Link>
-                    <Link to="/offres-livraison" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Offres disponibles</Link>
+                    <Link to="/livraisons/historique" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Historique</Link>
+                    <Link to="/livraisons/paiements" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Paiements</Link>
                 </div>
             </header>
         </>

@@ -10,6 +10,16 @@ const app = express();
 const cors = require("cors");
 const morgan = require("morgan");
 
+const cron = require('node-cron');
+const { processPendingProviderPayments } = require('./app/controllers/providerPayments/processProviderPayments');
+
+// Tâche cron toutes les 5 minutes
+cron.schedule('*/5 * * * *', () => {
+    console.log("[Cron] Démarrage du traitement des paiements provider...");
+    processPendingProviderPayments();
+});
+
+
 const handleStripeWebhook = require("./app/controllers/payments/handleStripeWebhook");
 
 // ✅ Webhook Stripe - doit être mis **avant** express.json()
@@ -60,10 +70,13 @@ app.use("/provider", require("./app/routes/provider/patch"));
 app.use("/provider_payments", require("./app/routes/providerPayments/get"));
 app.use("/requests/provider", require("./app/routes/requests/provider"));
 
-
 // Commerçants
 app.use("/shop-owner", require("./app/routes/shopOwner/post"));
 app.use("/shop-owner", require("./app/routes/shopOwner/patch"));
+
+//Commerçant Demande
+app.use("/shopowner-requests", require("./app/routes/shopowner_requests/post"));
+app.use("/shopowner-requests", require("./app/routes/shopowner_requests/get"));
 
 // Documents
 app.use("/documents", require("./app/routes/documents/post"));
@@ -91,6 +104,14 @@ app.use("/rides", require("./app/routes/rides/assign"));
 app.use("/rides/en-attente", require("./app/routes/rides/en-attente"));
 app.use("/rides/provider", require("./app/routes/rides/providerRides"));
 app.use("/provider_payments", require("./app/routes/providerPayments/get"));
+app.use("/rides/client", require ("./app/routes/rides/clientRides"));
+app.use("/rides", require("./app/routes/rides/updateStatus"));
+
+
+//Shops
+app.use("/shops", require("./app/routes/shops/post"));
+app.use("/shops", require("./app/routes/shops/get"));
+
 
 // Payments
 app.use("/payments", require("./app/routes/payments/post"));

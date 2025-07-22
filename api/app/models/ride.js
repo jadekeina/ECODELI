@@ -15,17 +15,18 @@ const Ride = {
                 data.arrivee_address,
                 data.distance_km,
                 data.duree,
-                data.prix_base,
+                data.base_price,
                 data.commission,
                 data.tva,
-                data.prix_total,
-                data.scheduled_at,
+                data.total_price,
+                data.scheduled_date,
                 data.note,
                 data.status || "en_attente"
             ]
         );
         return { id: result.insertId, ...data };
     },
+
 
     findRideById: async (id) => {
         const [rows] = await db.promise().query(`SELECT * FROM rides WHERE id = ?`, [id]);
@@ -60,7 +61,13 @@ const Ride = {
         return result;
     },
 
-
+    getRidesByClientId: async (clientId) => {
+        const [rows] = await db.promise().query(
+            `SELECT * FROM rides WHERE user_id = ? ORDER BY scheduled_date DESC`,
+            [clientId]
+        );
+        return rows;
+    },
 
 
 };

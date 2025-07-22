@@ -49,6 +49,13 @@ import ConfirmationTrajet from "./pages/client/ConfirmationTrajet";
 import ProviderCourses from "./pages/provider/ProviderCourses";
 import CourseDetail from "./pages/provider/CourseDetail";
 import DashboardProvider from "./pages/provider/DashBoardProvider";
+import SuiviCourse from "./pages/client/SuiviCourse";
+import DashboardClient from "./pages/client/DashboardClient";
+import NouvelleAnnonceShopOwner from "./pages/shop-owner/NouvelleAnnonceShopOwner";
+import SuccessAnnonce from "./pages/shop-owner/SuccessAnnonce";
+import PaymentsHistory from "./pages/provider/PaymentHistory";
+
+
 
 
 // Pages pros
@@ -65,18 +72,28 @@ function App() {
     if (loading) return <div>Chargement...</div>;
 
     const renderWithLayout = (component: JSX.Element) => {
-        if (!user) return <Navigate to="/" replace />;
+        if (!user) {
+            console.warn("[App.tsx - renderWithLayout] Utilisateur non défini. Redirection vers la page d'accueil.");
+            return <Navigate to="/" replace />;
+        }
+        // Correction ici : Si user.role n'est pas encore défini, on retourne un placeholder de chargement
+        // pour satisfaire le type JSX.Element attendu par <Route element={...}>
+        if (!user.role) {
+            console.warn("[App.tsx - renderWithLayout] Rôle de l'utilisateur non défini. Affichage du chargement...");
+            return <div>Chargement du profil...</div>; // Retourne un élément JSX valide
+        }
 
         switch (user.role) {
             case "client":
                 return <LayoutClient>{component}</LayoutClient>;
-            case "delivery_driver":
+            case "delivery-driver": // <-- CORRECTION ICI : 'delivery_driver' devient 'delivery-driver'
                 return <LayoutDeliveryDriver>{component}</LayoutDeliveryDriver>;
             case "provider":
                 return <LayoutProvider>{component}</LayoutProvider>;
-            case "shop_owner":
+            case "shop-owner":
                 return <LayoutShopOwner>{component}</LayoutShopOwner>;
             default:
+                console.warn(`[App.tsx - renderWithLayout] Rôle utilisateur inconnu: ${user.role}. Redirection vers la page d'accueil.`);
                 return <Navigate to="/" replace />;
         }
     };
@@ -114,9 +131,16 @@ function App() {
                 <Route path="/mes-trajets" element={<ProtectedRoute><RoleRoute allowedRoles={["client"]}>{renderWithLayout(<MesTrajets />)}</RoleRoute></ProtectedRoute>} />
                 <Route path="/trajet" element={<ProtectedRoute><RoleRoute allowedRoles={["client"]}>{renderWithLayout(<Trajet />)}</RoleRoute></ProtectedRoute>} />
                 <Route path="/confirmation-trajet" element={<ProtectedRoute><RoleRoute allowedRoles={["client"]}>{renderWithLayout(<ConfirmationTrajet />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/suivi-course/:rideId" element={<ProtectedRoute><RoleRoute allowedRoles={["client"]}>{renderWithLayout(<SuiviCourse />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/dashboard-client" element={<ProtectedRoute><RoleRoute allowedRoles={["client"]}>{renderWithLayout(<DashboardClient />)}</RoleRoute></ProtectedRoute>} />
+
+                {/* Shop-owner */}
+                <Route path="/annonces/nouvelle" element={<ProtectedRoute><RoleRoute allowedRoles={["shop-owner"]}>{renderWithLayout(<NouvelleAnnonceShopOwner />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/annonces/success" element={<ProtectedRoute><RoleRoute allowedRoles={["shop-owner"]}>{renderWithLayout(<SuccessAnnonce />)}</RoleRoute></ProtectedRoute>} />
+
 
                 <Route path="/mes-prestations" element={<ProtectedRoute><RoleRoute allowedRoles={["provider"]}>{renderWithLayout(<MesPrestations />)}</RoleRoute></ProtectedRoute>} />
-                <Route path="/annonces" element={<ProtectedRoute><RoleRoute allowedRoles={["provider", "delivery_driver", "shop_owner"]}>{renderWithLayout(<Requests />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/annonces" element={<ProtectedRoute><RoleRoute allowedRoles={["provider", "delivery_driver"]}>{renderWithLayout(<Requests />)}</RoleRoute></ProtectedRoute>} />
 
                 <Route path="/deposer-annonce" element={<ProtectedRoute><RoleRoute allowedRoles={["client"]}>{renderWithLayout(<CreateAnnonce />)}</RoleRoute></ProtectedRoute>} />
                 <Route path="/deposer-contenu" element={<ProtectedRoute><RoleRoute allowedRoles={["client"]}>{renderWithLayout(<DeposerContenu />)}</RoleRoute></ProtectedRoute>} />
@@ -128,6 +152,7 @@ function App() {
                 <Route path="/provider/courses" element={<ProtectedRoute><RoleRoute allowedRoles={["provider"]}>{renderWithLayout(<ProviderCourses />)}</RoleRoute></ProtectedRoute>} />
                 <Route path="/provider/courses/:id" element={<ProtectedRoute><RoleRoute allowedRoles={["provider"]}>{renderWithLayout(<CourseDetail />)}</RoleRoute></ProtectedRoute>} />
                 <Route path="/provider/dashboard" element={<ProtectedRoute><RoleRoute allowedRoles={["provider"]}>{renderWithLayout(<DashboardProvider />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/provider/payments-history" element={<ProtectedRoute><RoleRoute allowedRoles={["provider"]}><LayoutProvider><PaymentsHistory /></LayoutProvider></RoleRoute></ProtectedRoute>} />
 
             </Routes>
         </Elements>
