@@ -10,6 +10,9 @@ const db = require("../../models/users");
 
 // Route pour mettre à jour les informations textuelles du profil
 router.patch("/me", async (req, res) => {
+  console.log("PATCH /me appelé");
+  console.log("Headers:", req.headers);
+  console.log("Body:", req.body);
   const authHeader = req.headers.authorization;
   if (!isPatchMethod(req)) {
     return res.status(405).json({ message: "Méthode non autorisée" });

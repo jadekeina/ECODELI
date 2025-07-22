@@ -45,9 +45,7 @@ app.use("/distance", require("./app/routes/distance.js"));
 // Users
 app.use("/api/users/last", require("./app/routes/users/last"));
 app.use("/api/users", require("./app/routes/users"));
-
-
-
+console.log("Route /api/users montée");
 
 
 //Stats

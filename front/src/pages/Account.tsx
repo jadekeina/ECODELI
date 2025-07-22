@@ -4,10 +4,11 @@ import Paiement from "./Payment";
 import Securite from "./Securite";
 import Document from "./Documents";
 import Parrainage from "./Referral";
-
+import { useTranslation } from "react-i18next";
 
 const Account = () => {
   const [ongletActif, setOngletActif] = useState("profil");
+  const { t } = useTranslation();
 
   const renderContenu = () => {
     switch (ongletActif) {
@@ -18,30 +19,31 @@ const Account = () => {
       // case "entreprise":
       //   return <Entreprise />;
       case "securite":
-           return <Securite />;
+        return <Securite />;
       case "Document":
-        return <Document/>;
+        return <Document />;
       case "parrainage":
         return <Parrainage />;
       // case "utilisateurs":
       //   return <Utilisateurs />;
       default:
-        return <div className="text-gray-500">Section en construction</div>;
+        return null; // No default content for now
     }
   };
 
   const tabs = [
-    { key: "profil", label: "Profil" },
-    { key: "securite", label: "Sécurité" },
-    { key: "paiement", label: "Paiement" },
-    { key: "Document", label: "Documents" },
+    { key: "profil", label: t("account.profile") },
+    { key: "securite", label: t("account.security") },
+    { key: "paiement", label: t("account.payment") },
+    { key: "Document", label: t("account.documents") },
+    { key: "parrainage", label: t("account.referral") }
   ];
 
   return (
     <div className="flex h-full min-h-screen bg-gray-50">
       {/* Sidebar gauche */}
       <aside className="w-64 bg-white border-r p-6">
-        <h2 className="text-xl font-bold mb-6 text-gray-800">Mon compte</h2>
+        <h2 className="text-xl font-bold mb-6 text-gray-800">{t("account.my_account")}</h2>
         <div className="space-y-2">
           {tabs.map((tab) => (
             <button
@@ -60,7 +62,9 @@ const Account = () => {
       </aside>
 
       {/* Contenu principal */}
-      <main className="flex-1 p-10z">{renderContenu()}</main>
+      <main className="flex-1 p-10z">
+        {renderContenu() || <div className="text-gray-500">{t("account.under_construction")}</div>}
+      </main>
     </div>
   );
 };

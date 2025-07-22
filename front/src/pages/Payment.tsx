@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { CardElement, IbanElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import {
+  CardElement,
+  IbanElement,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
+import { useTranslation } from "react-i18next";
 
 interface Card {
   id: number;
@@ -22,6 +28,7 @@ function AddCardForm({ onCardAdded }: { onCardAdded?: () => void }) {
   const elements = useElements();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,7 +56,9 @@ function AddCardForm({ onCardAdded }: { onCardAdded?: () => void }) {
   return (
     <form onSubmit={handleSubmit} className="border p-4 rounded space-y-4">
       <div>
-        <label className="block text-sm font-medium mb-2">Détails de la carte</label>
+        <label className="block text-sm font-medium mb-2">
+          {t("payment.cards")}
+        </label>
         <CardElement className="border p-3 rounded" />
       </div>
       {error && <p className="text-red-600 text-sm">{error}</p>}
@@ -59,14 +68,14 @@ function AddCardForm({ onCardAdded }: { onCardAdded?: () => void }) {
           disabled={loading}
           className="bg-[#155250] text-white px-4 py-2 rounded text-sm disabled:opacity-50"
         >
-          {loading ? "Ajout en cours..." : "Ajouter la carte"}
+          {loading ? t("payment.add_card_loading") : t("payment.add_card_btn")}
         </button>
         <button
           type="button"
           onClick={() => onCardAdded?.()}
           className="px-4 py-2 border rounded text-sm"
         >
-          Annuler
+          {t("payment.cancel")}
         </button>
       </div>
     </form>
@@ -76,6 +85,7 @@ function AddCardForm({ onCardAdded }: { onCardAdded?: () => void }) {
 function AddIbanForm() {
   const stripe = useStripe();
   const elements = useElements();
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,13 +120,14 @@ function AddIbanForm() {
         type="submit"
         className="bg-[#155250] text-white px-4 py-2 rounded text-sm"
       >
-        Enregistrer l'IBAN
+        {t("payment.save_iban")}
       </button>
     </form>
   );
 }
 
 const Paiement = () => {
+  const { t } = useTranslation();
   const [cards, setCards] = useState<Card[]>([]);
   const [iban, setIban] = useState<string>("");
   const [history, setHistory] = useState<HistoryRow[]>([]);
@@ -127,11 +138,11 @@ const Paiement = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
-    
+
     axios
-      .get("/payments/me", { 
+      .get("/payments/me", {
         headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true // Utiliser les cookies en plus
+        withCredentials: true, // Utiliser les cookies en plus
       })
       .then(({ data }) => {
         // <— Fallbacks sûrs
@@ -141,7 +152,9 @@ const Paiement = () => {
       })
       .catch(() => {
         // en cas d'erreur serveur, on garde l'état vide
-        setCards([]); setIban(""); setHistory([]);
+        setCards([]);
+        setIban("");
+        setHistory([]);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -149,11 +162,11 @@ const Paiement = () => {
   /* ───────────── Supprimer carte */
   const removeCard = async (id: number) => {
     const token = localStorage.getItem("token");
-    await axios.delete(`/payments/cards/${id}`, { 
+    await axios.delete(`/payments/cards/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
-      withCredentials: true // Utiliser les cookies en plus
+      withCredentials: true, // Utiliser les cookies en plus
     });
-    setCards(c => c.filter(k => k.id !== id));
+    setCards((c) => c.filter((k) => k.id !== id));
   };
 
   /* ───────────── IBAN edit */
@@ -161,32 +174,48 @@ const Paiement = () => {
   const [newIban, setNewIban] = useState("");
   const saveIban = async () => {
     const token = localStorage.getItem("token");
-    await axios.patch("/payments/iban", { iban: newIban },
-      { 
+    await axios.patch(
+      "/payments/iban",
+      { iban: newIban },
+      {
         headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true // Utiliser les cookies en plus
-      });
-    setIban(newIban); setEditing(false);
+        withCredentials: true, // Utiliser les cookies en plus
+      },
+    );
+    setIban(newIban);
+    setEditing(false);
   };
 
   /* ───────────────────────── UI */
-  if (loading) return <p className="p-10">Chargement…</p>;
+  if (loading) return <p className="p-10">{t("payment.loading")}</p>;
 
   return (
     <main className="max-w-3xl mx-auto px-6 py-8 min-h-[80vh]">
-      <h1 className="text-3xl font-bold mb-6">Paiement</h1>
+      <h1 className="text-3xl font-bold mb-6">{t("payment.title")}</h1>
 
       {/* Cartes */}
       <section className="mb-10">
-        <h2 className="text-xl font-semibold mb-4">Cartes bancaires</h2>
-        {cards.length === 0 && <p className="text-gray-500 text-sm mb-4">Aucune carte enregistrée.</p>}
+        <h2 className="text-xl font-semibold mb-4">{t("payment.cards")}</h2>
+        {cards.length === 0 && (
+          <p className="text-gray-500 text-sm mb-4">
+            {t("payment.no_cards")}
+          </p>
+        )}
         <div className="space-y-3">
-          {cards.map(c => (
-            <div key={c.id} className="flex justify-between items-center border p-3 rounded">
-              <span>{c.brand} •••• {c.last4}</span>
+          {cards.map((c) => (
+            <div
+              key={c.id}
+              className="flex justify-between items-center border p-3 rounded"
+            >
+              <span>
+                {c.brand} •••• {c.last4}
+              </span>
               <button
                 onClick={() => removeCard(c.id)}
-                className="text-sm text-red-600 hover:underline">Supprimer</button>
+                className="text-sm text-red-600 hover:underline"
+              >
+                {t("payment.remove")}
+              </button>
             </div>
           ))}
 
@@ -198,7 +227,7 @@ const Paiement = () => {
               onClick={() => setShowAddCard(true)}
               className="w-full border p-3 rounded text-sm hover:bg-gray-50"
             >
-              + Ajouter une carte
+              {t("payment.add_card")}
             </button>
           )}
         </div>
@@ -206,18 +235,18 @@ const Paiement = () => {
 
       {/* IBAN */}
       <section className="mb-10">
-        <h2 className="text-xl font-semibold mb-4">IBAN pour virement</h2>
+        <h2 className="text-xl font-semibold mb-4">{t("payment.iban")}</h2>
         <AddIbanForm />
       </section>
 
       {/* Historique */}
       <section>
-        <h2 className="text-xl font-semibold mb-4">Historique des paiements</h2>
+        <h2 className="text-xl font-semibold mb-4">{t("payment.history")}</h2>
         {history.length === 0 ? (
-          <p className="text-gray-500 text-sm">Aucun paiement récent.</p>
+          <p className="text-gray-500 text-sm">{t("payment.no_history")}</p>
         ) : (
           <div className="bg-white rounded shadow divide-y text-sm">
-            {history.map(h => (
+            {history.map((h) => (
               <div key={h.id} className="flex justify-between p-3">
                 <span>{new Date(h.date).toLocaleDateString()}</span>
                 <span>{h.label}</span>

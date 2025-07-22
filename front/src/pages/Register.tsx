@@ -4,7 +4,6 @@ import styled from "styled-components";
 import API_URL from "@/config";
 import GoogleLoginButton from "../components/GoogleLoginButton";
 
-
 const Register = () => {
   const [formData, setFormData] = useState({
     lastname: "",
@@ -33,7 +32,7 @@ const Register = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
-      });;
+      });
 
       if (!response.ok) {
         throw new Error("Erreur lors de l'inscription");
@@ -50,82 +49,96 @@ const Register = () => {
   };
 
   return (
-      <StyledWrapper>
-        <form className="form" onSubmit={handleSubmit}>
-          <div className="flex-column">
-            <label>Nom</label>
-          </div>
-          <div className="inputForm">
-            <input
-                type="text"
-                name="lastname"
-                className="input"
-                placeholder="Entrez votre nom"
-                value={formData.lastname}
-                onChange={handleChange}
-            />
-          </div>
+    <StyledWrapper>
+      <form className="form" onSubmit={handleSubmit}>
+        <div className="flex-column">
+          <label>Nom</label>
+        </div>
+        <div className="inputForm">
+          <input
+            type="text"
+            name="lastname"
+            className="input"
+            placeholder="Entrez votre nom"
+            value={formData.lastname}
+            onChange={handleChange}
+          />
+        </div>
 
-          <div className="flex-column">
-            <label>Prénom</label>
-          </div>
-          <div className="inputForm">
-            <input
-                type="text"
-                name="firstname"
-                className="input"
-                placeholder="Entrez votre prénom"
-                value={formData.firstname}
-                onChange={handleChange}
-            />
-          </div>
+        <div className="flex-column">
+          <label>Prénom</label>
+        </div>
+        <div className="inputForm">
+          <input
+            type="text"
+            name="firstname"
+            className="input"
+            placeholder="Entrez votre prénom"
+            value={formData.firstname}
+            onChange={handleChange}
+          />
+        </div>
 
-          <div className="flex-column">
-            <label>Email</label>
-          </div>
-          <div className="inputForm">
-            <input
-                type="email"
-                name="mail"
-                className="input"
-                placeholder="Entrez votre email"
-                value={formData.mail}
-                onChange={handleChange}
-            />
-          </div>
+        <div className="flex-column">
+          <label>Email</label>
+        </div>
+        <div className="inputForm">
+          <input
+            type="email"
+            name="mail"
+            className="input"
+            placeholder="Entrez votre email"
+            value={formData.mail}
+            onChange={handleChange}
+          />
+        </div>
 
-          <div className="flex-column">
-            <label>Mot de passe</label>
-          </div>
-          <div className="inputForm">
-            <input
-                type="password"
-                name="password"
-                className="input"
-                placeholder="Entrez votre mot de passe"
-                value={formData.password}
-                onChange={handleChange}
-            />
-          </div>
+        <div className="flex-column">
+          <label>Mot de passe</label>
+        </div>
+        <div className="inputForm">
+          <input
+            type="password"
+            name="password"
+            className="input"
+            placeholder="Entrez votre mot de passe"
+            value={formData.password}
+            onChange={handleChange}
+          />
+        </div>
 
-          <button type="submit" className="button-submit">S'inscrire</button>
-          {message && <p style={{ color: message.startsWith("✅") ? "green" : "red", textAlign: "center" }}>{message}</p>}
-          <p className="p">
-            Vous avez déjà un compte ? <Link to="/connexion" className="span">Connectez-vous</Link>
+        <button type="submit" className="button-submit">
+          S'inscrire
+        </button>
+        {message && (
+          <p
+            style={{
+              color: message.startsWith("✅") ? "green" : "red",
+              textAlign: "center",
+            }}
+          >
+            {message}
           </p>
-          <div className="flex-row">
-            <GoogleLoginButton 
-              onSuccess={() => {
-                setMessage("✅ Inscription Google réussie !");
-                setTimeout(() => navigate("/app"), 2000);
-              }}
-              onError={(error) => {
-                setMessage(`❌ ${error}`);
-              }}
-            />
-          </div>
-        </form>
-      </StyledWrapper>
+        )}
+        <p className="p">
+          Vous avez déjà un compte ?{" "}
+          <Link to="/connexion" className="span">
+            Connectez-vous
+          </Link>
+        </p>
+        <div className="flex-row">
+          <GoogleLoginButton
+            onSuccess={() => {
+              setMessage("✅ Inscription Google réussie !");
+              setTimeout(() => navigate("/app"), 2000);
+            }}
+            onError={(error) => {
+              setMessage(`❌ ${error}`);
+            }}
+          />
+        </div>
+      </form>
+    </StyledWrapper>
   );
 };
 
@@ -145,7 +158,9 @@ const StyledWrapper = styled.div`
     padding: 30px;
     width: 450px;
     border-radius: 20px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family:
+      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+      Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   }
 
   .inputForm {
@@ -211,7 +226,7 @@ const StyledWrapper = styled.div`
     cursor: pointer;
   }
 
-    .btn {
+  .btn {
     width: 100%;
     height: 50px;
     border-radius: 10px;

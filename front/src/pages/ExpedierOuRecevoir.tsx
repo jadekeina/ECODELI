@@ -1,37 +1,34 @@
 import { useState } from "react";
 
 type ObjectItem = {
-    quantity: number;
-    name: string;
-    size: string;
-    weight: string;
+  quantity: number;
+  name: string;
+  size: string;
+  weight: string;
 };
 
 type ObjectKey = keyof ObjectItem;
 
 const ExpedierOuRecevoir = () => {
-    const [objects, setObjects] = useState<ObjectItem[]>([
-        { quantity: 1, name: "", size: "", weight: "" }
-    ]);
+  const [objects, setObjects] = useState<ObjectItem[]>([
+    { quantity: 1, name: "", size: "", weight: "" },
+  ]);
 
-    const handleObjectChange = (
-        index: number,
-        field: ObjectKey,
-        value: string
-    ) => {
-        const newObjects = [...objects];
-        newObjects[index] = {
-            ...newObjects[index],
-            [field]: field === "quantity" ? Number(value) : value
-        };
-        setObjects(newObjects);
+  const handleObjectChange = (
+    index: number,
+    field: ObjectKey,
+    value: string,
+  ) => {
+    const newObjects = [...objects];
+    newObjects[index] = {
+      ...newObjects[index],
+      [field]: field === "quantity" ? Number(value) : value,
     };
+    setObjects(newObjects);
+  };
 
   const addObject = () => {
-    setObjects([
-      ...objects,
-      { quantity: 1, name: "", size: "", weight: "" },
-    ]);
+    setObjects([...objects, { quantity: 1, name: "", size: "", weight: "" }]);
   };
 
   return (
@@ -68,17 +65,13 @@ const ExpedierOuRecevoir = () => {
           />
           <input
             value={obj.name}
-            onChange={(e) =>
-              handleObjectChange(index, "name", e.target.value)
-            }
+            onChange={(e) => handleObjectChange(index, "name", e.target.value)}
             placeholder="Ex : Canapé, fauteuil..."
             className="border p-2 rounded"
           />
           <select
             value={obj.size}
-            onChange={(e) =>
-              handleObjectChange(index, "size", e.target.value)
-            }
+            onChange={(e) => handleObjectChange(index, "size", e.target.value)}
             className="border p-2 rounded"
           >
             <option value="">Choisir une taille</option>
