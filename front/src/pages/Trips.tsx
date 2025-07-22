@@ -1,13 +1,13 @@
 /* --- MesTrajets.tsx ------------------------------------------------------- */
 import { useEffect, useState } from "react";
- /* import { Link } from "react-router-dom";
+/* import { Link } from "react-router-dom";
 import axios from "axios"; */
 
 interface Trajet {
   id: number;
   cityFrom: string;
   cityTo: string;
-  date: string;            // ISO
+  date: string; // ISO
   status: "planned" | "done";
 }
 
@@ -121,13 +121,25 @@ export default function MesTrajets() {
   const fetchPlanned = async () => {
     /* const { data } = await axios.get("/trajets/planned"); */
     return [
-      { id: 1, cityFrom: "Paris", cityTo: "Lyon", date: "2025-07-02", status: "planned" },
+      {
+        id: 1,
+        cityFrom: "Paris",
+        cityTo: "Lyon",
+        date: "2025-07-02",
+        status: "planned",
+      },
     ] as Trajet[];
   };
   const fetchDone = async () => {
     /* const { data } = await axios.get("/trajets/done"); */
     return [
-      { id: 2, cityFrom: "Lille", cityTo: "Paris", date: "2025-06-20", status: "done" },
+      {
+        id: 2,
+        cityFrom: "Lille",
+        cityTo: "Paris",
+        date: "2025-06-20",
+        status: "done",
+      },
     ] as Trajet[];
   };
 
@@ -167,7 +179,9 @@ export default function MesTrajets() {
             key={key}
             onClick={() => setTab(key as any)}
             className={`pb-2 border-b-2 ${
-              tab === key ? "border-[#155250] text-[#155250]" : "border-transparent"
+              tab === key
+                ? "border-[#155250] text-[#155250]"
+                : "border-transparent"
             }`}
           >
             {label}

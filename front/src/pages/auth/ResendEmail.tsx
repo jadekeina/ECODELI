@@ -3,52 +3,61 @@ import styled from "styled-components";
 import API_URL from "@/config";
 
 const ResendEmail = () => {
-    const [mail, setMail] = useState("");
-    const [message, setMessage] = useState("");
+  const [mail, setMail] = useState("");
+  const [message, setMessage] = useState("");
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-        try {
-            const response = await fetch(`${API_URL}/auth/resend-email`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ mail }),
-            });
+    try {
+      const response = await fetch(`${API_URL}/auth/resend-email`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mail }),
+      });
 
-            const data = await response.json();
+      const data = await response.json();
 
-            if (!response.ok) {
-                throw new Error(data.message || "Erreur lors de la requête");
-            }
+      if (!response.ok) {
+        throw new Error(data.message || "Erreur lors de la requête");
+      }
 
-            setMessage("✅ Un nouveau mail de confirmation a été envoyé !");
-        } catch (error) {
-            setMessage(`❌ ${error instanceof Error ? error.message : "Erreur inconnue"}`);
-        }
-    };
+      setMessage("✅ Un nouveau mail de confirmation a été envoyé !");
+    } catch (error) {
+      setMessage(
+        `❌ ${error instanceof Error ? error.message : "Erreur inconnue"}`,
+      );
+    }
+  };
 
-    return (
-        <ResendWrapper>
-            <form className="form" onSubmit={handleSubmit}>
-                <h2>Renvoyer l'email de confirmation</h2>
+  return (
+    <ResendWrapper>
+      <form className="form" onSubmit={handleSubmit}>
+        <h2>Renvoyer l'email de confirmation</h2>
 
-                <input
-                    type="email"
-                    placeholder="Votre adresse email"
-                    value={mail}
-                    onChange={(e) => setMail(e.target.value)}
-                    required
-                />
+        <input
+          type="email"
+          placeholder="Votre adresse email"
+          value={mail}
+          onChange={(e) => setMail(e.target.value)}
+          required
+        />
 
-                <button type="submit">Renvoyer</button>
+        <button type="submit">Renvoyer</button>
 
-                {message && (
-                    <p style={{ color: message.startsWith("✅") ? "green" : "red", marginTop: "15px" }}>{message}</p>
-                )}
-            </form>
-        </ResendWrapper>
-    );
+        {message && (
+          <p
+            style={{
+              color: message.startsWith("✅") ? "green" : "red",
+              marginTop: "15px",
+            }}
+          >
+            {message}
+          </p>
+        )}
+      </form>
+    </ResendWrapper>
+  );
 };
 
 const ResendWrapper = styled.div`

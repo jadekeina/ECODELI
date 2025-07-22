@@ -47,7 +47,7 @@ const Login = () => {
       const userRes = await fetch(`${API_URL}/users/me`, {
         headers: {
           Authorization: `Bearer ${data.user.token}`,
-        }, 
+        },
         credentials: "include",
       });
 
@@ -59,87 +59,102 @@ const Login = () => {
       } else {
         setMessage("❌ Impossible de récupérer le profil utilisateur.");
       }
-
     } catch (error) {
-      setMessage(`❌ ${error instanceof Error ? error.message : "Erreur de connexion"}`);
+      setMessage(
+        `❌ ${error instanceof Error ? error.message : "Erreur de connexion"}`,
+      );
     }
   };
 
-
   return (
-      <StyledWrapper>
-        <form className="form" onSubmit={handleSubmit}>
-          <div className="flex-column"><label>Email </label></div>
-          <div className="inputForm">
-            <input
-                type="email"
-                name="mail"
-                className="input"
-                placeholder="Enter your Email"
-                value={formData.mail}
-                onChange={handleChange}
-                required
-            />
-          </div>
+    <StyledWrapper>
+      <form className="form" onSubmit={handleSubmit}>
+        <div className="flex-column">
+          <label>Email </label>
+        </div>
+        <div className="inputForm">
+          <input
+            type="email"
+            name="mail"
+            className="input"
+            placeholder="Enter your Email"
+            value={formData.mail}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-          <div className="flex-column"><label>Password </label></div>
-          <div className="inputForm">
-            <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                className="input"
-                placeholder="Enter your Password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-            />
-            <span
-                onClick={() => setShowPassword(!showPassword)}
-                style={{ cursor: "pointer", marginRight: "10px", color: "#555" }}
-            >
+        <div className="flex-column">
+          <label>Password </label>
+        </div>
+        <div className="inputForm">
+          <input
+            type={showPassword ? "text" : "password"}
+            name="password"
+            className="input"
+            placeholder="Enter your Password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+          <span
+            onClick={() => setShowPassword(!showPassword)}
+            style={{ cursor: "pointer", marginRight: "10px", color: "#555" }}
+          >
             {showPassword ? "👁️" : "🙈"}
           </span>
-          </div>
+        </div>
 
-          <div className="flex-row mt-4">
-            <div>
-              <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  id="rememberMe"
-              />
-              <label htmlFor="rememberMe" style={{ marginLeft: 6 }}>Remember me</label>
-            </div>
-            <Link to="/forgot-password" className="span">Mot de passe oublié ?</Link>
-          </div>
-
-          <button className="button-submit">Sign In</button>
-
-          {message && (
-              <p style={{ textAlign: "center", color: message.startsWith("✅") ? "green" : "red" }}>
-                {message}
-              </p>
-          )}
-
-          <p className="p">
-            Don't have an account?{" "}
-            <Link to="/inscription" className="span">Créez-en un</Link>
-          </p>
-          <p className="p line">Or With</p>
-
-          <div className="flex-row">
-            <GoogleLoginButton 
-              onSuccess={() => {
-                setMessage("✅ Connexion Google réussie ! Redirection...");
-              }}
-              onError={(error) => {
-                setMessage(`❌ ${error}`);
-              }}
+        <div className="flex-row mt-4">
+          <div>
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              id="rememberMe"
             />
+            <label htmlFor="rememberMe" style={{ marginLeft: 6 }}>
+              Remember me
+            </label>
           </div>
-        </form>
-      </StyledWrapper>
+          <Link to="/forgot-password" className="span">
+            Mot de passe oublié ?
+          </Link>
+        </div>
+
+        <button className="button-submit">Sign In</button>
+
+        {message && (
+          <p
+            style={{
+              textAlign: "center",
+              color: message.startsWith("✅") ? "green" : "red",
+            }}
+          >
+            {message}
+          </p>
+        )}
+
+        <p className="p">
+          Don't have an account?{" "}
+          <Link to="/inscription" className="span">
+            Créez-en un
+          </Link>
+        </p>
+        <p className="p line">Or With</p>
+
+        <div className="flex-row">
+          <GoogleLoginButton
+            onSuccess={() => {
+              setMessage("✅ Connexion Google réussie ! Redirection...");
+            }}
+            onError={(error) => {
+              setMessage(`❌ ${error}`);
+            }}
+          />
+        </div>
+      </form>
+    </StyledWrapper>
   );
 };
 
@@ -158,7 +173,9 @@ const StyledWrapper = styled.div`
     padding: 30px;
     width: 450px;
     border-radius: 20px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family:
+      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+      Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   }
 
   .inputForm {

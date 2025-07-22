@@ -6,22 +6,22 @@ import HeaderProvider from "./HeaderProvider";
 import HeaderShopOwner from "./HeaderShopOwner";
 
 const HeaderConnected = () => {
-    const { user } = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
-    if (!user) return null;
+  if (!user) return null;
 
-    switch (user.role) {
-        case "client":
-            return <HeaderClient />;
-        case "delivery_driver":
-            return <HeaderDeliveryDriver />;
-        case "provider":
-            return <HeaderProvider />;
-        case "shop_owner":
-            return <HeaderShopOwner />;
-        default:
-            return null;
-    }
+  switch (user.role) {
+    case "client":
+      return <HeaderClient />;
+    case "delivery_driver":
+      return <HeaderDeliveryDriver />;
+    case "provider":
+      return <HeaderProvider />;
+    case "shop_owner":
+      return <HeaderShopOwner />;
+    default:
+      return null;
+  }
 };
 
 export default HeaderConnected;

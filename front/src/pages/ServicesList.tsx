@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 interface Prestation {
   id: number;
   label: string;
-  date: string;         // ISO
+  date: string; // ISO
   status: "booked" | "done";
   price: number;
 }
@@ -18,13 +18,17 @@ function PrestationRow({ p }: { p: Prestation }) {
     <div className="flex justify-between p-3 border-b last:border-0">
       <div className="flex flex-col">
         <span className="font-semibold">{p.label}</span>
-        <span className="text-xs text-gray-500">{new Date(p.date).toLocaleDateString()}</span>
+        <span className="text-xs text-gray-500">
+          {new Date(p.date).toLocaleDateString()}
+        </span>
       </div>
       <div className="text-right">
         <span className="font-semibold">{p.price} €</span>
         <span
           className={`ml-2 text-xs px-2 py-0.5 rounded-full ${
-            p.status === "booked" ? "bg-[#E9FADF] text-[#155250]" : "bg-gray-200"
+            p.status === "booked"
+              ? "bg-[#E9FADF] text-[#155250]"
+              : "bg-gray-200"
           }`}
         >
           {p.status === "booked" ? "En cours" : "Terminée"}
@@ -35,7 +39,13 @@ function PrestationRow({ p }: { p: Prestation }) {
 }
 
 /* ------------ Formulaire création simple -------------- */
-function PrestationForm({ onClose, onCreated }: { onClose: () => void; onCreated: () => void }) {
+function PrestationForm({
+  onClose,
+  onCreated,
+}: {
+  onClose: () => void;
+  onCreated: () => void;
+}) {
   const [label, setLabel] = useState("");
   const [price, setPrice] = useState("");
 
@@ -75,7 +85,10 @@ function PrestationForm({ onClose, onCreated }: { onClose: () => void; onCreated
             <button type="button" onClick={onClose} className="text-gray-500">
               Annuler
             </button>
-            <button type="submit" className="bg-[#155250] text-white px-4 py-2 rounded">
+            <button
+              type="submit"
+              className="bg-[#155250] text-white px-4 py-2 rounded"
+            >
               Créer
             </button>
           </div>
@@ -97,13 +110,25 @@ const Prestations = () => {
   const fetchActives = async () => {
     /* const { data } = await axios.get("/prestations/me"); */
     return [
-      { id: 1, label: "Cours de piano", date: "2025-07-03", status: "booked", price: 30 },
+      {
+        id: 1,
+        label: "Cours de piano",
+        date: "2025-07-03",
+        status: "booked",
+        price: 30,
+      },
     ] as Prestation[];
   };
   const fetchHistoric = async () => {
     /* const { data } = await axios.get("/prestations/historic"); */
     return [
-      { id: 2, label: "Jardinage", date: "2025-06-10", status: "done", price: 25 },
+      {
+        id: 2,
+        label: "Jardinage",
+        date: "2025-06-10",
+        status: "done",
+        price: 25,
+      },
     ] as Prestation[];
   };
 
@@ -143,7 +168,9 @@ const Prestations = () => {
             key={key}
             onClick={() => setActiveTab(key as any)}
             className={`pb-2 border-b-2 ${
-              activeTab === key ? "border-[#155250] text-[#155250]" : "border-transparent"
+              activeTab === key
+                ? "border-[#155250] text-[#155250]"
+                : "border-transparent"
             }`}
           >
             {label}
@@ -178,5 +205,5 @@ const Prestations = () => {
       )}
     </main>
   );
-}
- export default Prestations;
+};
+export default Prestations;

@@ -5,9 +5,9 @@ import axios from "axios";
 interface Row {
   id: number;
   type: "trajet" | "prestation";
-  label: string;          // ex: "Paris → Lyon" ou "Jardinage"
-  date: string;           // ISO string
-  price?: number;         // pour prestation
+  label: string; // ex: "Paris → Lyon" ou "Jardinage"
+  date: string; // ISO string
+  price?: number; // pour prestation
 }
 
 /* ------- Ligne tableau ------- */
@@ -60,7 +60,9 @@ const History = () => {
         fetchHistoricPrestations(),
       ]);
       // fusion + tri desc
-      setRows([...t, ...p].sort((a, b) => Date.parse(b.date) - Date.parse(a.date)));
+      setRows(
+        [...t, ...p].sort((a, b) => Date.parse(b.date) - Date.parse(a.date)),
+      );
       setLoading(false);
     })();
   }, []);
@@ -83,7 +85,9 @@ const History = () => {
             key={key}
             onClick={() => setTab(key as any)}
             className={`pb-2 border-b-2 ${
-              tab === key ? "border-[#155250] text-[#155250]" : "border-transparent"
+              tab === key
+                ? "border-[#155250] text-[#155250]"
+                : "border-transparent"
             }`}
           >
             {label}
@@ -105,5 +109,5 @@ const History = () => {
       )}
     </main>
   );
-} 
+};
 export default History;

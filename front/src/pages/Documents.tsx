@@ -1,9 +1,18 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import API_URL from "@/config";
+import { useTranslation } from "react-i18next";
 
 // Types adaptés aux ENUM de la DB
-type DocType = "permis" | "piece_identite" | "avis_sirene" | "attestation_urssaf" | "rc_pro" | "diplome" | "siret" | "attestation_autoentrepreneur";
+type DocType =
+  | "permis"
+  | "piece_identite"
+  | "avis_sirene"
+  | "attestation_urssaf"
+  | "rc_pro"
+  | "diplome"
+  | "siret"
+  | "attestation_autoentrepreneur";
 type Status = "valide" | "en_attente" | "refuse";
 
 interface DocRow {
@@ -14,18 +23,21 @@ interface DocRow {
   fileUrl?: string;
 }
 
-const DOC_LABELS: Record<DocType, string> = {
-  permis: "Permis de conduire",
-  piece_identite: "Pièce d'identité (CNI/Passeport)",
-  avis_sirene: "Avis SIRENE",
-  attestation_urssaf: "Attestation URSSAF",
-  rc_pro: "Registre du Commerce",
-  diplome: "Diplôme/Certification",
-  siret: "Numéro SIRET",
-  attestation_autoentrepreneur: "Attestation Auto-entrepreneur",
-};
-
 const DocumentsPage = () => {
+  const { t } = useTranslation();
+
+  // Place DOC_LABELS ici, dans le composant !
+  const DOC_LABELS: Record<DocType, string> = {
+    permis: t("documents.permis"),
+    piece_identite: t("documents.piece_identite"),
+    avis_sirene: t("documents.avis_sirene"),
+    attestation_urssaf: t("documents.attestation_urssaf"),
+    rc_pro: t("documents.rc_pro"),
+    diplome: t("documents.diplome"),
+    siret: t("documents.siret"),
+    attestation_autoentrepreneur: t("documents.attestation_autoentrepreneur"),
+  };
+
   const [docs, setDocs] = useState<DocRow[]>([]);
   const [files, setFiles] = useState<Record<DocType, File | null>>({
     permis: null,
@@ -50,14 +62,42 @@ const DocumentsPage = () => {
       // Correction : supporte réponse tableau ou objet
       const docsArray = Array.isArray(data) ? data : data.data || [];
       const map: Record<DocType, DocRow> = {
-        permis: { type: "permis", label: DOC_LABELS.permis, status: "en_attente" },
-        piece_identite: { type: "piece_identite", label: DOC_LABELS.piece_identite, status: "en_attente" },
-        avis_sirene: { type: "avis_sirene", label: DOC_LABELS.avis_sirene, status: "en_attente" },
-        attestation_urssaf: { type: "attestation_urssaf", label: DOC_LABELS.attestation_urssaf, status: "en_attente" },
-        rc_pro: { type: "rc_pro", label: DOC_LABELS.rc_pro, status: "en_attente" },
-        diplome: { type: "diplome", label: DOC_LABELS.diplome, status: "en_attente" },
+        permis: {
+          type: "permis",
+          label: DOC_LABELS.permis,
+          status: "en_attente",
+        },
+        piece_identite: {
+          type: "piece_identite",
+          label: DOC_LABELS.piece_identite,
+          status: "en_attente",
+        },
+        avis_sirene: {
+          type: "avis_sirene",
+          label: DOC_LABELS.avis_sirene,
+          status: "en_attente",
+        },
+        attestation_urssaf: {
+          type: "attestation_urssaf",
+          label: DOC_LABELS.attestation_urssaf,
+          status: "en_attente",
+        },
+        rc_pro: {
+          type: "rc_pro",
+          label: DOC_LABELS.rc_pro,
+          status: "en_attente",
+        },
+        diplome: {
+          type: "diplome",
+          label: DOC_LABELS.diplome,
+          status: "en_attente",
+        },
         siret: { type: "siret", label: DOC_LABELS.siret, status: "en_attente" },
-        attestation_autoentrepreneur: { type: "attestation_autoentrepreneur", label: DOC_LABELS.attestation_autoentrepreneur, status: "en_attente" },
+        attestation_autoentrepreneur: {
+          type: "attestation_autoentrepreneur",
+          label: DOC_LABELS.attestation_autoentrepreneur,
+          status: "en_attente",
+        },
       };
       docsArray.forEach((d: any) => {
         if (map[d.type_document as DocType]) {
@@ -72,21 +112,23 @@ const DocumentsPage = () => {
       setDocs(Object.values(map));
     } catch (e) {
       console.error("Erreur lors du chargement des documents:", e);
-      setDocs(Object.keys(DOC_LABELS).map(t => ({
-        type: t as DocType,
-        label: DOC_LABELS[t as DocType],
-        status: "en_attente",
-      })));
+      setDocs(
+        Object.keys(DOC_LABELS).map((t) => ({
+          type: t as DocType,
+          label: DOC_LABELS[t as DocType],
+          status: "en_attente",
+        })),
+      );
     }
     setLoading(false);
   };
 
-  useEffect(() => { 
-    refresh(); 
-    
+  useEffect(() => {
+    refresh();
+
     // Refresh toutes les 30 secondes
     const interval = setInterval(refresh, 30000);
-    
+
     return () => clearInterval(interval);
   }, []);
 
@@ -104,7 +146,7 @@ const DocumentsPage = () => {
     formData.append("type", type);
 
     try {
-      await axios.post(`${API_URL}/documents`, formData, { 
+      await axios.post(`${API_URL}/documents`, formData, {
         headers: {
           ...headers,
           "Content-Type": "multipart/form-data",
@@ -112,43 +154,59 @@ const DocumentsPage = () => {
       });
       await refresh();
       setFiles((prev) => ({ ...prev, [type]: null }));
-      alert("Document envoyé avec succès !");
+      alert(t("documents.uploaded_success"));
     } catch (err: any) {
       console.error("Erreur lors de l'upload:", err);
-      alert("Erreur lors de l'upload: " + (err?.response?.data?.message || "Erreur inconnue"));
+      alert(
+        t("documents.upload_error") +
+          (err?.response?.data?.message || t("documents.upload_error_unknown")),
+      );
     }
     setLoading(false);
   };
 
   const getStatusColor = (status: Status) => {
     switch (status) {
-      case "valide": return "text-green-600";
-      case "refuse": return "text-red-600";
-      case "en_attente": return "text-yellow-500";
-      default: return "text-gray-400";
+      case "valide":
+        return "text-green-600";
+      case "refuse":
+        return "text-red-600";
+      case "en_attente":
+        return "text-yellow-500";
+      default:
+        return "text-gray-400";
     }
   };
 
   const getStatusText = (status: Status) => {
     switch (status) {
-      case "valide": return "Validé";
-      case "refuse": return "Refusé";
-      case "en_attente": return "En attente";
-      default: return "Non fourni";
+      case "valide":
+        return t("documents.status_valid");
+      case "refuse":
+        return t("documents.status_refused");
+      case "en_attente":
+        return t("documents.status_pending");
+      default:
+        return t("documents.status_missing");
     }
   };
 
   return (
     <main className="max-w-4xl mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-8">Documents à fournir</h1>
+      <h1 className="text-3xl font-bold mb-8">{t("documents.title")}</h1>
       <div className="space-y-8">
-        {docs.map(doc => (
-          <div key={doc.type} className="border rounded-lg p-6 bg-white shadow-sm">
+        {docs.map((doc) => (
+          <div
+            key={doc.type}
+            className="border rounded-lg p-6 bg-white shadow-sm"
+          >
             <h2 className="text-lg font-semibold mb-4">{doc.label}</h2>
             <div className="flex gap-3 items-center flex-wrap">
               <input
                 type="file"
-                onChange={e => handleFileChange(doc.type, e.target.files?.[0] || null)}
+                onChange={(e) =>
+                  handleFileChange(doc.type, e.target.files?.[0] || null)
+                }
                 className="border px-3 py-2 rounded flex-1 text-sm min-w-0"
                 accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
               />
@@ -157,25 +215,25 @@ const DocumentsPage = () => {
                 disabled={!files[doc.type] || loading}
                 className="bg-[#155250] text-white px-4 py-2 rounded text-sm disabled:opacity-50 hover:bg-[#155250]/90 transition-colors"
               >
-                {loading ? "Envoi..." : "Envoyer"}
+                {loading ? t("documents.sending") : t("documents.send")}
               </button>
-              <button 
+              <button
                 onClick={refresh}
                 className="bg-blue-500 text-white px-4 py-2 rounded"
               >
-                Actualiser
+                {t("documents.refresh")}
               </button>
               <span className={`font-medium ${getStatusColor(doc.status)}`}>
                 {getStatusText(doc.status)}
               </span>
               {doc.fileUrl && (
-                <a 
-                  href={doc.fileUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
+                <a
+                  href={doc.fileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-blue-600 underline hover:text-blue-800"
                 >
-                  Voir le document
+                  {t("documents.view")}
                 </a>
               )}
             </div>

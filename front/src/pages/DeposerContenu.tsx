@@ -4,11 +4,11 @@ import CreateAnnonce from "@/components/CreateAnnonce";
 import PublishOffer from "@/components/PublishOffer";
 
 export default function DeposerContenu() {
-    const { mode } = useContext(UserContext);
+  const { mode } = useContext(UserContext);
 
-    return (
-        <div className="py-10">
-            {mode === "client" ? <CreateAnnonce /> : <PublishOffer />}
-        </div>
-    );
+  return (
+    <div className="py-10">
+      {mode === "client" ? <CreateAnnonce /> : <PublishOffer />}
+    </div>
+  );
 }
