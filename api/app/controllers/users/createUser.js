@@ -15,7 +15,7 @@ async function createUser(data) {
   try {
     const hashedPassword = await bcrypt.hash(data.password, 10);
     const emailToken = crypto.randomBytes(32).toString("hex");
-    
+
     // Générer un username par défaut si aucun n'est fourni
     const username = data.username || generateDefaultUsername(data.firstname, data.lastname);
 
@@ -44,7 +44,7 @@ async function createUser(data) {
       });
     });
 
-    const confirmLink = `${process.env.FRONT_URL}/auth/verify-email/${emailToken}`;
+    const confirmLink = `${process.env.BASE_URL}/auth/verify-email/${emailToken}`;
 
     await sendMail({
       to: data.mail,

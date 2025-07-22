@@ -16,6 +16,16 @@ const auth = require('./app/librairies/authMiddleware');
 app.use(cookieParser());
 
 
+const cron = require('node-cron');
+const { processPendingProviderPayments } = require('./app/controllers/providerPayments/processProviderPayments');
+
+// Tâche cron toutes les 5 minutes
+cron.schedule('*/5 * * * *', () => {
+    console.log("[Cron] Démarrage du traitement des paiements provider...");
+    processPendingProviderPayments();
+});
+
+
 const handleStripeWebhook = require("./app/controllers/payments/handleStripeWebhook");
 
 // ✅ Webhook Stripe - doit être mis **avant** express.json()
@@ -70,13 +80,19 @@ app.use("/auth/forgot-password", require("./app/routes/auth/forgotPassword"));
 app.use("/delivery-driver", require("./app/routes/deliveryDriver/post"));
 app.use("/delivery-driver", require("./app/routes/deliveryDriver/patch"));
 
-// Prestataires
+// Providers
 app.use("/provider", require("./app/routes/provider/post"));
 app.use("/provider", require("./app/routes/provider/patch"));
+app.use("/provider_payments", require("./app/routes/providerPayments/get"));
+app.use("/requests/provider", require("./app/routes/requests/provider"));
 
 // Commerçants
 app.use("/shop-owner", require("./app/routes/shopOwner/post"));
 app.use("/shop-owner", require("./app/routes/shopOwner/patch"));
+
+//Commerçant Demande
+app.use("/shopowner-requests", require("./app/routes/shopowner_requests/post"));
+app.use("/shopowner-requests", require("./app/routes/shopowner_requests/get"));
 
 // Documents
 app.use("/documents", require("./app/routes/documents/post"));
@@ -87,6 +103,7 @@ app.use("/documents", require("./app/routes/documents/patch"));
 app.use("/requests", require("./app/routes/requests/post"));
 app.use("/requests/my", require("./app/routes/requests/my"));
 app.use("/requests/public", require("./app/routes/requests/public"));
+app.use("/requests/provider", require("./app/routes/requests/provider"));
 
 // Warehouses
 app.use("/warehouses", require("./app/routes/warehouses/public"));
@@ -100,6 +117,17 @@ app.use("/rides", require("./app/routes/rides/get"));
 app.use("/rides", require("./app/routes/rides/getInvoice"));
 app.use("/rides", require("./app/routes/rides/status"));
 app.use("/rides", require("./app/routes/rides/assign"));
+app.use("/rides/en-attente", require("./app/routes/rides/en-attente"));
+app.use("/rides/provider", require("./app/routes/rides/providerRides"));
+app.use("/provider_payments", require("./app/routes/providerPayments/get"));
+app.use("/rides/client", require ("./app/routes/rides/clientRides"));
+app.use("/rides", require("./app/routes/rides/updateStatus"));
+
+
+//Shops
+app.use("/shops", require("./app/routes/shops/post"));
+app.use("/shops", require("./app/routes/shops/get"));
+
 
 // Payments
 app.use("/payments", require("./app/routes/payments/post"));

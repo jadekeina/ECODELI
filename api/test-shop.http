@@ -1,0 +1,22 @@
+### Créer une boutique à Paris 16e
+POST http://localhost:3002/shops/create
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE0LCJtYWlsIjoic2ViZWxlYmUuc2VAZ21haWwuY29tIiwicm9sZSI6InNob3Atb3duZXIiLCJ0aW1lc3RhbXAiOjE3NTMxOTIzODk0OTMsImlhdCI6MTc1MzE5MjM4OSwiZXhwIjoxNzUzMTk5NTg5fQ.7tWhYtwM4-tztLd56KGV11lmz3apck0yD1vmsvToaW8
+Content-Type: application/json
+
+{
+  "name": "KLS Paris 16",
+  "address": "98 Avenue Victor Hugo, 75116 Paris"
+}
+
+
+
+
+### Créer une boutique à Courbevoie (92)
+POST http://localhost:3002/shops/create
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE0LCJtYWlsIjoic2ViZWxlYmUuc2VAZ21haWwuY29tIiwicm9sZSI6InNob3Atb3duZXIiLCJ0aW1lc3RhbXAiOjE3NTMxOTIzODk0OTMsImlhdCI6MTc1MzE5MjM4OSwiZXhwIjoxNzUzMTk5NTg5fQ.7tWhYtwM4-tztLd56KGV11lmz3apck0yD1vmsvToaW8
+Content-Type: application/json
+
+{
+  "name": "KLS Courbevoie",
+  "address": "25 Rue Baudin, 92400 Courbevoie"
+}

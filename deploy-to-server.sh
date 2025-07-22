@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # === CONFIGURATION ===
-SERVER_USER=sandrine
+SERVER_USER=root
 SERVER_IP=51.89.21.8
-DEPLOY_PATH=/home/sandrine
+DEPLOY_PATH=/home/ecodeli
 
 # === BUILD AMD64 IMAGES ===
 echo "🚀 Build de l'image ecodeli_api (linux/amd64)..."
@@ -23,8 +23,7 @@ docker save ecodeli_front > front.tar
 
 # === TRANSFERT SCP ===
 echo "📤 Envoi des fichiers .tar vers le serveur..."
-scp api.tar admin.tar front.tar $SERVER_USER@$SERVER_IP:$DEPLOY_PATH
-
+scp -o ProxyJump=$SERVER_USER@$SERVER_IP api.tar admin.tar front.tar root@192.168.1.100:$DEPLOY_PATH
 echo "✅ Tout est prêt. Connecte-toi au serveur et fais :"
 echo "    docker load < api.tar"
 echo "    docker load < admin.tar"

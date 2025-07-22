@@ -190,7 +190,8 @@ CREATE TABLE box (
 -- Trajet
 CREATE TABLE rides (
                        id INT AUTO_INCREMENT PRIMARY KEY,
-                       user_id INT NOT NULL,
+                       user_id INT NOT NULL, -- client
+                       provider_id INT DEFAULT NULL, -- prestataire
                        depart_address VARCHAR(255),
                        arrivee_address VARCHAR(255),
                        distance_km DECIMAL(10, 2),
@@ -199,12 +200,23 @@ CREATE TABLE rides (
                        commission DECIMAL(10, 2),
                        tva DECIMAL(10, 2),
                        total_price DECIMAL(10, 2),
-                       status ENUM('en_attente', 'acceptee', 'refusee', 'en_cours', 'terminee', 'annulee') DEFAULT 'en_attente',
+                       status ENUM(
+                           'en_attente',
+                           'acceptee',
+                           'refusee',
+                           'en_cours',
+                           'terminee',
+                           'annulee'
+                           ) DEFAULT 'en_attente',
                        note TEXT,
                        scheduled_date DATETIME,
                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+                       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                       FOREIGN KEY (provider_id) REFERENCES provider(id) ON DELETE SET NULL
 );
+
 
 
 
@@ -221,6 +233,74 @@ CREATE TABLE payments (
                           FOREIGN KEY (ride_id) REFERENCES rides(id)
 );
 
+CREATE TABLE provider_payments (
+                                   id INT AUTO_INCREMENT PRIMARY KEY,
+                                   provider_id INT NOT NULL,
+                                   ride_id INT DEFAULT NULL,
+                                   services_id INT DEFAULT NULL,
+                                   amount DECIMAL(10, 2) NOT NULL,
+                                   status ENUM('en_attente', 'en_cours', 'effectue') DEFAULT 'en_attente',
+                                   method ENUM('virement', 'paypal', 'stripe') DEFAULT 'virement',
+                                   payment_date DATETIME DEFAULT NULL,
+                                   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                                   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                   FOREIGN KEY (provider_id) REFERENCES provider(id) ON DELETE CASCADE,
+                                   FOREIGN KEY (ride_id) REFERENCES rides(id) ON DELETE SET NULL,
+                                   FOREIGN KEY (services_id) REFERENCES services(id) ON DELETE SET NULL
+);
+
+
+-- Shop Owner Requestq
+
+CREATE TABLE shopowner_requests (
+                                    id INT AUTO_INCREMENT PRIMARY KEY,
+                                    user_id INT NOT NULL,
+                                    shop_id INT DEFAULT NULL,
+                                    type ENUM('colis_total', 'livraison_domicile', 'courses') NOT NULL,
+                                    title VARCHAR(255),
+                                    description TEXT,
+                                    poids FLOAT,
+                                    longueur FLOAT,
+                                    largeur FLOAT,
+                                    hauteur FLOAT,
+                                    photo VARCHAR(255),
+                                    destinataire_nom VARCHAR(100),
+                                    destinataire_prenom VARCHAR(100),
+                                    adresse_livraison TEXT,
+                                    date_livraison DATE,
+                                    heure_livraison TIME,
+                                    prix DECIMAL(10, 2),
+                                    statut ENUM('en_attente', 'en_cours', 'terminee') DEFAULT 'en_attente',
+                                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+                                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                                    FOREIGN KEY (shop_id) REFERENCES shops(id) ON DELETE SET NULL
+);
+
+
+
+-- Prestations
+CREATE TABLE services (
+                             id INT AUTO_INCREMENT PRIMARY KEY,
+                             provider_id INT NOT NULL,
+                             type VARCHAR(255),
+                             description TEXT,
+                             price DECIMAL(10,2),
+                             status ENUM('en_attente', 'valide', 'refuse') DEFAULT 'en_attente',
+                             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                             FOREIGN KEY (provider_id) REFERENCES provider(id) ON DELETE CASCADE
+);
+
+
+-- Shops
+CREATE TABLE shops (
+                       id INT AUTO_INCREMENT PRIMARY KEY,
+                       shop_owner_id INT NOT NULL,
+                       name VARCHAR(255) NOT NULL,
+                       address TEXT NOT NULL,
+                       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                       FOREIGN KEY (shop_owner_id) REFERENCES shop_owner(id) ON DELETE CASCADE
+);
 
 
 -- --------------------------------------------------------- Données
