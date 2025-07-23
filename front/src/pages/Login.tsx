@@ -61,100 +61,100 @@ const Login = () => {
       }
     } catch (error) {
       setMessage(
-        `❌ ${error instanceof Error ? error.message : "Erreur de connexion"}`,
+          `❌ ${error instanceof Error ? error.message : "Erreur de connexion"}`,
       );
     }
   };
 
   return (
-    <StyledWrapper>
-      <form className="form" onSubmit={handleSubmit}>
-        <div className="flex-column">
-          <label>Email </label>
-        </div>
-        <div className="inputForm">
-          <input
-            type="email"
-            name="mail"
-            className="input"
-            placeholder="Enter your Email"
-            value={formData.mail}
-            onChange={handleChange}
-            required
-          />
-        </div>
+      <StyledWrapper>
+        <form className="form" onSubmit={handleSubmit}>
+          <div className="flex-column">
+            <label>Email </label>
+          </div>
+          <div className="inputForm">
+            <input
+                type="email"
+                name="mail"
+                className="input"
+                placeholder="Enter your Email"
+                value={formData.mail}
+                onChange={handleChange}
+                required
+            />
+          </div>
 
-        <div className="flex-column">
-          <label>Password </label>
-        </div>
-        <div className="inputForm">
-          <input
-            type={showPassword ? "text" : "password"}
-            name="password"
-            className="input"
-            placeholder="Enter your Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-          <span
-            onClick={() => setShowPassword(!showPassword)}
-            style={{ cursor: "pointer", marginRight: "10px", color: "#555" }}
-          >
+          <div className="flex-column">
+            <label>Password </label>
+          </div>
+          <div className="inputForm">
+            <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                className="input"
+                placeholder="Enter your Password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+            />
+            <span
+                onClick={() => setShowPassword(!showPassword)}
+                style={{ cursor: "pointer", marginRight: "10px", color: "#555" }}
+            >
             {showPassword ? "👁️" : "🙈"}
           </span>
-        </div>
-
-        <div className="flex-row mt-4">
-          <div>
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-              id="rememberMe"
-            />
-            <label htmlFor="rememberMe" style={{ marginLeft: 6 }}>
-              Remember me
-            </label>
           </div>
-          <Link to="/forgot-password" className="span">
-            Mot de passe oublié ?
-          </Link>
-        </div>
 
-        <button className="button-submit">Sign In</button>
+          <div className="flex-row mt-4">
+            <div>
+              <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  id="rememberMe"
+              />
+              <label htmlFor="rememberMe" style={{ marginLeft: 6 }}>
+                Remember me
+              </label>
+            </div>
+            <Link to="/forgot-password" className="span">
+              Mot de passe oublié ?
+            </Link>
+          </div>
 
-        {message && (
-          <p
-            style={{
-              textAlign: "center",
-              color: message.startsWith("✅") ? "green" : "red",
-            }}
-          >
-            {message}
+          <button className="button-submit">Sign In</button>
+
+          {message && (
+              <p
+                  style={{
+                    textAlign: "center",
+                    color: message.startsWith("✅") ? "green" : "red",
+                  }}
+              >
+                {message}
+              </p>
+          )}
+
+          <p className="p">
+            Don't have an account?{" "}
+            <Link to="/inscription" className="span">
+              Créez-en un
+            </Link>
           </p>
-        )}
+          <p className="p line">Or With</p>
 
-        <p className="p">
-          Don't have an account?{" "}
-          <Link to="/inscription" className="span">
-            Créez-en un
-          </Link>
-        </p>
-        <p className="p line">Or With</p>
-
-        <div className="flex-row">
-          <GoogleLoginButton
-            onSuccess={() => {
-              setMessage("✅ Connexion Google réussie ! Redirection...");
-            }}
-            onError={(error) => {
-              setMessage(`❌ ${error}`);
-            }}
-          />
-        </div>
-      </form>
-    </StyledWrapper>
+          <div className="flex-row">
+            <GoogleLoginButton
+                onSuccess={() => {
+                  setMessage("✅ Connexion Google réussie ! Redirection...");
+                }}
+                onError={(error) => {
+                  setMessage(`❌ ${error}`);
+                }}
+            />
+          </div>
+        </form>
+      </StyledWrapper>
   );
 };
 
@@ -174,8 +174,8 @@ const StyledWrapper = styled.div`
     width: 450px;
     border-radius: 20px;
     font-family:
-      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
-      Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+        Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   }
 
   .inputForm {

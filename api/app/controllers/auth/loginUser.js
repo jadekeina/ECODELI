@@ -46,15 +46,15 @@ async function loginUser(mail, password, rememberMe = false) {
 
       // ✅ Génération du token
       const token = jwt.sign(
-        {
-          userId: user.id,
-          mail: user.mail,
-          role: user.role,
-          status: user.status,
-          timestamp: Date.now(),
-        },
-        process.env.SECRET_KEY,
-        { expiresIn: tokenExpiry }
+          {
+            userId: user.id,
+            mail: user.mail,
+            role: user.role,
+            status: user.status,
+            timestamp: Date.now(),
+          },
+          process.env.SECRET_KEY,
+          { expiresIn: tokenExpiry }
       );
 
       db.setUserToken(user.id, token, (updateErr, updateResult) => {
