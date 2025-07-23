@@ -20,11 +20,11 @@ async function authMiddleware(req, res, next) {
     }
 
     if (!token) {
-      console.log("AUTH_MIDDLEWARE: Token manquant (ni header ni cookie)."); // DEBUG
+      //console.log("AUTH_MIDDLEWARE: Token manquant (ni header ni cookie)."); // DEBUG
       return res.status(401).json({ message: "Token manquant" });
     }
 
-    console.log("AUTH_MIDDLEWARE: Token reçu (début):", token.substring(0, 20) + "..."); // DEBUG
+    //console.log("AUTH_MIDDLEWARE: Token reçu (début):", token.substring(0, 20) + "..."); // DEBUG
 
     if (!process.env.SECRET_KEY) {
       console.error("AUTH_MIDDLEWARE: SECRET_KEY non définie!"); // DEBUG
@@ -34,7 +34,7 @@ async function authMiddleware(req, res, next) {
     let decoded;
     try {
       decoded = jwt.verify(token, process.env.SECRET_KEY);
-      console.log("AUTH_MIDDLEWARE: Token décodé. Payload:", decoded); // DEBUG: TRÈS IMPORTANT
+      //console.log("AUTH_MIDDLEWARE: Token décodé. Payload:", decoded); // DEBUG: TRÈS IMPORTANT
     } catch (jwtError) {
       console.error("AUTH_MIDDLEWARE: Erreur lors de la vérification JWT:", jwtError.name, jwtError.message); // DEBUG
       if (jwtError.name === 'TokenExpiredError') {
@@ -45,7 +45,7 @@ async function authMiddleware(req, res, next) {
 
     // Extraire l'ID utilisateur selon le format du token
     const userId = decoded.userId || decoded.id;
-    console.log("AUTH_MIDDLEWARE: userId extrait du token:", userId); // DEBUG
+    //console.log("AUTH_MIDDLEWARE: userId extrait du token:", userId); // DEBUG
 
     // --- VÉRIFICATION CRUCIALE : `db.getUserById` ---
     db.getUserById(userId, (err, result) => {
@@ -54,23 +54,23 @@ async function authMiddleware(req, res, next) {
         return res.status(500).json({ message: "Erreur serveur lors de la récupération de l'utilisateur." });
       }
       if (!result || !result.length) {
-        console.log("AUTH_MIDDLEWARE: db.getUserById N'A PAS TROUVÉ l'utilisateur avec ID:", userId); // DEBUG: C'EST VOTRE MESSAGE ACTUEL
+        //console.log("AUTH_MIDDLEWARE: db.getUserById N'A PAS TROUVÉ l'utilisateur avec ID:", userId); // DEBUG: C'EST VOTRE MESSAGE ACTUEL
         return res.status(401).json({ message: "Authentification échouée: Utilisateur introuvable." });
       }
 
       const user = result[0];
-      console.log("AUTH_MIDDLEWARE: Utilisateur trouvé en BDD:", user.mail, "Token BDD (début):", user.token ? user.token.substring(0,20) + '...' : 'N/A'); // DEBUG
+      //console.log("AUTH_MIDDLEWARE: Utilisateur trouvé en BDD:", user.mail, "Token BDD (début):", user.token ? user.token.substring(0,20) + '...' : 'N/A'); // DEBUG
 
       // Vérifier si le token correspond à celui en base (optionnel)
-      if (user.token && user.token !== token) {
-        console.log("AUTH_MIDDLEWARE: Mismatch Token BDD vs Token fourni."); // DEBUG
+      //if (user.token && user.token !== token) {
+        //console.log("AUTH_MIDDLEWARE: Mismatch Token BDD vs Token fourni."); // DEBUG
         // On peut être permissif car le token JWT est valide
-        console.log("AUTH_MIDDLEWARE: Token JWT valide, on autorise malgré le mismatch");
-      }
+        //console.log("AUTH_MIDDLEWARE: Token JWT valide, on autorise malgré le mismatch");
+      //}
 
       delete user.password;
       req.user = user;
-      console.log("=== MIDDLEWARE OK, utilisateur trouvé ===", user.mail);
+      //console.log("=== MIDDLEWARE OK, utilisateur trouvé ===", user.mail);
       next();
     });
   } catch (error) {

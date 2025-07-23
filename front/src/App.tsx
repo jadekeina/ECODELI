@@ -54,6 +54,7 @@ import DashboardClient from "./pages/client/DashboardClient";
 import NouvelleAnnonceShopOwner from "./pages/shop-owner/NouvelleAnnonceShopOwner";
 import SuccessAnnonce from "./pages/shop-owner/SuccessAnnonce";
 import PaymentsHistory from "./pages/provider/PaymentHistory";
+import ShopOwnerOffers from "./pages/delivery-driver/ShopOwnerOffers";
 
 
 
@@ -147,6 +148,10 @@ function App() {
 
                 <Route path="/inscription-pro" element={<ProtectedRoute>{renderWithLayout(<RegisterPro />)}</ProtectedRoute>} />
                 <Route path="/requests/:id" element={<ProtectedRoute>{renderWithLayout(<RequestDetails />)}</ProtectedRoute>} />
+
+                {/* Delivery Driver */}
+                <Route path="/livraisons/offres-commercants" element={<ProtectedRoute><RoleRoute allowedRoles={["delivery-driver"]}>{renderWithLayout(<ShopOwnerOffers />)}</RoleRoute></ProtectedRoute>} />
+
 
                 {/* Provider */}
                 <Route path="/provider/courses" element={<ProtectedRoute><RoleRoute allowedRoles={["provider"]}>{renderWithLayout(<ProviderCourses />)}</RoleRoute></ProtectedRoute>} />

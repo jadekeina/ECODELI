@@ -76,6 +76,7 @@ const HeaderDeliveryDriver = () => {
                 <nav className="hidden lg:flex gap-10 font-semibold">
                     <Link to="/livraisons" className="hover:text-[#1B4F3C]">Mes livraisons</Link>
                     <Link to="/offres-livraison" className="hover:text-[#1B4F3C]">Offres disponibles</Link>
+                    <Link to="/livraisons/offres-commercants" className="hover:text-[#1B4F3C]">Demandes commerçants</Link>
                     <Link to="/livraisons/historique" className="hover:text-[#1B4F3C]">Historique</Link>
                     <Link to="/livraisons/paiements" className="hover:text-[#1B4F3C]">Paiements</Link>
                 </nav>
@@ -125,6 +126,9 @@ const HeaderDeliveryDriver = () => {
                     }`}
                 >
                     <button className="self-end mb-4 text-xl" onClick={closeMobileMenu}>✕</button>
+                    <Link to="/livraisons" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Mes livraisons</Link>
+                    <Link to="/offres-livraison" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Offres disponibles</Link>
+                    <Link to="/livraisons/offres-commercants" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Demandes commerçants</Link>
                     <Link to="/livraisons/historique" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Historique</Link>
                     <Link to="/livraisons/paiements" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Paiements</Link>
                 </div>
