@@ -74,6 +74,7 @@ const HeaderClient = () => {
                     <Link to="/offres" className="hover:text-[#1B4F3C]">Toutes nos Offres</Link>
                     <Link to="/trajet" className="hover:text-[#1B4F3C]">Trajets</Link>
                     <Link to="/deposer-annonce" className="hover:text-[#1B4F3C]">Déposer une annonce</Link>
+                    <Link to="/client/nouvelle-demande" className="hover:text-[#1B4F3C]">Faire une demande</Link>
                     <Link to="/messages" className="hover:text-[#1B4F3C]">Messages</Link>
                     <Link to="/mes-achats" className="hover:text-[#1B4F3C]">Achats</Link>
                 </nav>
@@ -110,9 +111,8 @@ const HeaderClient = () => {
                                 <ul className="space-y-3">
                                     <li><Link to="/dashboard-client" onClick={() => setIsUserMenuOpen(false)}>Dashboard</Link></li>
                                     <li><Link to="/mon-compte" onClick={() => setIsUserMenuOpen(false)}>Mon compte</Link></li>
-                                    <li><Link to="/mes-prestations" onClick={() => setIsUserMenuOpen(false)}>Mes prestations</Link></li>
+                                    <li><Link to="/client/demandes" onClick={() => setIsUserMenuOpen(false)}>Mes Demandes</Link></li>
                                     <li><Link to="/trajet" onClick={() => setIsUserMenuOpen(false)}>Mes trajets</Link></li>
-                                    <li><Link to="/history" onClick={() => setIsUserMenuOpen(false)}>Historique</Link></li>
                                     <li><Link to="/abonnement" onClick={() => setIsUserMenuOpen(false)}>Abonnement</Link></li>
                                     <li><button onClick={handleLogout} className="text-red-600">Se déconnecter</button></li>
                                 </ul>
@@ -137,6 +137,7 @@ const HeaderClient = () => {
                     <Link to="/offres" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Toutes nos Offres</Link>
                     <Link to="/trajet" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Trajets</Link>
                     <Link to="/deposer-annonce" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Déposer une annonce</Link>
+                    <Link to="/client/nouvelle-demande" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Faire une demande</Link>
                     <Link to="/mes-prestations" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Mes prestations</Link>
                     <Link to="/messages" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Messages</Link>
                     <Link to="/mes-achats" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Achats</Link>

@@ -8,6 +8,7 @@ const auth = (req, res, next) => {
     const token = authHeader && authHeader.split(" ")[1];
 
     if (!token) {
+        console.warn("⚠️ [Auth Middleware] Token manquant.");
         return jsonResponse(res, 401, {}, { message: "Token manquant" });
     }
 
@@ -15,14 +16,15 @@ const auth = (req, res, next) => {
         const decoded = jwt.verify(token, JWT_SECRET);
 
         req.user = {
-            id: decoded.userId,
+            id: decoded.userId, // Assurez-vous que le token contient bien 'userId'
             email: decoded.mail,
             role: decoded.role,
             status: decoded.status,
         };
+
         next();
     } catch (error) {
-        console.error("Erreur vérification token JWT :", error);
+        console.error("❌ [Auth Middleware] Erreur vérification token JWT :", error);
         return jsonResponse(res, 401, {}, { message: "Token invalide ou expiré" });
     }
 };

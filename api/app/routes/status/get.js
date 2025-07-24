@@ -1,4 +1,4 @@
-// Fichier : app/routes/status/get.js
+// Fichier : app/routes/status/getId.js
 
 const express = require("express");
 const router = express.Router();

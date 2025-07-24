@@ -24,7 +24,6 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      // 1. On fait le login
       const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -38,31 +37,39 @@ const Login = () => {
         throw new Error(data.message || `Erreur ${response.status}`);
       }
 
-      // 2. Sauvegarder le token dans le localStorage
-      if (data.user && data.user.token) {
-        localStorage.setItem("token", data.user.token);
+      const receivedToken = data.token; // <-- Récupérer le token directement de la réponse
+      if (!receivedToken) {
+        throw new Error("Token non reçu après la connexion.");
       }
 
-      // 3. On va chercher l'utilisateur connecté via le cookie sécurisé
+      localStorage.setItem("token", receivedToken); // Stocker le token dans localStorage
+      console.log("📦 Token stocké dans localStorage:", receivedToken.substring(0, 20) + '...');
+
+      // Utiliser le token directement pour la requête /users/me
       const userRes = await fetch(`${API_URL}/users/me`, {
         headers: {
-          Authorization: `Bearer ${data.user.token}`,
+          Authorization: `Bearer ${receivedToken}`, // <-- Utiliser receivedToken ici
         },
         credentials: "include",
       });
 
       if (userRes.ok) {
         const userData = await userRes.json();
-        setUser(userData.user || userData.data); // adapte selon ta réponse API réelle !
+        // Optionnel: Ajouter le token à l'objet user dans le contexte si vous en avez besoin côté client
+        setUser({ ...userData.user || userData.data, token: receivedToken });
         setMessage("✅ Connexion réussie !");
         setTimeout(() => navigate("/app"), 800);
       } else {
-        setMessage("❌ Impossible de récupérer le profil utilisateur.");
+        const errorData = await userRes.json();
+        setMessage(`❌ Impossible de récupérer le profil utilisateur: ${errorData.message || userRes.statusText}`);
+        // Nettoyer le token si la récupération du profil échoue
+        localStorage.removeItem("token");
       }
     } catch (error) {
-      setMessage(
-          `❌ ${error instanceof Error ? error.message : "Erreur de connexion"}`,
-      );
+      setMessage(`❌ ${error instanceof Error ? error.message : "Erreur de connexion"}`);
+      console.error("Erreur de connexion complète:", error);
+      // S'assurer que le token est retiré en cas d'erreur
+      localStorage.removeItem("token");
     }
   };
 
@@ -136,7 +143,7 @@ const Login = () => {
           )}
 
           <p className="p">
-            Don't have an account?{" "}
+            Don't have an account? {" "}
             <Link to="/inscription" className="span">
               Créez-en un
             </Link>

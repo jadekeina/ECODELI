@@ -65,9 +65,11 @@ const HeaderProvider = () => {
                 </Link>
 
                 <nav className="hidden lg:flex gap-10 font-semibold">
-                    <Link to="/prestations" className="hover:text-[#1B4F3C]">Mes prestations</Link>
+                    <Link to="/provider/prestations" className="hover:text-[#1B4F3C]">Mes prestations</Link>
                     <Link to="/annonces" className="hover:text-[#1B4F3C]">Toutes les offres</Link>
                     <Link to="/provider/courses" className="hover:text-[#1B4F3C]">Courses disponibles</Link>
+                    <Link to="/provider/demandes" className="hover:text-[#1B4F3C]">Mes demandes prestations</Link>
+                    <Link to="/provider/prestations/demandes" className="hover:text-[#1B4F3C]">Gérer mes demandes prestations</Link>
 
                 </nav>
 
@@ -96,6 +98,7 @@ const HeaderProvider = () => {
                             <div className="absolute right-0 mt-3 w-64 bg-white border rounded-lg shadow-lg text-sm p-4 z-50">
                                 <ul className="space-y-3">
                                     <li><Link to="/provider/dashboard" onClick={() => setIsUserMenuOpen(false)}>Dashboard</Link></li>
+                                    <li><Link to="/provider/calendar" onClick={() => setIsUserMenuOpen(false)}>Calendrier</Link></li>
                                     <li><Link to="/mon-compte" onClick={() => setIsUserMenuOpen(false)}>Mon compte</Link></li>
                                     <li><button onClick={handleLogout} className="text-red-600">Se déconnecter</button></li>
                                 </ul>
@@ -114,9 +117,11 @@ const HeaderProvider = () => {
                     }`}
                 >
                     <button className="self-end mb-4 text-xl" onClick={closeMobileMenu}>✕</button>
-                    <Link to="/prestations" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Mes prestations</Link>
+                    <Link to="/provider/prestations" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Mes prestations</Link>
                     <Link to="/annonces" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Toutes les offres</Link>
                     <Link to="/provider/courses" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Courses disponibles</Link>
+                    <Link to="/provider/demandes" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Mes demandes prestations</Link>
+                    <Link to="/provider/prestations/demandes" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Gérer mes demandes prestations</Link>
 
                 </div>
             </header>

@@ -1,17 +1,15 @@
+// api/app/routes/shops/post.js
 const express = require("express");
 const router = express.Router();
-const auth = require("../../librairies/auth");
-const createShop = require("../../controllers/shops/createShop");
-const { jsonResponse } = require("../../librairies/response");
 
-router.post("/create", auth, async (req, res) => {
-    try {
-        const result = await createShop(req.headers.authorization?.split(" ")[1], req.body);
-        jsonResponse(res, 201, {}, result);
-    } catch (err) {
-        console.error("❌ [POST /shops/create] Erreur :", err.message);
-        jsonResponse(res, 500, {}, { message: "Erreur serveur", error: err.message });
-    }
-});
+// AJOUT DE LOG POUR VÉRIFIER QUEL MODULE AUTH EST CHARGÉ
+const authPath = require.resolve("../../librairies/auth");
+console.log("🔍 [post.js] Chargement du middleware auth depuis :", authPath);
+const auth = require(authPath); // Utiliser le chemin résolu
+
+const createShop = require("../../controllers/shops/createShop");
+
+// Définit la route POST pour ajouter une nouvelle boutique
+router.post("/", auth, createShop);
 
 module.exports = router;

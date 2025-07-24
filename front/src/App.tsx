@@ -55,8 +55,27 @@ import NouvelleAnnonceShopOwner from "./pages/shop-owner/NouvelleAnnonceShopOwne
 import SuccessAnnonce from "./pages/shop-owner/SuccessAnnonce";
 import PaymentsHistory from "./pages/provider/PaymentHistory";
 import ShopOwnerOffers from "./pages/delivery-driver/ShopOwnerOffers";
-
-
+import ShopOwnerRequestDetails from "./pages/delivery-driver/ShopOwnerRequestDetails";
+import ProviderServicesList from "@/components/provider/ProviderServicesList";
+import MesAnnonces from "@/pages/shop-owner/MesAnnonces";
+import NouvellePrestationProvider from "./pages/provider/NouvellePrestationProvider";
+import EditPrestation from "@/pages/provider/EditPrestation";
+import AnnonceDetails   from "@/pages/shop-owner/AnnonceDetails";
+import PrestationDetails from "@/pages/provider/PrestationDetails";
+import ProviderServiceRequests  from "@/pages/provider/ProviderServiceRequests";
+import ModifierAnnonceShopOwner from "@/pages/shop-owner/ModifierAnnonceShopOwner";
+import GererStatusPrestations from "@/pages/provider/GererStatusPrestations";
+import ProviderCalendar from "@/pages/provider/ProviderCalendar";
+import ServiceRequestDetails from "@/pages/provider/ServiceRequestsDetails";
+import DashboardShopOwner from "@/pages/shop-owner/DashboardShopOwner";
+import MesBoutiques from "@/pages/shop-owner/MesBoutiques";
+import AjouterBoutique from "@/pages/shop-owner/AjouterBoutique";
+import ShopDetails from "@/pages/shop-owner/ShopDetails";
+import DashBoardDeliveryDriver from "@/pages/delivery-driver/DashboardDeliveryDriver";
+import DemandeClient from "@/pages/client/DemandeClient";
+import DetailDemandeClient from "@/pages/client/DetailDemandeClient";
+import EditShopDetails from "@/pages/shop-owner/EditShopDetails";
+import NouvelleDemande from "@/pages/client/NouvelleDemande";
 
 
 // Pages pros
@@ -134,10 +153,21 @@ function App() {
                 <Route path="/confirmation-trajet" element={<ProtectedRoute><RoleRoute allowedRoles={["client"]}>{renderWithLayout(<ConfirmationTrajet />)}</RoleRoute></ProtectedRoute>} />
                 <Route path="/suivi-course/:rideId" element={<ProtectedRoute><RoleRoute allowedRoles={["client"]}>{renderWithLayout(<SuiviCourse />)}</RoleRoute></ProtectedRoute>} />
                 <Route path="/dashboard-client" element={<ProtectedRoute><RoleRoute allowedRoles={["client"]}>{renderWithLayout(<DashboardClient />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/client/demandes" element={<ProtectedRoute><RoleRoute allowedRoles={["client"]}>{renderWithLayout(<DemandeClient />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/client/demande/:id" element={<ProtectedRoute><RoleRoute allowedRoles={["client"]}>{renderWithLayout(<DetailDemandeClient />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/client/nouvelle-demande" element={<ProtectedRoute><RoleRoute allowedRoles={["client"]}>{renderWithLayout(<NouvelleDemande />)}</RoleRoute></ProtectedRoute>} />
 
                 {/* Shop-owner */}
                 <Route path="/annonces/nouvelle" element={<ProtectedRoute><RoleRoute allowedRoles={["shop-owner"]}>{renderWithLayout(<NouvelleAnnonceShopOwner />)}</RoleRoute></ProtectedRoute>} />
                 <Route path="/annonces/success" element={<ProtectedRoute><RoleRoute allowedRoles={["shop-owner"]}>{renderWithLayout(<SuccessAnnonce />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/mes-annonces" element={<ProtectedRoute><RoleRoute allowedRoles={["shop-owner"]}>{renderWithLayout(<MesAnnonces />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/annonce/:id" element={<ProtectedRoute><RoleRoute allowedRoles={["shop-owner"]}>{renderWithLayout(<AnnonceDetails />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/annonces/edit/:id" element={<ProtectedRoute><RoleRoute allowedRoles={["shop-owner"]}>{renderWithLayout(<ModifierAnnonceShopOwner />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/dashboard/shop-owner" element={<ProtectedRoute><RoleRoute allowedRoles={["shop-owner"]}>{renderWithLayout(<DashboardShopOwner />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/mes-boutiques" element={<ProtectedRoute><RoleRoute allowedRoles={["shop-owner"]}>{renderWithLayout(<MesBoutiques />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/mes-boutiques/ajouter" element={<ProtectedRoute><RoleRoute allowedRoles={["shop-owner"]}>{renderWithLayout(<AjouterBoutique />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/mes-boutiques/:id" element={<ProtectedRoute><RoleRoute allowedRoles={["shop-owner"]}>{renderWithLayout(<ShopDetails />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/mes-boutiques/edit/:id" element={<ProtectedRoute><RoleRoute allowedRoles={["shop-owner"]}>{renderWithLayout(<EditShopDetails />)}</RoleRoute></ProtectedRoute>} />
 
 
                 <Route path="/mes-prestations" element={<ProtectedRoute><RoleRoute allowedRoles={["provider"]}>{renderWithLayout(<MesPrestations />)}</RoleRoute></ProtectedRoute>} />
@@ -151,13 +181,24 @@ function App() {
 
                 {/* Delivery Driver */}
                 <Route path="/livraisons/offres-commercants" element={<ProtectedRoute><RoleRoute allowedRoles={["delivery-driver"]}>{renderWithLayout(<ShopOwnerOffers />)}</RoleRoute></ProtectedRoute>} />
-
+                <Route path="/livraisons/offre/:id" element={<ProtectedRoute><RoleRoute allowedRoles={["delivery-driver"]}>{renderWithLayout(<ShopOwnerRequestDetails />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/livraisons/shop-owner/en-attente" element={<ProtectedRoute><RoleRoute allowedRoles={["delivery-driver"]}>{renderWithLayout(<ShopOwnerOffers />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/livraisons/shop-owner/:id" element={<ProtectedRoute><RoleRoute allowedRoles={["delivery-driver"]}>{renderWithLayout(<ShopOwnerRequestDetails />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/deliverydriver/dashboard" element={<ProtectedRoute><RoleRoute allowedRoles={["delivery-driver"]}>{renderWithLayout(<DashBoardDeliveryDriver />)}</RoleRoute></ProtectedRoute>} />
 
                 {/* Provider */}
                 <Route path="/provider/courses" element={<ProtectedRoute><RoleRoute allowedRoles={["provider"]}>{renderWithLayout(<ProviderCourses />)}</RoleRoute></ProtectedRoute>} />
                 <Route path="/provider/courses/:id" element={<ProtectedRoute><RoleRoute allowedRoles={["provider"]}>{renderWithLayout(<CourseDetail />)}</RoleRoute></ProtectedRoute>} />
                 <Route path="/provider/dashboard" element={<ProtectedRoute><RoleRoute allowedRoles={["provider"]}>{renderWithLayout(<DashboardProvider />)}</RoleRoute></ProtectedRoute>} />
                 <Route path="/provider/payments-history" element={<ProtectedRoute><RoleRoute allowedRoles={["provider"]}><LayoutProvider><PaymentsHistory /></LayoutProvider></RoleRoute></ProtectedRoute>} />
+                <Route path="/provider/prestations" element={<ProtectedRoute><RoleRoute allowedRoles={["provider"]}>{renderWithLayout(<ProviderServicesList />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/provider/prestations/nouvelle" element={<ProtectedRoute><RoleRoute allowedRoles={["provider"]}>{renderWithLayout(<NouvellePrestationProvider />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/provider/prestations/:id/edit" element={<ProtectedRoute><RoleRoute allowedRoles={["provider"]}>{renderWithLayout(<EditPrestation />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/provider/prestations/:id/" element={<ProtectedRoute><RoleRoute allowedRoles={["provider"]}>{renderWithLayout(<PrestationDetails />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/provider/demandes" element={<ProtectedRoute><RoleRoute allowedRoles={["provider"]}>{renderWithLayout(<ProviderServiceRequests />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/provider/prestations/demandes" element={<ProtectedRoute><RoleRoute allowedRoles={["provider"]}>{renderWithLayout(<GererStatusPrestations />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/provider/calendar" element={<ProtectedRoute><RoleRoute allowedRoles={["provider"]}>{renderWithLayout(<ProviderCalendar />)}</RoleRoute></ProtectedRoute>} />
+                <Route path="/provider/service-requests/:id" element={<ProtectedRoute><RoleRoute allowedRoles={["provider"]}>{renderWithLayout(<ServiceRequestDetails />)}</RoleRoute></ProtectedRoute>} />
 
             </Routes>
         </Elements>

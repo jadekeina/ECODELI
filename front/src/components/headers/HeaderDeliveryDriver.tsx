@@ -107,7 +107,7 @@ const HeaderDeliveryDriver = () => {
                         {isUserMenuOpen && (
                             <div className="absolute right-0 mt-3 w-64 bg-white border rounded-lg shadow-lg text-sm p-4 z-50">
                                 <ul className="space-y-3">
-                                    <li><Link to="/dashboard" onClick={() => setIsUserMenuOpen(false)}>Dashboard</Link></li>
+                                    <li><Link to="/deliverydriver/dashboard" onClick={() => setIsUserMenuOpen(false)}>Dashboard</Link></li>
                                     <li><Link to="/mon-compte" onClick={() => setIsUserMenuOpen(false)}>Mon compte</Link></li>
                                     <li><button onClick={handleLogout} className="text-red-600">Se déconnecter</button></li>
                                 </ul>

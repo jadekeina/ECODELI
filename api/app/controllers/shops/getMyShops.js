@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const db = require("../../../config/db");
-const Shop = require("../../models/shop");
+const Shop = require("../../models/shop"); // Assurez-vous que ce chemin est correct
 
 async function getShops(token) {
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
@@ -19,7 +19,9 @@ async function getShops(token) {
         );
     });
 
-    const shops = await Shop.findAllByShopOwnerId(shopOwnerId);
+    // --- CORRECTION ICI ---
+    // Remplacez Shop.findAllByShopOwnerId par Shop.findByOwnerId
+    const shops = await Shop.findByOwnerId(shopOwnerId); // Appel de la méthode correcte
     return shops;
 }
 

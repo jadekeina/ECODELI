@@ -60,14 +60,14 @@ const HeaderShopOwner = () => {
             )}
 
             <header className="w-full bg-white px-6 py-4 flex justify-between items-center shadow text-[#1a1a1a] text-lg relative z-50">
-                <Link to="/dashboard" className="text-2xl font-bold text-[#1B4F3C]">
+                <Link to="/dashboard/shop-owner" className="text-2xl font-bold text-[#1B4F3C]">
                     ecodeli
                 </Link>
 
                 {/* Desktop Navigation */}
                 <nav className="hidden lg:flex gap-8 font-medium">
                     <Link to="/annonces/nouvelle" className="hover:text-[#1B4F3C]">Créer une annonces</Link>
-                    <Link to="/annonces" className="hover:text-[#1B4F3C]">Annonces</Link>
+                    <Link to="/mes-annonces" className="hover:text-[#1B4F3C]">Mes annonces</Link>
                     <Link to="/livraisons" className="hover:text-[#1B4F3C]">Livraisons</Link>
                     <Link to="/paiements" className="hover:text-[#1B4F3C]">Paiements</Link>
                     <Link to="/abonnement" className="hover:text-[#1B4F3C]">Abonnement</Link>
@@ -100,7 +100,8 @@ const HeaderShopOwner = () => {
                         {isUserMenuOpen && (
                             <div className="absolute right-0 mt-3 w-64 bg-white border rounded-lg shadow-lg text-sm p-4 z-50">
                                 <ul className="space-y-3">
-                                    <li><Link to="/dashboard" onClick={() => setIsUserMenuOpen(false)}>Dashboard</Link></li>
+                                    <li><Link to="/dashboard/shop-owner" onClick={() => setIsUserMenuOpen(false)}>Dashboard</Link></li>
+                                    <li><Link to="/mes-boutiques" onClick={() => setIsUserMenuOpen(false)}>Mes Boutiques</Link></li>
                                     <li><Link to="/documents" onClick={() => setIsUserMenuOpen(false)}>Documents</Link></li>
                                     <li><Link to="/contrat" onClick={() => setIsUserMenuOpen(false)}>Contrat</Link></li>
                                     <li><Link to="/profil-boutique" onClick={() => setIsUserMenuOpen(false)}>Profil boutique</Link></li>
@@ -124,7 +125,7 @@ const HeaderShopOwner = () => {
                 >
                     <button className="self-end mb-4 text-xl" onClick={closeMobileMenu}>✕</button>
                     <Link to="/annonces/nouvelle" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Créer une annonce</Link>
-                    <Link to="/annonces" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Annonces</Link>
+                    <Link to="/mes-annonces" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Mes annonces</Link>
                     <Link to="/livraisons" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Livraisons</Link>
                     <Link to="/paiements" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Paiements</Link>
                     <Link to="/abonnement" className="hover:text-[#1B4F3C]" onClick={closeMobileMenu}>Abonnement</Link>

@@ -38,8 +38,71 @@ const NouvelleAnnonceShopOwner = () => {
             .then((data) => setShops(data));
     }, []);
 
-    const next = async () => {
+    // Fonctions utilitaires pour la validation
+    const isEmpty = (val: string) => !val || val.trim() === "" || val.trim().toLowerCase() === "nptk";
+    const isNegative = (val: string) => parseFloat(val) < 0;
+
+    // Fonction de validation par étape
+    const validateStep = () => {
+        if (step === 1) {
+            if (isEmpty(formData.type)) {
+                alert("Veuillez choisir un type de livraison.");
+                return false;
+            }
+        }
+
+        if (step === 2) {
+            if (isEmpty(formData.title) || isEmpty(formData.description)) {
+                alert("Titre et description obligatoires.");
+                return false;
+            }
+            // Vérifier les champs numériques s'ils sont remplis et négatifs
+            if (
+                (formData.poids && isNegative(formData.poids)) ||
+                (formData.longueur && isNegative(formData.longueur)) ||
+                (formData.largeur && isNegative(formData.largeur)) || // <-- CORRECTION ICI : 'largeur' au lieu de 'lar geur'
+                (formData.hauteur && isNegative(formData.hauteur))
+            ) {
+                alert("Aucune valeur (poids, dimensions) ne peut être négative.");
+                return false;
+            }
+        }
+
         if (step === 3) {
+            if (isEmpty(formData.shop_id) || isEmpty(formData.destinataire_nom) || isEmpty(formData.destinataire_prenom)) {
+                alert("Champs destinataire et boutique obligatoires.");
+                return false;
+            }
+
+            if (isEmpty(formData.adresse)) {
+                alert("Adresse de livraison obligatoire.");
+                return false;
+            }
+
+            if (isEmpty(formData.date) || isEmpty(formData.heure)) {
+                alert("Date et heure de livraison obligatoires.");
+                return false;
+            }
+
+            const now = new Date();
+            const selectedDate = new Date(`${formData.date}T${formData.heure}`);
+            if (selectedDate < now) {
+                alert("La date/heure ne peut pas être antérieure à maintenant.");
+                return false;
+            }
+        }
+
+        return true; // Validation réussie pour l'étape actuelle
+    };
+
+    const next = async () => {
+        // Appeler la validation avant de passer à l'étape suivante
+        if (!validateStep()) {
+            return; // Arrêter si la validation échoue
+        }
+
+        // Logique de calcul du prix estimé si on passe à l'étape 4 (ou si on est à l'étape 3 et on passe à 4)
+        if (step === 3) { // Si on est à l'étape 3 et qu'on va passer à l'étape 4
             const selectedShop = shops.find((s) => s.id.toString() === formData.shop_id);
             if (selectedShop) {
                 const getDistance = async (origin: string, destination: string): Promise<number> => {
@@ -84,10 +147,22 @@ const NouvelleAnnonceShopOwner = () => {
     };
 
     const submit = async () => {
+        // Optionnel: Ajouter une validation finale pour l'étape 4 si nécessaire
+        // if (!validateStep()) return;
+
         const data = new FormData();
         for (const key in formData) {
             const value = (formData as any)[key];
-            if (value) data.append(key, value);
+            // Ne pas append les valeurs nulles ou vides pour les fichiers par exemple,
+            // ou si le backend attend des champs non vides
+            if (value !== null && value !== undefined && value !== '') {
+                // Pour les fichiers, append directement l'objet File
+                if (key === 'photo' && value instanceof File) {
+                    data.append(key, value);
+                } else {
+                    data.append(key, value.toString()); // Convertir en chaîne pour FormData
+                }
+            }
         }
 
         try {
@@ -99,10 +174,15 @@ const NouvelleAnnonceShopOwner = () => {
                 },
             });
 
-            if (res.ok) navigate("/annonces/success");
-            else alert("Erreur lors de la création de l’annonce");
-        } catch (err) {
-            console.error(err);
+            if (res.ok) {
+                navigate("/annonces/success"); // Assurez-vous que cette route existe
+            } else {
+                const errorData = await res.json();
+                alert(`Erreur lors de la création de l’annonce: ${errorData.message || res.statusText}`);
+            }
+        } catch (err: any) {
+            console.error("Erreur lors de la soumission de l'annonce :", err);
+            alert(`Une erreur inattendue est survenue: ${err.message}`);
         }
     };
 
@@ -150,18 +230,18 @@ const NouvelleAnnonceShopOwner = () => {
                     {step === 2 && (
                         <div className="space-y-4">
                             <label className="block font-semibold">Titre</label>
-                            <input name="title" onChange={handleChange} className="w-full border px-4 py-2 rounded" />
+                            <input name="title" value={formData.title} onChange={handleChange} className="w-full border px-4 py-2 rounded" />
 
                             <label className="block font-semibold">Description</label>
-                            <textarea name="description" onChange={handleChange} className="w-full border px-4 py-2 rounded" />
+                            <textarea name="description" value={formData.description} onChange={handleChange} className="w-full border px-4 py-2 rounded" />
 
                             <div className="flex gap-4">
-                                <input name="poids" placeholder="Poids (kg)" onChange={handleChange} className="w-full border px-4 py-2 rounded" />
-                                <input name="longueur" placeholder="Longueur (cm)" onChange={handleChange} className="w-full border px-4 py-2 rounded" />
+                                <input name="poids" type="number" placeholder="Poids (kg)" value={formData.poids} onChange={handleChange} className="w-full border px-4 py-2 rounded" />
+                                <input name="longueur" type="number" placeholder="Longueur (cm)" value={formData.longueur} onChange={handleChange} className="w-full border px-4 py-2 rounded" />
                             </div>
                             <div className="flex gap-4">
-                                <input name="largeur" placeholder="Largeur (cm)" onChange={handleChange} className="w-full border px-4 py-2 rounded" />
-                                <input name="hauteur" placeholder="Hauteur (cm)" onChange={handleChange} className="w-full border px-4 py-2 rounded" />
+                                <input name="largeur" type="number" placeholder="Largeur (cm)" value={formData.largeur} onChange={handleChange} className="w-full border px-4 py-2 rounded" />
+                                <input name="hauteur" type="number" placeholder="Hauteur (cm)" value={formData.hauteur} onChange={handleChange} className="w-full border px-4 py-2 rounded" />
                             </div>
 
                             <label className="block font-semibold">Photo</label>
@@ -182,19 +262,19 @@ const NouvelleAnnonceShopOwner = () => {
                             </select>
 
                             <label className="block font-semibold">Nom du destinataire</label>
-                            <input name="destinataire_nom" onChange={handleChange} className="w-full border px-4 py-2 rounded" />
+                            <input name="destinataire_nom" value={formData.destinataire_nom} onChange={handleChange} className="w-full border px-4 py-2 rounded" />
 
                             <label className="block font-semibold">Prénom du destinataire</label>
-                            <input name="destinataire_prenom" onChange={handleChange} className="w-full border px-4 py-2 rounded" />
+                            <input name="destinataire_prenom" value={formData.destinataire_prenom} onChange={handleChange} className="w-full border px-4 py-2 rounded" />
 
                             <label className="block font-semibold">Adresse de livraison</label>
                             <AutocompleteInput name="adresse" value={formData.adresse} onChange={handleChange} />
 
                             <label className="block font-semibold">Date</label>
-                            <input name="date" type="date" onChange={handleChange} className="w-full border px-4 py-2 rounded" />
+                            <input name="date" type="date" value={formData.date} onChange={handleChange} className="w-full border px-4 py-2 rounded" />
 
                             <label className="block font-semibold">Heure</label>
-                            <input name="heure" type="time" onChange={handleChange} className="w-full border px-4 py-2 rounded" />
+                            <input name="heure" type="time" value={formData.heure} onChange={handleChange} className="w-full border px-4 py-2 rounded" />
                         </div>
                     )}
 
