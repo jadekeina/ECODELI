@@ -14,6 +14,7 @@ const auth = require('./app/librairies/authMiddleware');
 
 
 app.use(cookieParser());
+app.use(express.json());
 
 
 const handleStripeWebhook = require("./app/controllers/payments/handleStripeWebhook");
@@ -43,6 +44,7 @@ require("./config/db");
 app.use("/distance", require("./app/routes/distance.js"));
 
 // Users
+app.use("/users", require("./app/routes/users/me"));
 app.use("/api/users/last", require("./app/routes/users/last"));
 app.use("/api/users", require("./app/routes/users"));
 console.log("Route /api/users montée");
@@ -51,8 +53,6 @@ console.log("Route /api/users montée");
 //Stats
 app.use("/api/stats/inscriptions", require("./app/routes/stats/inscriptions"));
 app.use("/api/stats/ca", require("./app/routes/stats/ca"));
-
-
 
 
 // Auth
@@ -78,6 +78,11 @@ app.use("/provider", require("./app/routes/provider/patch"));
 app.use("/shop-owner", require("./app/routes/shopOwner/post"));
 app.use("/shop-owner", require("./app/routes/shopOwner/patch"));
 
+//Admin
+app.use("/auth/admin-login", require("./app/routes/auth/adminLogin"));
+
+
+
 // Documents
 app.use("/documents", require("./app/routes/documents/post"));
 app.use("/documents", require("./app/routes/documents/patch"));
@@ -87,6 +92,7 @@ app.use("/documents", require("./app/routes/documents/patch"));
 app.use("/requests", require("./app/routes/requests/post"));
 app.use("/requests/my", require("./app/routes/requests/my"));
 app.use("/requests/public", require("./app/routes/requests/public"));
+app.use("/admin/requests", require("./app/routes/requests/get"));
 
 // Warehouses
 app.use("/warehouses", require("./app/routes/warehouses/public"));

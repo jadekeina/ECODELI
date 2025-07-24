@@ -182,7 +182,3 @@ exports.updateUserById = (id, updates, callback) => {
   db.query(sql, [...values, id], callback);
 };
 
-exports.logUserLogin = (userId, callback) => {
-  const sql = "INSERT INTO user_logins (user_id) VALUES (?)";
-  db.query(sql, [userId], callback);
-};
