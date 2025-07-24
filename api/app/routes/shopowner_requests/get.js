@@ -1,8 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../../librairies/auth");
-const getAllShopOwnerRequests = require("../../controllers/shopowner_requests/getAllShopOwnerRequests");
+const getAvailableShopOwnerRequests = require("../../controllers/shopowner_requests/getAvailableShopOwnerRequests");
 
-router.get("/available", auth, getAllShopOwnerRequests);
+// Ajout d'un log pour confirmer que ce fichier de route est bien chargé par Express
+console.log("✅ Route file 'get.js' loaded for /shopowner-requests/available");
+
+// Utilisez le bon nom de contrôleur dans la route
+router.get("/available", auth, getAvailableShopOwnerRequests);
 
 module.exports = router;

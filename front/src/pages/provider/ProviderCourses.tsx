@@ -1,33 +1,50 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useContext } from "react"; // Ajout de useContext
 import { Link } from "react-router-dom";
-import { useUserContext } from "@/contexts/UserContext";
+import { UserContext } from "@/contexts/UserContext"; // Utilisation de UserContext directement
 import API_URL from "@/config";
+import { MapPin, ArrowRight, Euro, Calendar, Clock, Package } from "lucide-react"; // Importation d'icônes
 
 interface Ride {
     id: number;
     depart_address: string;
     arrivee_address: string;
     status: string;
-    scheduled_date?: string;
-    total_price?: number; // Après traitement, nous nous attendons à un nombre ou undefined
+    scheduled_at?: string; // Changé de scheduled_date pour correspondre à l'API si elle renvoie un timestamp
+    total_price?: number;
+    // Ajout d'autres champs si votre API les renvoie et que vous voulez les afficher
+    // par exemple:
+    // scheduled_date?: string; // Si l'API renvoie une date séparée
+    // scheduled_time?: string; // Si l'API renvoie une heure séparée
 }
 
-// Labels pour les statuts des courses
+// Labels pour les statuts des courses (améliorés pour l'affichage)
 const statusLabels: Record<string, string> = {
-    all: "Toutes",
-    en_attente: "En attente", // Courses en attente d'acceptation par un prestataire
+    all: "Toutes les courses",
+    en_attente: "En attente",
     acceptee: "Acceptée",
     refusee: "Refusée",
-    en_cours: "En cours", // Courses attribuées et en cours
+    en_cours: "En cours",
     terminee: "Terminée",
     annulee: "Annulée",
 };
 
-export default function ProviderCourses() {
-    const { user, loading: userContextLoading } = useUserContext();
-    console.log("[ProviderCourses - Init] user:", user, "userContextLoading:", userContextLoading);
+// Couleurs pour les badges de statut
+const statusBadgeColors: Record<string, string> = {
+    en_attente: "bg-yellow-100 text-yellow-800",
+    acceptee: "bg-blue-100 text-blue-800",
+    refusee: "bg-red-100 text-red-800",
+    en_cours: "bg-purple-100 text-purple-800",
+    terminee: "bg-green-100 text-green-800",
+    annulee: "bg-gray-100 text-gray-800",
+    default: "bg-gray-200 text-gray-700", // Pour les statuts non définis
+};
 
-    const [rides, setRides] = useState<Ride[]>([]); // Contiendra toutes les courses (attribuées et en attente)
+export default function ProviderCourses() {
+    // Utilisation de useContext pour récupérer le user du UserContext
+    const { user, loading: userContextLoading } = useContext(UserContext);
+    // console.log("[ProviderCourses - Init] user:", user, "userContextLoading:", userContextLoading);
+
+    const [rides, setRides] = useState<Ride[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [filterStatus, setFilterStatus] = useState<string>("all");
@@ -49,23 +66,24 @@ export default function ProviderCourses() {
     }, []);
 
     useEffect(() => {
-        console.log("[ProviderCourses - useEffect] Début de l'effet.");
+        // console.log("[ProviderCourses - useEffect] Début de l'effet.");
 
         if (userContextLoading) {
-            console.log("[ProviderCourses - useEffect] UserContext en cours de chargement, attente...");
+            // console.log("[ProviderCourses - useEffect] UserContext en cours de chargement, attente...");
             return;
         }
         if (!user || !user.id) {
             console.warn("[ProviderCourses - useEffect] Utilisateur non défini ou ID manquant. Arrêt du fetch.");
             setLoading(false);
+            setError("Veuillez vous connecter pour voir vos courses.");
             return;
         }
 
         const fetchAllRides = async () => {
-            const token = localStorage.getItem("token");
-            console.log("[ProviderCourses - fetchAllRides] Token du localStorage:", token ? "Présent" : "Absent");
-            console.log("[ProviderCourses - fetchAllRides] API_URL:", API_URL);
-            console.log("[ProviderCourses - fetchAllRides] User ID pour les requêtes attribuées:", user.id);
+            const token = user.token || localStorage.getItem("token"); // Utiliser user.token en priorité
+            // console.log("[ProviderCourses - fetchAllRides] Token du localStorage:", token ? "Présent" : "Absent");
+            // console.log("[ProviderCourses - fetchAllRides] API_URL:", API_URL);
+            // console.log("[ProviderCourses - fetchAllRides] User ID pour les requêtes attribuées:", user.id);
 
             setLoading(true);
             setError(null);
@@ -73,51 +91,50 @@ export default function ProviderCourses() {
             try {
                 // 1. Appel pour les courses ATTRBUÉES au prestataire connecté
                 const assignedRidesUrl = `${API_URL}/rides/provider/${user.id}`;
-                console.log("[ProviderCourses - fetchAllRides] Requête API vers:", assignedRidesUrl);
+                // console.log("[ProviderCourses - fetchAllRides] Requête API vers:", assignedRidesUrl);
                 const assignedRes = await fetch(assignedRidesUrl, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 const assignedData = await assignedRes.json();
-                console.log("[ProviderCourses - fetchAllRides] Réponse Assigned Rides (res.ok, status):", assignedRes.ok, assignedRes.status);
-                console.log("[ProviderCourses - fetchAllRides] Données Assigned Rides JSON reçues:", assignedData);
+                // console.log("[ProviderCourses - fetchAllRides] Réponse Assigned Rides (res.ok, status):", assignedRes.ok, assignedRes.status);
+                // console.log("[ProviderCourses - fetchAllRides] Données Assigned Rides JSON reçues:", assignedData);
 
                 if (!assignedRes.ok) {
                     const errorMessage = assignedData.message || `Erreur serveur sur les courses attribuées: ${assignedRes.status}`;
                     console.error("[ProviderCourses - fetchAllRides] Erreur HTTP Assigned Rides:", errorMessage);
-                    throw new Error(errorMessage);
+                    // Ne pas throw ici pour pouvoir combiner avec les pending rides même si un type échoue
+                    // setError(errorMessage); // Gérer l'erreur si vous voulez l'afficher
                 }
-                // Traiter et filtrer les trajets attribués
                 const assignedRides = assignedData && Array.isArray(assignedData.rides) ? processAndFilterRideData(assignedData.rides) : [];
-                console.log("[ProviderCourses - fetchAllRides] Trajets attribués traités et filtrés (prix non nul):", assignedRides.length);
+                // console.log("[ProviderCourses - fetchAllRides] Trajets attribués traités et filtrés (prix non nul):", assignedRides.length);
 
 
                 // 2. Appel pour toutes les courses EN ATTENTE (non attribuées)
                 const pendingRidesUrl = `${API_URL}/rides/en-attente`;
-                console.log("[ProviderCourses - fetchAllRides] Requête API vers:", pendingRidesUrl);
+                // console.log("[ProviderCourses - fetchAllRides] Requête API vers:", pendingRidesUrl);
                 const pendingRes = await fetch(pendingRidesUrl, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 const pendingData = await pendingRes.json();
-                console.log("[ProviderCourses - fetchAllRides] Réponse Pending Rides (res.ok, status):", pendingRes.ok, pendingRes.status);
-                console.log("[ProviderCourses - fetchAllRides] Données Pending Rides JSON reçues:", pendingData);
+                // console.log("[ProviderCourses - fetchAllRides] Réponse Pending Rides (res.ok, status):", pendingRes.ok, pendingRes.status);
+                // console.log("[ProviderCourses - fetchAllRides] Données Pending Rides JSON reçues:", pendingData);
 
                 if (!pendingRes.ok) {
                     const errorMessage = pendingData.message || `Erreur serveur sur les courses en attente: ${pendingRes.status}`;
                     console.error("[ProviderCourses - fetchAllRides] Erreur HTTP Pending Rides:", errorMessage);
-                    throw new Error(errorMessage);
+                    // setError(errorMessage); // Gérer l'erreur si vous voulez l'afficher
                 }
-                // Traiter et filtrer les trajets en attente
                 const pendingRides = pendingData && Array.isArray(pendingData.rides) ? processAndFilterRideData(pendingData.rides) : [];
-                console.log("[ProviderCourses - fetchAllRides] Trajets en attente traités et filtrés (prix non nul):", pendingRides.length);
+                // console.log("[ProviderCourses - fetchAllRides] Trajets en attente traités et filtrés (prix non nul):", pendingRides.length);
 
 
-                // Combiner les deux listes de courses
+                // Combiner les deux listes de courses, en évitant les doublons par ID
                 const combinedRidesMap = new Map<number, Ride>();
                 assignedRides.forEach(ride => combinedRidesMap.set(ride.id, ride));
-                pendingRides.forEach(ride => combinedRidesMap.set(ride.id, ride));
+                pendingRides.forEach(ride => combinedRidesMap.set(ride.id, ride)); // Les pending rides peuvent écraser les assigned si même ID, ce qui est peu probable pour des statuts différents
 
                 const allRides = Array.from(combinedRidesMap.values());
-                console.log("[ProviderCourses - fetchAllRides] Total courses combinées (après filtrage prix non nul):", allRides.length);
+                // console.log("[ProviderCourses - fetchAllRides] Total courses combinées (après filtrage prix non nul):", allRides.length);
                 setRides(allRides);
 
             } catch (err: any) {
@@ -125,7 +142,7 @@ export default function ProviderCourses() {
                 setError(err.message);
             } finally {
                 setLoading(false);
-                console.log("[ProviderCourses - fetchAllRides] Fin du fetch combiné. loading est false.");
+                // console.log("[ProviderCourses - fetchAllRides] Fin du fetch combiné. loading est false.");
             }
         };
 
@@ -140,54 +157,124 @@ export default function ProviderCourses() {
         return ride.status === filterStatus;
     });
 
-    console.log("[ProviderCourses - Render] État actuel:", { loading, error, rides, filteredRides, filterStatus, user });
+    // console.log("[ProviderCourses - Render] État actuel:", { loading, error, rides, filteredRides, filterStatus, user });
 
 
-    if (loading) return <p className="p-6">Chargement des courses...</p>;
-    if (error) return <p className="p-6 text-red-600">Erreur : {error}</p>;
-    // Messages adaptés pour les deux types de courses
-    if (rides.length === 0 && filterStatus === "all") return <p className="p-6">Aucune course disponible pour le moment (ou toutes ont un prix non défini).</p>;
-    if (filteredRides.length === 0 && filterStatus !== "all") return <p className="p-6">Aucune course "{statusLabels[filterStatus]}" trouvée avec un prix défini.</p>;
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center min-h-screen bg-gray-50 font-inter">
+                <p className="text-lg text-gray-600">Chargement des courses...</p>
+            </div>
+        );
+    }
 
+    if (error) {
+        return (
+            <div className="flex justify-center items-center min-h-screen bg-gray-50 font-inter">
+                <p className="text-lg text-red-500 font-medium">Erreur : {error}</p>
+            </div>
+        );
+    }
 
     return (
-        <div className="max-w-4xl mx-auto p-6">
-            <h1 className="text-2xl font-bold mb-4 text-[#1B4F3C]">Mes courses</h1>
+        <div className="min-h-screen bg-white p-8 font-inter"> {/* Fond blanc */}
+            <div className="max-w-5xl mx-auto">
+                <h1 className="text-4xl font-extrabold text-[#1B4F3C] mb-8 text-center drop-shadow-sm">
+                    Mes Courses de Livraison
+                </h1>
 
-            <div className="mb-4 flex flex-wrap gap-2">
-                {Object.keys(statusLabels).map((statusKey) => (
-                    <button
-                        key={statusKey}
-                        onClick={() => setFilterStatus(statusKey)}
-                        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200
-                            ${filterStatus === statusKey
-                            ? "bg-[#1B4F3C] text-white shadow"
-                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                        }`}
-                    >
-                        {statusLabels[statusKey]}
-                    </button>
-                ))}
+                {/* Filtres de statut */}
+                <div className="mb-8 flex flex-wrap justify-center gap-3">
+                    {Object.keys(statusLabels).map((statusKey) => (
+                        <button
+                            key={statusKey}
+                            onClick={() => setFilterStatus(statusKey)}
+                            className={`px-5 py-2 rounded-full text-base font-medium transition-all duration-300 ease-in-out shadow-sm hover:shadow-md
+                                ${filterStatus === statusKey
+                                ? "bg-[#1B4F3C] text-white transform scale-105"
+                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                            }`}
+                        >
+                            {statusLabels[statusKey]}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Messages si aucune course */}
+                {rides.length === 0 && filterStatus === "all" ? (
+                    <div className="bg-gray-50 p-8 rounded-2xl shadow-lg text-center border border-gray-200">
+                        <p className="text-xl text-gray-600 font-medium">
+                            Aucune course disponible pour le moment.
+                        </p>
+                    </div>
+                ) : filteredRides.length === 0 && filterStatus !== "all" ? (
+                    <div className="bg-gray-50 p-8 rounded-2xl shadow-lg text-center border border-gray-200">
+                        <p className="text-xl text-gray-600 font-medium">
+                            Aucune course "{statusLabels[filterStatus]}" trouvée.
+                        </p>
+                    </div>
+                ) : (
+                    // Liste des courses
+                    <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {filteredRides.map((ride) => (
+                            <li
+                                key={ride.id}
+                                className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-1 flex flex-col justify-between"
+                            >
+                                <Link to={`/provider/courses/${ride.id}`} className="block">
+                                    <div className="flex justify-between items-start mb-3">
+                                        <h3 className="text-xl font-bold text-[#2C3E50] mb-1">
+                                            Course #{ride.id}
+                                        </h3>
+                                        <span
+                                            className={`px-3 py-1 rounded-full text-xs font-semibold uppercase ${
+                                                statusBadgeColors[ride.status] || statusBadgeColors.default
+                                            }`}
+                                        >
+                                            {statusLabels[ride.status] || ride.status.replace('_', ' ')}
+                                        </span>
+                                    </div>
+
+                                    <div className="space-y-2 text-gray-700 text-sm">
+                                        <p className="flex items-center gap-2">
+                                            <MapPin className="w-4 h-4 text-emerald-600" />
+                                            <span className="font-medium">Départ :</span> {ride.depart_address}
+                                        </p>
+                                        <p className="flex items-center gap-2">
+                                            <ArrowRight className="w-4 h-4 text-emerald-600" />
+                                            <span className="font-medium">Arrivée :</span> {ride.arrivee_address}
+                                        </p>
+                                        {ride.total_price && (
+                                            <p className="flex items-center gap-2">
+                                                <Euro className="w-4 h-4 text-emerald-600" />
+                                                <span className="font-medium">Prix :</span>{" "}
+                                                <span className="font-semibold text-lg text-[#2C3E50]">
+                                                    {ride.total_price.toFixed(2)} €
+                                                </span>
+                                            </p>
+                                        )}
+                                        {ride.scheduled_at && (
+                                            <p className="flex items-center gap-2">
+                                                <Calendar className="w-4 h-4 text-gray-500" />
+                                                <span className="font-medium">Prévue le :</span>{" "}
+                                                {new Date(ride.scheduled_at).toLocaleDateString("fr-FR")}
+                                            </p>
+                                        )}
+                                        {/* Vous pouvez ajouter l'heure si elle est disponible dans ride.scheduled_at ou un champ séparé */}
+                                        {/* {ride.scheduled_at && (
+                                            <p className="flex items-center gap-2">
+                                                <Clock className="w-4 h-4 text-gray-500" />
+                                                <span className="font-medium">À :</span>{" "}
+                                                {new Date(ride.scheduled_at).toLocaleTimeString("fr-FR", { hour: '2-digit', minute: '2-digit' })}
+                                            </p>
+                                        )} */}
+                                    </div>
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
-
-            <ul className="space-y-3">
-                {filteredRides.map((ride) => (
-                    <li key={ride.id} className="border p-4 rounded shadow hover:bg-gray-50 cursor-pointer">
-                        <Link to={`/provider/courses/${ride.id}`} className="block">
-                            <div className="flex justify-between">
-                                <span>
-                                    {ride.depart_address} → {ride.arrivee_address}
-                                </span>
-                                <span className="capitalize font-semibold text-green-700">{statusLabels[ride.status] || ride.status.replace('_', ' ')}</span>
-                            </div>
-                            <div className="text-sm text-gray-600">
-                                {/* Ici, nous savons que total_price est un nombre valide grâce au filtre amont */}
-                                {`${ride.total_price?.toFixed(2)} €`}
-                            </div>
-                        </Link>
-                    </li>
-                ))}
-            </ul>
         </div>
     );
 }

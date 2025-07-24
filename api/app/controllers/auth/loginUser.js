@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const db = require("../../models/users");
+const db = require("../../models/users"); // Assurez-vous que ce 'db' est votre modèle 'users'
 const sendMail = require("../../librairies/mailer");
 const crypto = require("crypto");
 
@@ -11,15 +11,17 @@ async function loginUser(mail, password, rememberMe = false) {
       if (!result.length) return reject(new Error("Utilisateur non trouvé"));
 
       const user = result[0];
+
+      // Vérification du mot de passe
       const isValid = await bcrypt.compare(password, user.password);
       if (!isValid) return reject(new Error("Mot de passe incorrect"));
 
-      // 🚨 Vérification de l'adresse email
+      // Vérification de l'email
       if (!user.email_verified) {
         const emailToken = crypto.randomBytes(32).toString("hex");
-        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h
+        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
-        // Mise à jour du token dans la BDD
+        // Assurez-vous que db.updateEmailToken utilise une Promise ou est promisifié
         db.updateEmailToken(user.id, emailToken, expiresAt, async (updateErr) => {
           if (updateErr) {
             console.error("Erreur updateEmailToken:", updateErr);
@@ -27,7 +29,6 @@ async function loginUser(mail, password, rememberMe = false) {
           }
 
           const confirmLink = `${process.env.FRONT_URL}/email-confirmed/${emailToken}`;
-
           await sendMail({
             to: user.mail,
             subject: "Confirmez votre adresse email",
@@ -39,46 +40,44 @@ async function loginUser(mail, password, rememberMe = false) {
           return reject(new Error("Veuillez confirmer votre adresse email pour vous connecter"));
         });
 
-        return; // Important pour ne pas continuer le flux
+        return;
       }
 
+      // Génération du token
       const tokenExpiry = rememberMe ? "30d" : "2h";
+      const payload = {
+        userId: user.id,
+        mail: user.mail,
+        role: user.role,
+        status: user.status,
+        timestamp: Date.now(),
+      };
 
-      // ✅ Génération du token
-      const token = jwt.sign(
-          {
-            userId: user.id,
-            mail: user.mail,
-            role: user.role,
-            status: user.status,
-            timestamp: Date.now(),
-          },
-          process.env.SECRET_KEY,
-          { expiresIn: tokenExpiry }
-      );
+      const token = jwt.sign(payload, process.env.SECRET_KEY, {
+        expiresIn: tokenExpiry,
+      });
 
+      // Mise à jour du token en BDD
+      // Assurez-vous que db.setUserToken utilise une Promise ou est promisifié
       db.setUserToken(user.id, token, (updateErr, updateResult) => {
         if (updateErr) {
-          console.error("❌ Erreur UPDATE token BDD :", updateErr);
+          console.error("Erreur UPDATE token BDD :", updateErr);
           return reject(new Error("Erreur enregistrement du token"));
         }
 
-        // Log the login in user_logins
-        db.logUserLogin(user.id, (logErr) => {
-          if (logErr) {
-            console.error("❌ Erreur logUserLogin :", logErr);
-            // On ne bloque pas la connexion si le log échoue
-          }
+        // --- DÉBUT DE LA MODIFICATION ---
+        // Suppression de l'appel à db.logUserLogin
+        // console.error("Erreur logUserLogin :", logErr); // Cette ligne est supprimée car logUserLogin est supprimé.
+        // --- FIN DE LA MODIFICATION ---
 
-          console.log("✅ Token mis à jour en BDD :", token);
-          console.log("🗃️ Résultat de la mise à jour SQL :", updateResult);
+        console.log("✅ Token mis à jour en BDD :", token);
+        console.log("🗃️ Résultat de la mise à jour SQL :", updateResult);
 
-          delete user.password;
+        delete user.password;
 
-          resolve({
-            token,
-            ...user,
-          });
+        resolve({
+          token,
+          ...user,
         });
       });
     });
