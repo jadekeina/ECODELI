@@ -1,16 +1,17 @@
-// Fichier : app/controllers/rides/findRideById.js
-const Ride = require("../../models/ride");
+const db = require("../../../config/db");
 
-/**
- * Récupère une course (ride) par son ID.
- * @param {number} id - ID de la course à récupérer.
- * @returns {Promise<Object|null>} - La course si trouvée, sinon null.
- */
 const findRideById = async (id) => {
     const [rows] = await db
         .promise()
-        .query("SELECT * FROM rides WHERE id = ?", [id]);
+        .query(
+            `SELECT rides.*, users.firstname AS client_firstname, users.lastname AS client_lastname, users.mail AS client_email 
+             FROM rides 
+             JOIN users ON rides.user_id = users.id
+             WHERE rides.id = ?`,
+            [id]
+        );
 
     return rows[0];
 };
 
+module.exports = findRideById;

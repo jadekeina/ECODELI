@@ -1,0 +1,10 @@
+POST /service_requests
+Authorization: Bearer [token client]
+Body:
+{
+  "prestation_id": 7,
+  "date": "2025-08-10",
+  "heure": "15:00:00",
+  "lieu": "45 rue de Rivoli, Paris",
+  "commentaire": "Merci de prévoir une tenue adaptée."
+}

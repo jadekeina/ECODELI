@@ -105,7 +105,7 @@ CREATE TABLE shop_owner
 );
 
 
--- Annonce
+-- Annonce à supprimer
 CREATE TABLE requests
 (
     id                INT AUTO_INCREMENT PRIMARY KEY,
@@ -190,7 +190,8 @@ CREATE TABLE box (
 -- Trajet
 CREATE TABLE rides (
                        id INT AUTO_INCREMENT PRIMARY KEY,
-                       user_id INT NOT NULL,
+                       user_id INT NOT NULL, -- client
+                       provider_id INT DEFAULT NULL, -- prestataire
                        depart_address VARCHAR(255),
                        arrivee_address VARCHAR(255),
                        distance_km DECIMAL(10, 2),
@@ -199,12 +200,23 @@ CREATE TABLE rides (
                        commission DECIMAL(10, 2),
                        tva DECIMAL(10, 2),
                        total_price DECIMAL(10, 2),
-                       status ENUM('en_attente', 'acceptee', 'refusee', 'en_cours', 'terminee', 'annulee') DEFAULT 'en_attente',
+                       status ENUM(
+                           'en_attente',
+                           'acceptee',
+                           'refusee',
+                           'en_cours',
+                           'terminee',
+                           'annulee'
+                           ) DEFAULT 'en_attente',
                        note TEXT,
                        scheduled_date DATETIME,
                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+                       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                       FOREIGN KEY (provider_id) REFERENCES provider(id) ON DELETE SET NULL
 );
+
 
 
 
@@ -221,6 +233,147 @@ CREATE TABLE payments (
                           FOREIGN KEY (ride_id) REFERENCES rides(id)
 );
 
+CREATE TABLE provider_payments (
+                                   id INT AUTO_INCREMENT PRIMARY KEY,
+                                   provider_id INT NOT NULL,
+                                   ride_id INT DEFAULT NULL,
+                                   services_id INT DEFAULT NULL,
+                                   amount DECIMAL(10, 2) NOT NULL,
+                                   status ENUM('en_attente', 'en_cours', 'effectue') DEFAULT 'en_attente',
+                                   method ENUM('virement', 'paypal', 'stripe') DEFAULT 'virement',
+                                   payment_date DATETIME DEFAULT NULL,
+                                   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                                   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                   FOREIGN KEY (provider_id) REFERENCES provider(id) ON DELETE CASCADE,
+                                   FOREIGN KEY (ride_id) REFERENCES rides(id) ON DELETE SET NULL,
+                                   FOREIGN KEY (services_id) REFERENCES services(id) ON DELETE SET NULL
+);
+
+
+-- Shop Owner Requestq
+
+CREATE TABLE shopowner_requests (
+                                    id INT AUTO_INCREMENT PRIMARY KEY,
+                                    user_id INT NOT NULL,
+                                    shop_id INT DEFAULT NULL,
+                                    delivery_driver_id INT DEFAULT NULL, -- Nouvelle colonne pour l'ID du livreur
+                                    type ENUM('colis_total', 'livraison_domicile', 'courses') NOT NULL,
+                                    title VARCHAR(255),
+                                    description TEXT,
+                                    poids FLOAT,
+                                    longueur FLOAT,
+                                    largeur FLOAT,
+                                    hauteur FLOAT,
+                                    photo VARCHAR(255),
+                                    destinataire_nom VARCHAR(100),
+                                    destinataire_prenom VARCHAR(100),
+                                    adresse_livraison TEXT,
+                                    date_livraison DATE,
+                                    heure_livraison TIME,
+                                    prix DECIMAL(10, 2),
+                                    statut ENUM('en_attente', 'en_cours', 'terminee', 'ignoree', 'annulee', 'acceptee', 'refusee') DEFAULT 'en_attente', -- J'ai ajouté les statuts utilisés dans le frontend pour plus de clarté
+                                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+                                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                                    FOREIGN KEY (shop_id) REFERENCES shops(id) ON DELETE SET NULL,
+    -- Nouvelle contrainte de clé étrangère pour le livreur
+                                    FOREIGN KEY (delivery_driver_id) REFERENCES delivery_driver(id) ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+
+
+
+-- Prestations
+CREATE TABLE services (
+                             id INT AUTO_INCREMENT PRIMARY KEY,
+                             provider_id INT NOT NULL,
+                             type VARCHAR(255),
+                             description TEXT,
+                             price DECIMAL(10,2),
+                             status ENUM('en_attente', 'valide', 'refuse') NOT NULL DEFAULT 'en_attente',
+                             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                             FOREIGN KEY (provider_id) REFERENCES provider(id) ON DELETE CASCADE
+);
+
+
+-- Shops
+CREATE TABLE shops (
+                       id INT AUTO_INCREMENT PRIMARY KEY,
+                       shop_owner_id INT NOT NULL,
+                       name VARCHAR(255) NOT NULL,
+                       address TEXT NOT NULL,
+                       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                       FOREIGN KEY (shop_owner_id) REFERENCES shop_owner(id) ON DELETE CASCADE
+);
+
+
+-- Requête annonce service
+
+CREATE TABLE service_requests (
+                                  id INT AUTO_INCREMENT PRIMARY KEY,
+                                  prestation_id INT NOT NULL,
+                                  client_id INT NOT NULL,
+                                  date DATE NOT NULL,
+                                  heure TIME NOT NULL,
+                                  lieu TEXT NOT NULL,
+                                  commentaire TEXT,
+                                  statut ENUM('en_attente', 'acceptee', 'refusee', 'en_cours', 'terminee', 'annulee') DEFAULT 'en_attente',
+                                  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+                                  FOREIGN KEY (prestation_id) REFERENCES services(id) ON DELETE CASCADE,
+                                  FOREIGN KEY (client_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Requête annonce colis
+
+CREATE TABLE colis_requests (
+                                id INT AUTO_INCREMENT PRIMARY KEY,
+                                user_id INT NOT NULL,
+                                type ENUM('colis_total', 'colis_partiel', 'livraison_domicile') NOT NULL,
+                                titre VARCHAR(255) NOT NULL,
+                                description TEXT,
+                                photo VARCHAR(255),
+                                longueur FLOAT,
+                                largeur FLOAT,
+                                poids FLOAT,
+                                prix FLOAT,
+                                prix_suggere FLOAT,
+                                adresse_depart VARCHAR(255),
+                                adresse_arrivee VARCHAR(255),
+                                date_demande DATE,
+                                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+                                FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+
+-- Livreurs Delivery driver payment
+CREATE TABLE delivery_driver_payments (
+                                          id INT AUTO_INCREMENT PRIMARY KEY,
+                                          delivery_driver_id INT,
+                                          request_id INT,
+                                          amount DECIMAL(10,2),
+                                          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                                          FOREIGN KEY (delivery_driver_id) REFERENCES delivery_driver(id),
+                                          FOREIGN KEY (request_id) REFERENCES shopowner_requests(id)
+);
+
+
+CREATE TABLE service_payments (
+                                  id INT PRIMARY KEY AUTO_INCREMENT,
+                                  request_id INT NOT NULL,
+                                  provider_id INT NOT NULL,
+                                  client_id INT NOT NULL,
+                                  amount DECIMAL(10, 2) NOT NULL,
+                                  status ENUM('pending', 'effectue', 'echoue') DEFAULT 'pending',
+                                  payment_date DATETIME DEFAULT NULL,
+                                  method VARCHAR(50) DEFAULT 'stripe',
+                                  stripe_payment_id VARCHAR(255),
+                                  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                                  FOREIGN KEY (request_id) REFERENCES service_requests(id),
+                                  FOREIGN KEY (provider_id) REFERENCES users(id),
+                                  FOREIGN KEY (client_id) REFERENCES users(id)
+);
 
 
 -- --------------------------------------------------------- Données

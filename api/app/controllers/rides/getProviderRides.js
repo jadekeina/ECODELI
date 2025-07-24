@@ -1,18 +1,22 @@
 const db = require("../../../config/db");
 
-const getProviderRides = async (providerId) => {
+const getProviderRides = async (userId) => {
     return new Promise((resolve, reject) => {
         const query = `
-      SELECT * FROM rides
-      WHERE provider_id = ?
-      ORDER BY created_at DESC
-    `;
-
-        db.query(query, [providerId], (err, results) => {
-            if (err) return reject(err);
+            SELECT r.* FROM rides r
+            JOIN provider p ON p.id = r.provider_id
+            WHERE p.user_id = ?
+            ORDER BY r.created_at DESC
+        `;
+        db.query(query, [userId], (err, results) => {
+            if (err) {
+                console.error("[getProviderRides] Erreur SQL :", err);
+                return reject(err);
+            }
             resolve(results);
         });
     });
 };
 
 module.exports = getProviderRides;
+

@@ -24,7 +24,6 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      // 1. On fait le login
       const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -38,123 +37,131 @@ const Login = () => {
         throw new Error(data.message || `Erreur ${response.status}`);
       }
 
-      // 2. Sauvegarder le token dans le localStorage
-      if (data.user && data.user.token) {
-        localStorage.setItem("token", data.user.token);
+      const receivedToken = data.token; // <-- Récupérer le token directement de la réponse
+      if (!receivedToken) {
+        throw new Error("Token non reçu après la connexion.");
       }
 
-      // 3. On va chercher l'utilisateur connecté via le cookie sécurisé
+      localStorage.setItem("token", receivedToken); // Stocker le token dans localStorage
+      console.log("📦 Token stocké dans localStorage:", receivedToken.substring(0, 20) + '...');
+
+      // Utiliser le token directement pour la requête /users/me
       const userRes = await fetch(`${API_URL}/users/me`, {
         headers: {
-          Authorization: `Bearer ${data.user.token}`,
+          Authorization: `Bearer ${receivedToken}`, // <-- Utiliser receivedToken ici
         },
         credentials: "include",
       });
 
       if (userRes.ok) {
         const userData = await userRes.json();
-        setUser(userData.user || userData.data); // adapte selon ta réponse API réelle !
+        // Optionnel: Ajouter le token à l'objet user dans le contexte si vous en avez besoin côté client
+        setUser({ ...userData.user || userData.data, token: receivedToken });
         setMessage("✅ Connexion réussie !");
         setTimeout(() => navigate("/app"), 800);
       } else {
-        setMessage("❌ Impossible de récupérer le profil utilisateur.");
+        const errorData = await userRes.json();
+        setMessage(`❌ Impossible de récupérer le profil utilisateur: ${errorData.message || userRes.statusText}`);
+        // Nettoyer le token si la récupération du profil échoue
+        localStorage.removeItem("token");
       }
     } catch (error) {
-      setMessage(
-        `❌ ${error instanceof Error ? error.message : "Erreur de connexion"}`,
-      );
+      setMessage(`❌ ${error instanceof Error ? error.message : "Erreur de connexion"}`);
+      console.error("Erreur de connexion complète:", error);
+      // S'assurer que le token est retiré en cas d'erreur
+      localStorage.removeItem("token");
     }
   };
 
   return (
-    <StyledWrapper>
-      <form className="form" onSubmit={handleSubmit}>
-        <div className="flex-column">
-          <label>Email </label>
-        </div>
-        <div className="inputForm">
-          <input
-            type="email"
-            name="mail"
-            className="input"
-            placeholder="Enter your Email"
-            value={formData.mail}
-            onChange={handleChange}
-            required
-          />
-        </div>
+      <StyledWrapper>
+        <form className="form" onSubmit={handleSubmit}>
+          <div className="flex-column">
+            <label>Email </label>
+          </div>
+          <div className="inputForm">
+            <input
+                type="email"
+                name="mail"
+                className="input"
+                placeholder="Enter your Email"
+                value={formData.mail}
+                onChange={handleChange}
+                required
+            />
+          </div>
 
-        <div className="flex-column">
-          <label>Password </label>
-        </div>
-        <div className="inputForm">
-          <input
-            type={showPassword ? "text" : "password"}
-            name="password"
-            className="input"
-            placeholder="Enter your Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-          <span
-            onClick={() => setShowPassword(!showPassword)}
-            style={{ cursor: "pointer", marginRight: "10px", color: "#555" }}
-          >
+          <div className="flex-column">
+            <label>Password </label>
+          </div>
+          <div className="inputForm">
+            <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                className="input"
+                placeholder="Enter your Password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+            />
+            <span
+                onClick={() => setShowPassword(!showPassword)}
+                style={{ cursor: "pointer", marginRight: "10px", color: "#555" }}
+            >
             {showPassword ? "👁️" : "🙈"}
           </span>
-        </div>
-
-        <div className="flex-row mt-4">
-          <div>
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-              id="rememberMe"
-            />
-            <label htmlFor="rememberMe" style={{ marginLeft: 6 }}>
-              Remember me
-            </label>
           </div>
-          <Link to="/forgot-password" className="span">
-            Mot de passe oublié ?
-          </Link>
-        </div>
 
-        <button className="button-submit">Sign In</button>
+          <div className="flex-row mt-4">
+            <div>
+              <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  id="rememberMe"
+              />
+              <label htmlFor="rememberMe" style={{ marginLeft: 6 }}>
+                Remember me
+              </label>
+            </div>
+            <Link to="/forgot-password" className="span">
+              Mot de passe oublié ?
+            </Link>
+          </div>
 
-        {message && (
-          <p
-            style={{
-              textAlign: "center",
-              color: message.startsWith("✅") ? "green" : "red",
-            }}
-          >
-            {message}
+          <button className="button-submit">Sign In</button>
+
+          {message && (
+              <p
+                  style={{
+                    textAlign: "center",
+                    color: message.startsWith("✅") ? "green" : "red",
+                  }}
+              >
+                {message}
+              </p>
+          )}
+
+          <p className="p">
+            Don't have an account? {" "}
+            <Link to="/inscription" className="span">
+              Créez-en un
+            </Link>
           </p>
-        )}
+          <p className="p line">Or With</p>
 
-        <p className="p">
-          Don't have an account?{" "}
-          <Link to="/inscription" className="span">
-            Créez-en un
-          </Link>
-        </p>
-        <p className="p line">Or With</p>
-
-        <div className="flex-row">
-          <GoogleLoginButton
-            onSuccess={() => {
-              setMessage("✅ Connexion Google réussie ! Redirection...");
-            }}
-            onError={(error) => {
-              setMessage(`❌ ${error}`);
-            }}
-          />
-        </div>
-      </form>
-    </StyledWrapper>
+          <div className="flex-row">
+            <GoogleLoginButton
+                onSuccess={() => {
+                  setMessage("✅ Connexion Google réussie ! Redirection...");
+                }}
+                onError={(error) => {
+                  setMessage(`❌ ${error}`);
+                }}
+            />
+          </div>
+        </form>
+      </StyledWrapper>
   );
 };
 
@@ -174,8 +181,8 @@ const StyledWrapper = styled.div`
     width: 450px;
     border-radius: 20px;
     font-family:
-      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
-      Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+        Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   }
 
   .inputForm {

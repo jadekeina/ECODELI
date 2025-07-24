@@ -1,0 +1,8 @@
+### Mettre à jour le statut d'une course
+PATCH http://localhost:3002/rides/35/status
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm1haWwiOiJha291YWxhYjVAZ21haWwuY29tIiwicm9sZSI6InByb3ZpZGVyIiwidGltZXN0YW1wIjoxNzUzMTc4MzkwODMyLCJpYXQiOjE3NTMxNzgzOTAsImV4cCI6MTc1MzE4NTU5MH0.gq08rVp9uhGHe_idtYw47Z9M1Bfu-b8Po0GT20ysotA
+
+{
+  "status": "terminee"
+}

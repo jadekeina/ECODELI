@@ -1,4 +1,4 @@
-// Fichier : app/routes/invoices/get.js
+// Fichier : app/routes/invoices/getId.js
 const express = require("express");
 const router = express.Router();
 const generateInvoice = require("../../controllers/invoices/generateInvoice");

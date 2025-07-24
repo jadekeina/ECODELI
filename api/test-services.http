@@ -1,0 +1,34 @@
+### Créer un service (POST)
+POST http://localhost:3002/services
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm1haWwiOiJha291YWxhYjVAZ21haWwuY29tIiwicm9sZSI6InByb3ZpZGVyIiwidGltZXN0YW1wIjoxNzUzMjg2NjI4OTY1LCJpYXQiOjE3NTMyODY2MjgsImV4cCI6MTc1MzI5MzgyOH0.hM2da19iOall8KEcoH25HIAsc27fEFuv4_8gAJ9psSA
+Content-Type: application/json
+
+{
+  "type": "Ménage",
+  "description": "Nettoyage complet de la maison",
+  "price": 120.00
+}
+
+### Récupérer tous les services du provider connecté (GET)
+GET http://localhost:3002/services
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm1haWwiOiJha291YWxhYjVAZ21haWwuY29tIiwicm9sZSI6InByb3ZpZGVyIiwidGltZXN0YW1wIjoxNzUzMjg2NjI4OTY1LCJpYXQiOjE3NTMyODY2MjgsImV4cCI6MTc1MzI5MzgyOH0.hM2da19iOall8KEcoH25HIAsc27fEFuv4_8gAJ9psSA
+
+### Récupérer un service par ID (GET)
+GET http://localhost:3002/services/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm1haWwiOiJha291YWxhYjVAZ21haWwuY29tIiwicm9sZSI6InByb3ZpZGVyIiwidGltZXN0YW1wIjoxNzUzMjg2NjI4OTY1LCJpYXQiOjE3NTMyODY2MjgsImV4cCI6MTc1MzI5MzgyOH0.hM2da19iOall8KEcoH25HIAsc27fEFuv4_8gAJ9psSA
+
+### Mettre à jour un service par ID (PATCH)
+PATCH http://localhost:3002/services/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm1haWwiOiJha291YWxhYjVAZ21haWwuY29tIiwicm9sZSI6InByb3ZpZGVyIiwidGltZXN0YW1wIjoxNzUzMjg2NjI4OTY1LCJpYXQiOjE3NTMyODY2MjgsImV4cCI6MTc1MzI5MzgyOH0.hM2da19iOall8KEcoH25HIAsc27fEFuv4_8gAJ9psSA
+Content-Type: application/json
+
+{
+  "type": "Ménage amélioré",
+  "description": "Nettoyage complet + vitres",
+  "price": 150.00,
+  "status": "valide"
+}
+
+### Supprimer un service par ID (DELETE)
+DELETE http://localhost:3002/services/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm1haWwiOiJha291YWxhYjVAZ21haWwuY29tIiwicm9sZSI6InByb3ZpZGVyIiwidGltZXN0YW1wIjoxNzUzMjg2NjI4OTY1LCJpYXQiOjE3NTMyODY2MjgsImV4cCI6MTc1MzI5MzgyOH0.hM2da19iOall8KEcoH25HIAsc27fEFuv4_8gAJ9psSA

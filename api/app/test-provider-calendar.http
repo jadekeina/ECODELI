@@ -1,0 +1,34 @@
+### ✅ 1. Récupérer les demandes de prestations pour un prestataire (provider_id = 14)
+GET http://localhost:3002/service_requests/provider/14
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsIm1haWwiOiJzYW5kcmluZS5lYmVsZWJlQGdtYWlsLmNvbSIsInJvbGUiOiJjbGllbnQiLCJ0aW1lc3RhbXAiOjE3NTMzNjcwODc2MTAsImlhdCI6MTc1MzM2NzA4NywiZXhwIjoxNzUzMzc0Mjg3fQ.R2XR4ulRyWnpNsr6TrxEHgQmaEdQ1q91gl7iO1U1NGU
+Content-Type: application/json
+
+### ✅ 2. Créer une nouvelle demande (client vers prestation_id = 7 appartenant au provider 14)
+POST http://localhost:3002/service_requests
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsIm1haWwiOiJzYW5kcmluZS5lYmVsZWJlQGdtYWlsLmNvbSIsInJvbGUiOiJjbGllbnQiLCJ0aW1lc3RhbXAiOjE3NTMzNjcwODc2MTAsImlhdCI6MTc1MzM2NzA4NywiZXhwIjoxNzUzMzc0Mjg3fQ.R2XR4ulRyWnpNsr6TrxEHgQmaEdQ1q91gl7iO1U1NGU
+Content-Type: application/json
+
+{
+  "prestation_id": 7,
+  "date": "2025-08-15",
+  "heure": "11:00:00",
+  "lieu": "75 rue Lafayette, Paris",
+  "commentaire": "Merci d’apporter tout le matériel."
+}
+
+### ✅ 3. Créer une autre demande (provider_id = 14 encore)
+POST http://localhost:3002/service_requests
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsIm1haWwiOiJzYW5kcmluZS5lYmVsZWJlQGdtYWlsLmNvbSIsInJvbGUiOiJjbGllbnQiLCJ0aW1lc3RhbXAiOjE3NTMzNjcwODc2MTAsImlhdCI6MTc1MzM2NzA4NywiZXhwIjoxNzUzMzc0Mjg3fQ.R2XR4ulRyWnpNsr6TrxEHgQmaEdQ1q91gl7iO1U1NGU
+Content-Type: application/json
+
+{
+  "prestation_id": 7,
+  "date": "2025-08-17",
+  "heure": "15:30:00",
+  "lieu": "10 avenue de la République, Paris",
+  "commentaire": "Rdv à l’accueil."
+}
+
+### ✅ 4. Voir dans le calendrier si elles apparaissent (ProviderCalendar.tsx utilise cette route)
+GET http://localhost:3002/service_requests/provider/14
+Authorization: Bearer {{token_client}}

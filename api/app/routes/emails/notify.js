@@ -4,6 +4,7 @@ const express = require("express");
 const router = express.Router();
 const sendConfirmationEmail = require("../../controllers/emails/sendConfirmationEmail");
 
+
 router.post("/:type/:id/notify", async (req, res) => {
     const { type, id } = req.params;
 

@@ -1,11 +1,14 @@
 // routes/shopOwner/post.js
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
+
 const createShopOwner = require("../../controllers/shopOwner/createShopOwner");
 const { isPostMethod } = require("../../librairies/method");
 const { jsonResponse } = require("../../librairies/response");
 
-router.post("/", async (req, res) => {
+router.post("/", upload.single("justificatif"), async (req, res) => {
     if (!isPostMethod(req)) {
         return jsonResponse(res, 405, {}, { message: "Method Not Allowed" });
     }
@@ -18,7 +21,7 @@ router.post("/", async (req, res) => {
     const token = authHeader.split(" ")[1];
 
     try {
-        const result = await createShopOwner(token, req.body);
+        const result = await createShopOwner(token, req.body, req.file); // 👈 on passe bien req.body et req.file
         return jsonResponse(res, 201, {}, result);
     } catch (error) {
         console.error("createShopOwner error:", error);

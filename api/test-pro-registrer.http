@@ -1,1 +1,3 @@
-GET http://localhost:3002/invoices/ride/1
+GET http://localhost:3002/rides/provider/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm1haWwiOiJha291YWxhYjVAZ21haWwuY29tIiwicm9sZSI6InByb3ZpZGVyIiwidGltZXN0YW1wIjoxNzUyOTUwMjY5ODg0LCJpYXQiOjE3NTI5NTAyNjksImV4cCI6MTc1Mjk1NzQ2OX0._8kXQQx6C4Jl1gDuTGRc-h5oNYwic5Lh3Xpd8BTVBrQ
+Accept: application/json
