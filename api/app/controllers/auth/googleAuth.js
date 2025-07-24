@@ -123,13 +123,7 @@ async function googleAuth(accessToken) {
             if (tokenErr) {
               console.error("Erreur sauvegarde token:", tokenErr);
             }
-            
-            // Logger la connexion
-            userModel.logUserLogin(user.id, (logErr) => {
-              if (logErr) {
-                console.error("Erreur log connexion:", logErr);
-              }
-            });
+
             
             delete user.password;
             resolve({

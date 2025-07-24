@@ -65,10 +65,6 @@ async function loginUser(mail, password, rememberMe = false) {
           return reject(new Error("Erreur enregistrement du token"));
         }
 
-        // --- DÉBUT DE LA MODIFICATION ---
-        // Suppression de l'appel à db.logUserLogin
-        // console.error("Erreur logUserLogin :", logErr); // Cette ligne est supprimée car logUserLogin est supprimé.
-        // --- FIN DE LA MODIFICATION ---
 
         console.log("✅ Token mis à jour en BDD :", token);
         console.log("🗃️ Résultat de la mise à jour SQL :", updateResult);

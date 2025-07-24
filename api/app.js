@@ -14,6 +14,19 @@ const auth = require('./app/librairies/authMiddleware');
 
 //  Middlewares globaux
 app.use(cookieParser());
+
+
+const handleStripeWebhook = require("./app/controllers/payments/handleStripeWebhook");
+
+// ✅ Webhook Stripe - doit être mis **avant** express.json()
+// express.raw() met le corps brut de la requête dans req.body
+app.post(
+    "/webhooks/stripe",
+    express.raw({ type: "application/json" }),
+    handleStripeWebhook
+);
+
+// ✅ Middlewares généraux (pour toutes les autres routes)
 app.use(express.static("public"));
 app.use(morgan("dev"));
 app.use(cors({
@@ -53,7 +66,7 @@ app.post(
 //  Routes publiques
 app.use("/distance", require("./app/routes/distance.js"));
 
-//  Users
+// Users
 app.use("/users", require("./app/routes/users/me"));
 app.use("/api/users", require("./app/routes/users"));
 app.use("/api/users/last", require("./app/routes/users/last"));
@@ -61,7 +74,16 @@ app.use("/users", require("./app/routes/users/get"));
 app.use("/users", require("./app/routes/users/post"));
 app.use("/users", require("./app/routes/users/patch"));
 
-//  Auth
+
+
+//Stats
+app.use("/api/stats/inscriptions", require("./app/routes/stats/inscriptions"));
+app.use("/api/stats/ca", require("./app/routes/stats/ca"));
+
+
+
+
+// Auth
 app.use("/auth/login", require("./app/routes/auth/login"));
 app.use("/auth/logout", require("./app/routes/auth/logout"));
 app.use("/auth/google", require("./app/routes/auth/google"));
@@ -97,6 +119,12 @@ app.use("/provider/me", require("./app/routes/provider/me"));
 app.use("/shop-owner", require("./app/routes/shopOwner/post"));
 app.use("/shop-owner", require("./app/routes/shopOwner/patch"));
 
+//Admin
+app.use("/auth/admin-login", require("./app/routes/auth/adminLogin"));
+
+
+
+// Documents
 
 //  ShopOwner Requests
 app.use("/shopowner-requests", require("./app/routes/shopowner_requests/mine"));
@@ -113,12 +141,13 @@ app.use("/shopowner-requests", require("./app/routes/shopowner_requests/delete")
 //  Documents
 app.use("/documents", require("./app/routes/documents/post"));
 app.use("/documents", require("./app/routes/documents/patch"));
-app.use("/documents", require("./app/routes/documents/get"));
+   app.use("/documents", require("./app/routes/documents/get"));
 
-//  Requests a supprimer
+// Requests
 app.use("/requests", require("./app/routes/requests/post"));
 app.use("/requests/my", require("./app/routes/requests/my"));
 app.use("/requests/public", require("./app/routes/requests/public"));
+app.use("/admin/requests", require("./app/routes/requests/get"));
 app.use("/requests/provider", require("./app/routes/requests/provider"));
 
 //Services Requests
@@ -129,12 +158,13 @@ app.use("/service_requests", require("./app/routes/service_requests/get")); // P
 app.use("/service_requests", require("./app/routes/service_requests/getByClient"));
 
 
-//  Warehouses
+// Warehouses
 app.use("/warehouses", require("./app/routes/warehouses/public"));
 app.use("/admin/warehouses", require("./app/routes/warehouses/private"));
 app.use("/warehouses", require("./app/routes/warehouses/get"));
 
-//  Rides
+
+// Rides
 app.use("/rides", require("./app/routes/rides/post"));
 app.use("/rides", require("./app/routes/rides/get"));
 app.use("/rides", require("./app/routes/rides/getInvoice"));
